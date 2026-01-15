@@ -1,0 +1,23 @@
+plugins {
+    kotlin("jvm") version "2.1.21"
+}
+
+group = "edu.kit.ifv.populationsynthesis"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation(kotlin("test"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jgrapht:jgrapht-core:1.5.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(23)
+}
