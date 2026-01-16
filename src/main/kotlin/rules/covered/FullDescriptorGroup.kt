@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules.covered
 
-import edu.kit.ifv.populationsynthesis.rules.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import java.util.function.IntFunction
 
 class FullDescriptorGroup<T>(val descriptors: List<NamedContribution<T>>) : List<NamedContribution<T>>  by descriptors {

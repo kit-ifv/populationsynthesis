@@ -13,7 +13,7 @@ class UseLowestCoveredLeaf<AREA> : HandleRuleConflicts<AREA> {
         var nextRound = leafs.mapNotNull { hierarchicElement.getParent(it) }
         while (nextRound.isNotEmpty()) {
             nextRound.forEach { node ->
-                val isCovered = hierarchicElement.getChildren(node).all { it in completelyCovered }
+                val isCovered = hierarchicElement.getImmediateChildren(node).all { it in completelyCovered }
                 if (isCovered) {
                     completelyCovered.add(node)
                 }
@@ -22,7 +22,7 @@ class UseLowestCoveredLeaf<AREA> : HandleRuleConflicts<AREA> {
         }
 
         val (removable, unremovable) = conflictingAreas.filter { it !in leafs }.partition { it in completelyCovered }
-        val mustRemove = unremovable.flatMap { hierarchicElement.getAllDescendants(it) }.toSet()
+        val mustRemove = unremovable.flatMap { hierarchicElement.getAllChildren(it) }.toSet()
 
         return conflictingAreas.filter { it !in removable && it !in mustRemove }
     }

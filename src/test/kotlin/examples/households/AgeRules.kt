@@ -1,20 +1,19 @@
 package examples.households
 
-import edu.kit.ifv.populationsynthesis.rules.NamedContribution
-import edu.kit.ifv.populationsynthesis.rules.covered.ExhaustiveContributionGenerator
+import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.covered.ExhaustiveContributionSetSupplier
 import edu.kit.ifv.populationsynthesis.rules.covered.FullDescriptorGroup
 
-class AgeRules(private val ageThresholds: List<Int>) : ExhaustiveContributionGenerator<TestPerson> {
+class AgeRules(private val ageThresholds: List<Int>) : ExhaustiveContributionSetSupplier<TestPerson> {
 
     constructor(vararg ageThresholds: Int) : this(ageThresholds.toList())
-    override val description: String = "Age groups by $ageThresholds"
 
     override fun generateAllDescriptions(): FullDescriptorGroup<TestPerson> {
         val contributions = listOf(AgeContribution(0..ageThresholds.first())) +
                 ageThresholds.zipWithNext { a, b ->
                     AgeContribution(a..b)
                 } + AgeContribution(ageThresholds.last()..Int.MAX_VALUE)
-        return FullDescriptorGroup(contributions.map { it.generateDescription() })
+        return FullDescriptorGroup(contributions.map { it.createNamedContribution() })
     }
 
     override fun equals(other: Any?): Boolean {
@@ -26,7 +25,7 @@ class AgeRules(private val ageThresholds: List<Int>) : ExhaustiveContributionGen
         return ageThresholds.hashCode()
     }
 
-    override fun generateDescriptions(): List<NamedContribution<TestPerson>> {
+    override fun generateContributions(): List<NamedContribution<TestPerson>> {
         TODO("Not yet implemented")
     }
 }

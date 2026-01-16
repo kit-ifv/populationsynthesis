@@ -11,7 +11,7 @@ abstract class HierarchicSynthesis<AREA, H>(
 ): RuleBasedPopulationSynthesis<AREA, H> {
     val hierarchy = ruleProvider.hierarchy
     final override fun synthesize(targetAreas: List<AREA>): Map<AREA, List<H>>   {
-        // Trace roots runs up to the highest ancestor
+        // Trace roots runs up to the highest ancestor. Should take into account intermediate areas.
         val rootRegions = hierarchy.groupByHighestAncestor(targetAreas)
 //        val independentRegions = separateIrrelevantRegions(rootRegions) Unnecessary, should be handled by hierarchy beforehand
 
@@ -27,6 +27,10 @@ abstract class HierarchicSynthesis<AREA, H>(
                 .associate { it.key to it.value }
         }
         return out.filterKeys { it in targetAreas }
+    }
+
+    override fun synthesizeAll(): Map<AREA, List<H>> {
+        return synthesize(hierarchy.getAllLeafs())
     }
 
     /**
@@ -56,10 +60,10 @@ abstract class HierarchicSynthesis<AREA, H>(
                 // should never be able to occur, based on the graph structure and inputs
                 val safetyCheck = workspace[key]!!.filter { it in flatTargets }
                 workspace.remove(key)
-                val children = hierarchy.getChildren(key)
+                val children = hierarchy.getImmediateChildren(key)
 
                 val newInserts = children.associateWith { child ->
-                    val grandChildren = hierarchy.getAllDescendants(child)
+                    val grandChildren = hierarchy.getAllChildren(child)
                     grandChildren
                 }
                 workspace.putAll(newInserts)

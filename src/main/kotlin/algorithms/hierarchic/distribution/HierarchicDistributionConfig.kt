@@ -1,4 +1,4 @@
-package edu.kit.ifv.populationsynthesis.algorithms.hierarchic
+package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
 

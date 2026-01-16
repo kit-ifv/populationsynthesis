@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleGenerator
 
 class MapRuleProvider<AREA, H>(
     private val ruleMap: MutableMap<AREA, List<Rule<H>>> = mutableMapOf(),
@@ -15,6 +16,13 @@ class MapRuleProvider<AREA, H>(
         return ruleMap
     }
 
+    fun addRules(area: AREA, rules: List<Rule<H>>) {
+        ruleMap[area] = rules
+    }
+
+    fun addRules(area: AREA, ruleGenerator: RuleGenerator<H>) {
+        ruleMap[area] = ruleGenerator.generateRules()
+    }
     companion object {
         fun <AREA, H> fromMap(
             map: Map<AREA, List<Rule<H>>>

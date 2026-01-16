@@ -1,8 +1,6 @@
 package examples.households
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDescriptor
-import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionOrigin
-import edu.kit.ifv.populationsynthesis.rules.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
 
 data class AgeContribution(

@@ -17,9 +17,5 @@ class ContributionTest {
         assertEquals(ruleContributions[1], otherContributions[1])
         assertEquals(ruleContributions[2], otherContributions[2])
         assertEquals(ruleContributions[3], otherContributions[3])
-
-        val t = ruleContributions.groupBy { it.origin }
-
-        println(t)
     }
 }

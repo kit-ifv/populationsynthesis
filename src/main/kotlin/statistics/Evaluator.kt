@@ -43,7 +43,7 @@ fun <T, X> Rule<T>.toIPUOutput(area: X, households: Collection<T>): AreaIPUOutpu
         IPUOutputLog(
             this.logic.identifier,
             target,
-            evaluate(households)
+            total(households)
         )
     )
 }

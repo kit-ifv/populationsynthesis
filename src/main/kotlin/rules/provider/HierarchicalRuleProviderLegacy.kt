@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
-import edu.kit.ifv.populationsynthesis.rules.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.fuse
 import edu.kit.ifv.populationsynthesis.synthesis.HandleRuleConflicts
@@ -17,7 +17,7 @@ interface HierarchicalRuleProviderLegacy<AREA, H> : RuleProvider<AREA, H> {
         HierarchicalRuleProviderLegacy<AREA, H>
         >
 
-    fun getAllDescendants(target: AREA) = hierarchy.getAllDescendants(target)
+    fun getAllDescendants(target: AREA) = hierarchy.getAllChildren(target)
     fun getAllDescendantRules(target: AREA) = getAllDescendants(target).associateWith { getRules(it) }
 
     @Deprecated("Use conflict free rules instead.")
@@ -70,7 +70,7 @@ interface HierarchicalRuleProviderLegacy<AREA, H> : RuleProvider<AREA, H> {
      */
     fun isFinal(target: AREA) = getSubAreas(target).isEmpty()
 
-    fun getSubAreas(target: AREA) = hierarchy.getChildren(target)
+    fun getSubAreas(target: AREA) = hierarchy.getImmediateChildren(target)
 
 //    fun results(area: AREA, output: List<H>): List<AreaIPUOutput<AREA>> {
 //        return getRules(area).map {

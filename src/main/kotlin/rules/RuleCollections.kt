@@ -3,10 +3,10 @@ package edu.kit.ifv.populationsynthesis.rules
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 
 fun <T> Collection<Rule<T>>.toScalableVector(element: T): ScalableVector {
-    return ScalableVector.createFrom(element, this)
+    return ScalableVector.createFromRules(element, this)
 }
 
-fun <H> Collection<Rule<H>>.fuse(): Rule<H> {
+fun <T> Collection<Rule<T>>.fuse(): Rule<T> {
     require(isNotEmpty()) {
         "Cannot fuse empty"
     }
@@ -17,4 +17,17 @@ fun <H> Collection<Rule<H>>.fuse(): Rule<H> {
 
     val sum = sumOf { it.target }
     return Rule(sum, logic)
+}
+
+fun <T> Collection<Rule<T>>.delta(elements: Collection<T>): Map<Rule<T>, Double> {
+    return associateWith { it.delta(elements) }
+}
+
+fun <T> Collection<Rule<T>>.total(elements: Collection<T>): Map<Rule<T>, Double> {
+    return associateWith { it.total(elements) }
+}
+
+fun <T> Collection<Rule<T>>.relativeTotals(elements: Collection<T>): Map<Rule<T>, Double> {
+    val size = elements.size
+    return associateWith { it.total(elements) }.mapValues { it.value / size.toDouble() }
 }

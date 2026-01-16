@@ -1,17 +1,16 @@
-package edu.kit.ifv.populationsynthesis.rules
+package edu.kit.ifv.populationsynthesis.rules.contribution
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.Contribution
+import edu.kit.ifv.populationsynthesis.rules.Rule
 
 /**
  * The only implementation of Rule Logic. This class is protected because the comparision logic is wired to the
  * identifier string, which should not be operated upon.
  *
  * Why aren't we using the contribution origin as equality check? Because the same rules could theoretically be
- * independently spawned from different implementors. Also Contribution Origin is an interface which makes equals
- * and hashcode unenforceable.
+ * independently spawned from different implementors.
  */
 // Hide the constructor from idiots.
-class NamedContribution<in T> internal constructor(
+class NamedContribution<in T> private constructor(
     val identifier: String,
     val logic: Contribution<T>,
 ) : Contribution<T> by logic {
