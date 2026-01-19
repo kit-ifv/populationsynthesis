@@ -1,9 +1,10 @@
 package edu.kit.ifv.populationsynthesis.rules.composer
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 
 /**
- * A rule composer takes a target area, a way to generate rules for any given area, and produces a list of rules that
+ * A rule composer takes a target area, a way to generate rules for any given area, and produces a RuleSet that
  * are composed from a logic.
  *
  * One aspect will be the hierarchic rule composition. Where a target area has associated child areas, and the rules
@@ -11,6 +12,6 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
  *
  * This is the highest interface, and the concrete structure of rule derivation is not preset.
  */
-fun interface RuleComposer<AREA, H> {
-    fun compose(target: AREA, rulesFor: (AREA) -> Collection<Rule<H>>): List<Rule<H>>
+fun interface RuleComposer<AREA, T> {
+    fun compose(target: AREA, rulesFor: (AREA) -> Collection<Rule<T>>): RuleSet<T>
 }

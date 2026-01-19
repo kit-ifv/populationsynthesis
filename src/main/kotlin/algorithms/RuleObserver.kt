@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 
 /**
  * The RuleObserver class is responsible for monitoring a set of households encoded as vectors (represented by [ScalableVector])
@@ -14,7 +15,7 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
  * @param vectors A list of [ScalableVector] objects representing the household data in vectorized form.
  */
 abstract class RuleObserver(
-    val name: String,
+    val name: LogicIdentifier,
     private val observedIndex: Int,
     val vectors: List<ScalableVector>,
 ) {

@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.statistics
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicalRuleProviderLegacy
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import kotlin.collections.component1
@@ -49,7 +50,7 @@ fun <T, X> Rule<T>.toIPUOutput(area: X, households: Collection<T>): AreaIPUOutpu
 }
 
 data class IPUOutputLog(
-    val description: String,
+    val identifier: LogicIdentifier,
     val expected: Double,
     val actual: Double,
 

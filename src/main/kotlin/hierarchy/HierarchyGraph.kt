@@ -34,9 +34,11 @@ open class HierarchyGraph<T>(
     override fun getAllAncestors(element: T): Collection<T> {
         return getAllAncestorsInclusive(element) - element
     }
+
     private fun getAllAncestorsInclusive(element: T): Set<T> {
         return BreadthFirstIterator(parentGraph, element).asSequence().toSet()
     }
+
     override fun getImmediateChildren(element: T): List<T> {
         return parentGraph.incomingEdgesOf(element).map { parentGraph.getEdgeSource(it) }
     }
@@ -67,10 +69,9 @@ open class HierarchyGraph<T>(
     private fun groupByHighestSharedAncestor(targets: Set<T>): Map<T, Set<T>> {
         val activeNodes = allParentNodes(targets)
         val roots = activeNodes.filter { getParent(it) == null }
-
-        return roots.associateWith {  node -> getAllDescendantsInclusive(node).toSet()}
-        // TODO this was the original implementation that essentially removed nedes that have not been called
-        //        return roots.associateWith { node -> getAllDescendantsInclusive(node).filter { it in targets }.toSet() }
+        return roots.associateWith { node ->
+            getAllDescendantsInclusive(node).filter { getAllDescendantsInclusive(it).any { it in targets } }.toSet()
+        }
     }
 
     private fun allParentNodes(targets: Set<T>): Set<T> {
@@ -78,6 +79,9 @@ open class HierarchyGraph<T>(
     }
 }
 
+/**
+ * Convenience function to get vararg access.
+ */
 fun <T> HierarchyGraph<T>.groupByHighestAncestor(vararg elements: T): Map<T, Collection<T>> {
     return groupByHighestAncestor(elements.asList())
 }

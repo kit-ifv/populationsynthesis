@@ -10,6 +10,8 @@ class Rule<in T>(val target: Double, val logic : NamedContribution<T>) {
 
     fun delta(output: Collection<T>): Double = target - total(output)
 
+    operator fun plus(double: Double): Rule<T> = Rule(target + double, logic)
+
     override fun toString(): String {
         return "Rule(target=$target, logic=${logic.identifier})"
     }

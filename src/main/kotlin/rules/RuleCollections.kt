@@ -6,7 +6,7 @@ fun <T> Collection<Rule<T>>.toScalableVector(element: T): ScalableVector {
     return ScalableVector.createFromRules(element, this)
 }
 
-fun <T> Collection<Rule<T>>.fuse(): Rule<T> {
+fun <T> Collection<Rule<T>>.sumRule(): Rule<T> {
     require(isNotEmpty()) {
         "Cannot fuse empty"
     }

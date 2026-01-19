@@ -1,16 +1,17 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import kotlin.math.abs
 import kotlin.math.max
 
 class TargetNumberObserver(
-    name: String,
+    identifier: LogicIdentifier,
     observedIndex: Int,
     vectors: List<ScalableVector>,
     override val expected: Double,
 
     ) : RuleObserver(
-    name,
+    identifier,
     observedIndex,
     vectors,
 ) {

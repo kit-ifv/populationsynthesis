@@ -3,7 +3,7 @@ package edu.kit.ifv.populationsynthesis.rules.provider
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.fuse
+import edu.kit.ifv.populationsynthesis.rules.sumRule
 import edu.kit.ifv.populationsynthesis.synthesis.HandleRuleConflicts
 import edu.kit.ifv.populationsynthesis.synthesis.UseLowestCoveredLeaf
 import edu.kit.ifv.populationsynthesis.utils.partitionValues
@@ -60,7 +60,7 @@ interface HierarchicalRuleProviderLegacy<AREA, H> : RuleProvider<AREA, H> {
 
         val fusedRules = (updates + safe).map { (k, v) ->
             val allActiveRules = v.map { mappedRules[it]!![k]!! }
-            allActiveRules.fuse() //"Fused Rules for ${k.logic} summing ${allActiveRules.size} elements"
+            allActiveRules.sumRule() //"Fused Rules for ${k.logic} summing ${allActiveRules.size} elements"
         }
         return fusedRules
     }

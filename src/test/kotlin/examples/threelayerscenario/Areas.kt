@@ -9,6 +9,7 @@ class A private constructor(val code: Int): Area{
         val A2 = A(2)
         val A3 = A(3)
         val A4 = A(4)
+        val A5 = A(5)
     }
 }
 class B private constructor(val code: Int): Area {
@@ -16,11 +17,13 @@ class B private constructor(val code: Int): Area {
     companion object {
         val B1 = B(1)
         val B2 = B(2)
+        val B3 = B(3)
     }
 }
 class C private constructor(val code: Int): Area {
     override fun toString() = "C($code)"
     companion object {
         val C1 = C(1)
+        val C2 = C(2)
     }
 }

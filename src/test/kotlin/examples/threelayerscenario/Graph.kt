@@ -10,4 +10,6 @@ internal val ABCGraph: HierarchyGraph<Area> = MutableHierarchyGraph<Area>().appl
     addRelationship(A.A4, B.B2)
     addRelationship(B.B1, C.C1)
     addRelationship(B.B2, C.C1)
+    addRelationship(A.A5, B.B3)
+    addRelationship(B.B3, C.C2)
 }
