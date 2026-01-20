@@ -2,6 +2,7 @@ package edu.kit.ifv.populationsynthesis.rules.composer
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
+import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
 /**
  * A rule composer takes a target area, a way to generate rules for any given area, and produces a RuleSet that
@@ -13,5 +14,5 @@ import edu.kit.ifv.populationsynthesis.rules.RuleSet
  * This is the highest interface, and the concrete structure of rule derivation is not preset.
  */
 fun interface RuleComposer<AREA, T> {
-    fun compose(target: AREA, rulesFor: (AREA) -> Collection<Rule<T>>): RuleSet<T>
+    fun compose(target: AREA, ruleProvider: RuleProvider<AREA, T>): RuleSet<T>
 }

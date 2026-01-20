@@ -38,12 +38,12 @@ class NamedContribution<in T> private constructor(
             identifier: String,
             crossinline logic: (T) -> Boolean
         ) =
-            NamedContribution<T>(LogicIdentifier.create(identifier)) {
+            NamedContribution<T>(LogicIdentifier(identifier)) {
                 if (logic(it)) 1.0 else 0.0
             }
 
         internal inline fun <T> numeric(identifier: String, crossinline logic: (T) -> Number) =
-            NamedContribution<T>(LogicIdentifier.create(identifier)) {
+            NamedContribution<T>(LogicIdentifier(identifier)) {
                 logic(it).toDouble()
             }
 
@@ -55,17 +55,8 @@ class NamedContribution<in T> private constructor(
  * registers the logic name in the registry, to resolve ambiguities and help with debugging.
  */
 @JvmInline
-value class LogicIdentifier private constructor(val text: String) {
+value class LogicIdentifier(val text: String) {
 
-    companion object {
-        private val registeredRules: MutableMap<String, LogicIdentifier> = mutableMapOf()
 
-        operator fun get(text: String): LogicIdentifier? = registeredRules[text]
-
-        fun getValue(text: String): LogicIdentifier = registeredRules.getValue(text)
-        internal operator fun set(text: String, identifier: LogicIdentifier) = { registeredRules[text] = identifier }
-
-        fun create(text: String) = registeredRules.getOrPut(text) { LogicIdentifier(text) }
-    }
 }
 

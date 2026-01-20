@@ -12,6 +12,6 @@ interface ComposingRuleProvider<AREA, T> : RuleProvider<AREA, T> {
 
     val composer: RuleComposer<AREA, T>
 
-    fun getComposedRules(target: AREA): RuleSet<T> = composer.compose(target, ::getRules)
+    fun getComposedRules(target: AREA): RuleSet<T> = composer.compose(target, this)
 }
 

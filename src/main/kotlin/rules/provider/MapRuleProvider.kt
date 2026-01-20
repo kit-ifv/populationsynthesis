@@ -2,29 +2,34 @@ package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleGenerator
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 
-class MapRuleProvider<AREA, H>(
-    private val ruleMap: MutableMap<AREA, List<Rule<H>>> = mutableMapOf(),
+class MapRuleProvider<AREA, T>(
+    private val ruleMap: MutableMap<AREA, RuleSet<T>> = mutableMapOf(),
 ) :
-    RuleProvider<AREA, H> {
+    RuleProvider<AREA, T> {
 
-    override fun getRules(target: AREA): Collection<Rule<H>> {
-        return ruleMap[target] ?: emptyList()
+    override fun getRules(target: AREA): RuleSet<T> {
+        return ruleMap[target] ?: emptySet<>()
     }
 
-    override fun getAllRules(): Map<AREA, Collection<Rule<H>>> {
+    override fun getAllRules(): Map<AREA, RuleSet<T>> {
         return ruleMap
     }
 
-    fun addRules(area: AREA, rules: List<Rule<H>>) {
+    fun addRules(area: AREA, rules: List<Rule<T>>) {
         ruleMap[area] = ruleMap.getOrDefault(area, emptyList()) + rules
     }
-    operator fun set(target: AREA, rules: List<Rule<H>>) {
+    operator fun set(target: AREA, rules: List<Rule<T>>) {
         ruleMap[target] = rules
     }
-    fun addRules(area: AREA, ruleGenerator: RuleGenerator<H>) {
+    fun addRules(area: AREA, ruleGenerator: RuleGenerator<T>) {
         addRules(area, ruleGenerator.generateRules())
 
+    }
+
+    fun addRule(area: AREA, rule: Rule<T>) {
+        ruleMap[area] = ruleMap.getOrDefault(area, emptyList()) + rule
     }
     companion object {
         fun <AREA, H> fromMap(

@@ -9,15 +9,38 @@ import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
  *
  * For most programmatic tasks it is sufficient to know that a rule set exists.
  */
-class RuleSet<T> private constructor(
+
+interface RuleSet<T>: Set<Rule<T>> {
+    operator fun get(key: String) = get(LogicIdentifier(key))
+    operator fun get(key: LogicIdentifier): Rule<T>?
+    operator fun contains(key: String) = contains(LogicIdentifier(key))
+    operator fun contains(key: LogicIdentifier): Boolean
+
+    companion object {
+        fun <T> create(rules: Map<LogicIdentifier, Rule<T>>): RuleSet<T> {
+            return MutableRuleSet.create(rules.toMutableMap())
+        }
+    }
+}
+
+class MutableRuleSet<T> private constructor(
     private val rules: MutableMap<LogicIdentifier, Rule<T>>
-) : Iterable<Rule<T>>, Map<LogicIdentifier, Rule<T>> by rules {
+) : AbstractSet<Rule<T>>(), RuleSet<T> {
 
     private constructor(rules: Collection<Rule<T>>) : this(rules.associateBy { it.logic.identifier }.toMutableMap())
-    override fun iterator(): Iterator<Rule<T>> = rules.values.iterator()
-    operator fun get(key: String) = rules[LogicIdentifier[key]]
 
-    fun getValue(key: String) = rules.getValue(LogicIdentifier.getValue(key))
+    override val size: Int
+        get() = rules.size
+
+    override fun iterator(): Iterator<Rule<T>> {
+        return rules.values.iterator()
+    }
+
+    override fun toString(): String {
+        return rules.values.toString()
+    }
+
+
     fun add(rule: Rule<T>) {
         val existingTarget = rules[rule.logic.identifier]?.target ?: 0.0
         rules[rule.logic.identifier] = rule + existingTarget
@@ -28,27 +51,33 @@ class RuleSet<T> private constructor(
             add(rule)
         }
     }
-
-    override fun toString(): String {
-        return rules.values.toString()
-    }
-
-    operator fun plus(rules: Collection<Rule<T>>): RuleSet<T> {
-        return RuleSet(this.rules.toMutableMap()).apply {
+    operator fun plus(rules: Collection<Rule<T>>): MutableRuleSet<T> {
+        return MutableRuleSet(this.rules.toMutableMap()).apply {
             add(rules)
         }
     }
+
+
+    override fun get(key: LogicIdentifier): Rule<T>? {
+        return rules[key]
+    }
+
+    override fun contains(key: LogicIdentifier): Boolean {
+        return key in rules
+    }
+
+
     companion object {
         fun <T> create(
             rules: Collection<Rule<T>>,
             accumulator: (Collection<Rule<T>>) -> Rule<T> = Collection<Rule<T>>::sumRule
-        ): RuleSet<T> {
+        ): MutableRuleSet<T> {
             val groupedRules = rules.groupBy { it.logic }.values
-            return RuleSet(groupedRules.map { accumulator(it) })
+            return MutableRuleSet(groupedRules.map { accumulator(it) })
         }
 
-        fun <T> create(rules: Map<LogicIdentifier, Rule<T>>): RuleSet<T> {
-            return RuleSet(rules.toMutableMap())
+        fun <T> create(rules: Map<LogicIdentifier, Rule<T>>): MutableRuleSet<T> {
+            return MutableRuleSet(rules.toMutableMap())
         }
     }
 }

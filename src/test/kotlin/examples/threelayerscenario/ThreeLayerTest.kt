@@ -3,10 +3,25 @@ package examples.threelayerscenario
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.NakedIPU
 import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraph
 import edu.kit.ifv.populationsynthesis.hierarchy.groupByHighestAncestor
+import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleGenerator
+import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
+
+fun interface SingleRuleGenerator<T> : RuleGenerator<T> {
+    override fun generateRules(): List<Rule<T>> {
+        return listOf(generateRule())
+    }
+
+    fun generateRule(): Rule<T>
+}
+
+
 
 class ThreeLayerTest {
     @Test
@@ -63,4 +78,6 @@ class ThreeLayerTest {
         assertEquals(rules.size, 4)
         assertNotEquals(rules.getValue("YesDescriptor(A)").target.toInt(), 7)
     }
+
+
 }
