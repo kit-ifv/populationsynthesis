@@ -3,11 +3,7 @@ package edu.kit.ifv.populationsynthesis.utils
 import kotlin.math.ln
 
 
-interface ProbabilityDistribution<T> {
-
-}
-
-interface DiscreteProbabilityDistribution<T> : ProbabilityDistribution<T>, Iterable<Probability> {
+interface DiscreteProbabilityDistribution<T> :  Iterable<Probability> {
     val size: Int
     fun probabilityOfType(value: T): Probability = probabilityOf(mapIndex(value))
     fun probabilityOf(index: Int): Probability
@@ -24,9 +20,6 @@ interface DiscreteProbabilityDistribution<T> : ProbabilityDistribution<T>, Itera
     }
 }
 
-inline fun <T> Iterable<T>.sumODf(selector: (T) -> Probability): Double {
-    return map(selector).sumOf { it.probability }
-}
 class NumericProbDist(private val probabilities: Array<Probability>): DiscreteProbabilityDistribution<Int> {
 
     constructor(doubles: Collection<Double>): this(doubles.map { it.asProbability() }.toTypedArray())
@@ -79,9 +72,4 @@ class ArrayProbabilityDistribution<T> internal constructor(
 
 }
 
-class ContinuousProbabilityDistribution<T : Comparable<T>>(private val cumulativeDistributionFunction: (T) -> Double) {
-    fun target(range: ClosedRange<T>): Probability {
-        return Probability.of(cumulativeDistributionFunction(range.endInclusive) - cumulativeDistributionFunction(range.start))
-    }
-}
 

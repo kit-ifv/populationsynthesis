@@ -30,7 +30,9 @@ class NamedContribution<in T> private constructor(
         return Rule(target, this)
     }
 
-
+    override fun toString(): String {
+        return "NamedContribution($identifier)"
+    }
     companion object {
         internal inline fun <T> boolean(
             identifier: String,

@@ -46,5 +46,9 @@ class RuleSet<T> private constructor(
             val groupedRules = rules.groupBy { it.logic }.values
             return RuleSet(groupedRules.map { accumulator(it) })
         }
+
+        fun <T> create(rules: Map<LogicIdentifier, Rule<T>>): RuleSet<T> {
+            return RuleSet(rules.toMutableMap())
+        }
     }
 }

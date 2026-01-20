@@ -17,11 +17,14 @@ class MapRuleProvider<AREA, H>(
     }
 
     fun addRules(area: AREA, rules: List<Rule<H>>) {
-        ruleMap[area] = rules
+        ruleMap[area] = ruleMap.getOrDefault(area, emptyList()) + rules
     }
-
+    operator fun set(target: AREA, rules: List<Rule<H>>) {
+        ruleMap[target] = rules
+    }
     fun addRules(area: AREA, ruleGenerator: RuleGenerator<H>) {
-        ruleMap[area] = ruleGenerator.generateRules()
+        addRules(area, ruleGenerator.generateRules())
+
     }
     companion object {
         fun <AREA, H> fromMap(
