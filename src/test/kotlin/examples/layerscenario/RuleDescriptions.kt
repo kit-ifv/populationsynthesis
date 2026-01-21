@@ -1,12 +1,12 @@
 package examples.layerscenario
 
 import edu.kit.ifv.populationsynthesis.rules.ExhaustiveRuleGenerator
-import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.RuleGenerator
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
 import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.contribution.NumericContributionDefinition
 import edu.kit.ifv.populationsynthesis.rules.covered.ExhaustiveContributionSetSupplier
+import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 
 data class KonduriPersonTypeDescription(val code: Int): NumericContributionDefinition<KonduriHousehold>() {
@@ -39,10 +39,10 @@ object PTypeSet: ExhaustiveContributionSetSupplier<KonduriHousehold> {
 }
 class PTypeGenerator(val one: Int, val second: Int, val third: Int): ExhaustiveRuleGenerator<KonduriHousehold> {
     private val contributionSupplier = PTypeSet
-    override fun generateRules(): List<Rule<KonduriHousehold>> {
+    override fun generateRules(): RuleSet<KonduriHousehold> {
         return contributionSupplier.generateContributions().zip(listOf(one, second, third)).map { (desc, target) ->
             desc.withTarget(target.toDouble())
-        }
+        }.toRuleSet()
     }
 
 }
@@ -54,10 +54,10 @@ object HTypeSet: ExhaustiveContributionSetSupplier<KonduriHousehold> {
 }
 
 class HTypeGenerator(val one: Int, val two: Int): ExhaustiveRuleGenerator<KonduriHousehold> {
-    override fun generateRules(): List<Rule<KonduriHousehold>> {
+    override fun generateRules(): RuleSet<KonduriHousehold> {
         return HTypeSet.generateContributions().zip(listOf(one, two)).map {(desc, target) ->
             desc.withTarget(target.toDouble())
-        }
+        }.toRuleSet()
     }
 }
 
@@ -68,9 +68,9 @@ object RTypeSet: ExhaustiveContributionSetSupplier<KonduriHousehold> {
 }
 
 class RTypeGenerator(val one: Int, val two: Int, val three: Int): ExhaustiveRuleGenerator<KonduriHousehold> {
-    override fun generateRules(): List<Rule<KonduriHousehold>> {
+    override fun generateRules(): RuleSet<KonduriHousehold> {
         return RTypeSet.generateContributions().zip(listOf(one, two, three)).map {(desc, target) ->
             desc.withTarget(target.toDouble())
-        }
+        }.toRuleSet()
     }
 }

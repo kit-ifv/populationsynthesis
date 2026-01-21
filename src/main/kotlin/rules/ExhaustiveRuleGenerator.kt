@@ -20,7 +20,7 @@ import edu.kit.ifv.populationsynthesis.rules.covered.FullCoverageGroup
  * Coverage group is essentially a list with added benefits.
  */
 interface ExhaustiveRuleGenerator<T> : RuleGenerator<T> {
-    override fun generateRules(): List<Rule<T>>
+    override fun generateRules(): RuleSet<T>
 
     fun generateAllRules(): CoverageGroup<T> = FullCoverageGroup(generateRules())
 }

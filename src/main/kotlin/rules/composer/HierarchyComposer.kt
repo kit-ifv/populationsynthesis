@@ -2,131 +2,107 @@ package edu.kit.ifv.populationsynthesis.rules.composer
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.hierarchy.expandIf
-import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleLookup
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.BitsetMap
+import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.toBitsetMap
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import edu.kit.ifv.populationsynthesis.rules.sumRule
-import java.util.BitSet
-import kotlin.collections.ArrayDeque
-import kotlin.collections.Collection
-import kotlin.collections.Map
-import kotlin.collections.all
-import kotlin.collections.associate
-import kotlin.collections.associateBy
-import kotlin.collections.associateWith
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.drop
-import kotlin.collections.filter
-import kotlin.collections.first
-import kotlin.collections.flatMap
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
-import kotlin.collections.mutableMapOf
-import kotlin.collections.set
-import kotlin.collections.toMutableSet
-import kotlin.collections.toSet
-import kotlin.collections.withIndex
-import kotlin.math.min
-
-// Take a unique rule definition only once, and that is at the lowest level where coverage is achieved.
+/**
+ * Composes a single [RuleSet] for a target area by aggregating rules defined across a hierarchy (DAG).
+ *
+ * For each rule logic found in the subtree spanning from the target node a conflict free rule will be derived.
+ * (A conflict would be when a rule is defined multiple times at different levels in the subtree)
+ *
+ * For each rule logic the elements of the subtree are scanned for a potential conflict free resolution to
+ * aggregate the individual targets to a new compound target.
+ * (If multiple areas define a target, like A1=10, A2=20, B1=30 then the induced rule is C=60)
+ *
+ * The strategy to resolve conflicts is to use the lowest possible subareas to form the rules, so if A1, A2 are
+ * defining a rule, and the parent B defines a rule for the same logic, then the sum of A1,A2 is used instead of B
+ */
 class HierarchyComposer<AREA, T>(override val hierarchy: HierarchicElement<AREA>) : HierarchyRuleComposer<AREA, T> {
 
 
 
     override fun compose(target: AREA, ruleProvider: RuleProvider<AREA, T>): RuleSet<T> {
-
-        val children = hierarchy.getAllChildren(target) + target
-        val leafs = children.filter { hierarchy.isLeaf(it) }
-        val associatedRules = children.associateWith { ruleProvider[it] }
-
-        val ruleLookup = associatedRules.mapValues { it.value.associateBy { it.logic } }
-        val allLogics = associatedRules.values.flatMap { it.map { it.logic } }.toSet()
-
+        val relevantNodes = hierarchy.getAllChildren(target) + target
+        val ruleLookup    = RuleLookup.fromProvider(ruleProvider).filter { it in relevantNodes }
+        val allLogics     = ruleLookup.logics
+        val bitsetMap     = createBitsetMap(ruleProvider, ruleLookup)
         /*
-        Make an upward search. Encode the rules that you find as a BitSet As in 011001 means that the second, third
-        and sixth rule apply to T. Then we can induce
-
-        A parent covers all rules that
-         1) Are the AND conjunction of all coverages of all childs.
-         OR
-         2) Are given by the rules of the parent.
+         * The most complex part of rule composition. For each logic we step through the DAG Rule graph, starting
+         * at our target node. Then we check whether a node can (or must) be replaced with its children.
+         *
+         * A node MUST be replaced when it is not a leaf and has no associated rule for the logic.
+         * A node CANNOT be replaced when it is a leaf.
+         * A node CAN be replaced when the rule logic is covered by its children, even when the node itself defines
+         * a valid rule.
+         *
+         * This implementation will perform every CAN replacement.
          */
-
-        val parents = leafs.mapNotNull { hierarchy.getParent(it) }.toMutableSet()
-        val queue = ArrayDeque<AREA>(parents)
-        val bitsetMap = mutableMapOf<AREA, BitSet>()
-        val indexer = allLogics.withIndex().associate { it.value.identifier to it.index }
-        leafs.forEach {
-
-            bitsetMap[it] = ruleProvider[it].toBitSet(indexer)
-        }
-        while(queue.isNotEmpty()) {
-            val head = queue.removeFirst()
-            val currentChilds = hierarchy.getImmediateChildren(head)
-            val bitsets = currentChilds.mapNotNull { bitsetMap[it] }
-            val bitsetAnd = bitsets.andAll()
-            val myBitset = ruleProvider[head].toBitSet(indexer)
-            myBitset.or(bitsetAnd)
-            bitsetMap[head] = myBitset
-        }
-
-        val output = allLogics.withIndex().associate {  (index, logic) ->
+        val logicCoverageMapping = allLogics.withIndex().associate { (index, logic) ->
             logic to hierarchy.expandIf(target) { area ->
-
-                /*
-                Replace node if: MUST BE PARENT
-                    1) Children have coverage: As in all child nodes have been set to handle the rule at index i
-                    in the upward search.
-                    2) Node does not define rules for target rule index. (Means that coverage fails, but later nodes
-                    will define something.
-
-                Keep Node if:
-                    1) It is a leaf. Because in that instance no coverage could be formed
-                 */
-                val isLeaf = hierarchy.isLeaf(area)
-                val ch = hierarchy.getImmediateChildren(area)
-                val childCoverage = ch.map { bitsetMap[it]?.get(index) ?: false }.all { it }
-                val hasRule = ruleLookup[area]?.get(logic) != null
+                val isLeaf = isLeaf(area)
+                val ch = getImmediateChildren(area)
+                val childCoverage =bitsetMap.allAreFlagged(ch, index)
+                val hasRule = ruleLookup.hasRule(area, logic)
                 !isLeaf && (childCoverage || !hasRule)
             }
         }
 
-        val mapValues = output.entries.associate { (k, v) ->
-            k.identifier to v.mapNotNull { ruleLookup[it]?.get(k) }.sumRule()
+        /*
+         * We now know all the areas that are required to form a compound rule. However, there can still be some areas,
+         * leafs in particular, that do not have an associated rule. (When a rule is not covered the expansion strategy
+         * resolves down to the leaf level and adds all nodes, even those that do not have a rule for the logic)
+         *
+         * We need to form a new rule based on the entries, as such we check which rules exist and build a new rule
+         * with the summation strategy.
+         */
+        val fusedRules = logicCoverageMapping.entries.associate { (k, v) ->
+            k to v.mapNotNull { ruleLookup[it, k] }.sumRule()
         }
-        return RuleSet.create(mapValues)
+        return RuleSet.create(fusedRules)
 
     }
-    fun Collection<Rule<T>>.toBitSet(indexer: Map<LogicIdentifier, Int> ): BitSet {
-        val mapping = associateBy { it.logic }
-        val bitSet = BitSet()
-        mapping.entries.forEach { (c, _) ->
-
-            indexer[c.identifier]?.let { index ->
-                bitSet.set(index)
-            }
 
 
+    private fun createBitsetMap(
+        ruleProvider: RuleProvider<AREA, T>,
+        ruleLookup: RuleLookup<AREA, T>
+    ): BitsetMap<AREA> {
+
+        val leafs = ruleLookup.areas.filter { hierarchy.isLeaf(it) }
+
+
+        val queue = ArrayDeque<AREA>(leafs.mapNotNull { hierarchy.getParent(it) })
+        /* Create a bitset map where each node in the provider is associated with the bitset where defined rules
+        *  for the area are set to 1. For example if an area has a definition for the following (indexed) Rules:
+        *  R_0, R_2, R_3 then the bitset would look like this [1011].
+        */
+        val bitsetMap = ruleLookup.toBitsetMap(ruleProvider)
+
+
+        /*
+        The bitset map is intended to indicate whether a rule (referenced by index in the bitset) is covered by a rule
+        There are exactly 2 scenarios in which a node covers a rule
+        1) A rule already exists for the node (trivial coverage)
+        2) All child nodes are covered.
+
+        The bitset map is already initialized 1) by construction. Once a node is handled we can update the bitset
+        with the OR conjunction of Itself ||  Π(childs)
+         */
+
+        while (queue.isNotEmpty()) {
+            val node = queue.removeFirst()
+            val children = hierarchy.getImmediateChildren(node)
+            val childBitsets = bitsetMap.andConjunction(children)
+            val myBitset = bitsetMap[node]
+            myBitset.or(childBitsets) // Works via side effects onto the receiver, so we don't need to update the map
         }
-        return bitSet
+        return bitsetMap
     }
+
+
 }
 
-fun BitSet.fill(bitSize: Int) {
-    for (i in 0 until min(bitSize, size())) {
-        set(i)
-    }
-}
-
-fun Collection<BitSet>.andAll(): BitSet {
-    val first = first().clone() as BitSet
-    drop(1).forEach {
-        first.and(it)
-    }
-    return first
-}

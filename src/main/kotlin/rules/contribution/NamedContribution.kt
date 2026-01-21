@@ -1,11 +1,12 @@
 package edu.kit.ifv.populationsynthesis.rules.contribution
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import kotlin.text.get
 
 /**
  * The only implementation of Rule Logic. This class is protected because the comparision logic is wired to the
  * identifier string, which should not be operated upon.
+ *
+ * Equality/hash over identifier.
  *
  * Why aren't we using the contribution origin as equality check? Because the same rules could theoretically be
  * independently spawned from different implementors.
@@ -48,15 +49,5 @@ class NamedContribution<in T> private constructor(
             }
 
     }
-}
-
-/**
- * This string wrapper represents a random name that has been given to a contribution function. The constructor also
- * registers the logic name in the registry, to resolve ambiguities and help with debugging.
- */
-@JvmInline
-value class LogicIdentifier(val text: String) {
-
-
 }
 

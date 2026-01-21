@@ -42,7 +42,7 @@ interface HierarchicElement<T> {
  *
  * Returns the resulting frontier (nodes that were not expanded).
  */
-fun <T> HierarchicElement<T>.expandIf(node: T, expansionPredicate: (T) -> Boolean) :Set<T> {
+fun <T> HierarchicElement<T>.expandIf(node: T, expansionPredicate: HierarchicElement<T>.(T) -> Boolean) :Set<T> {
     val activeNodes : ArrayDeque<T> = ArrayDeque()
     activeNodes.add(node)
     val resultSet = mutableSetOf<T>()

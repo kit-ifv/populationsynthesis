@@ -1,6 +1,7 @@
 package examples.layerscenario
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyComposer
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
@@ -10,11 +11,11 @@ import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 class KonduriRuleProvider(val ruleProvider: RuleProvider<KonduriArea, KonduriHousehold> = KonduriRules): HierarchicRuleProvider<KonduriArea, KonduriHousehold> {
     override val composer: HierarchyRuleComposer<KonduriArea, KonduriHousehold> = HierarchyComposer(KonduriGraph)
 
-    override fun getRules(target: KonduriArea): Collection<Rule<KonduriHousehold>> {
+    override fun getRules(target: KonduriArea): RuleSet<KonduriHousehold> {
         return ruleProvider.getRules(target)
     }
 
-    override fun getAllRules(): Map<KonduriArea, Collection<Rule<KonduriHousehold>>> {
+    override fun getAllRules(): Map<KonduriArea, RuleSet<KonduriHousehold>> {
         return ruleProvider.getAllRules()
     }
 }

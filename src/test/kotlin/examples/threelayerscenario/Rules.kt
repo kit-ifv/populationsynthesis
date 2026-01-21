@@ -1,19 +1,20 @@
 package examples.threelayerscenario
 
 import edu.kit.ifv.populationsynthesis.rules.ExhaustiveRuleGenerator
-import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
 import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDefinition
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
+import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 class HelpGenerator(code: String, val yes: Int, val no: Int, val elementor: (SeedElement) -> Boolean) :
     ExhaustiveRuleGenerator<SeedElement> {
     val contributors = descriptors(code, elementor)
-    override fun generateRules(): List<Rule<SeedElement>> {
+    override fun generateRules(): RuleSet<SeedElement> {
         return contributors.map { it.createNamedContribution() }.zip(listOf(yes, no)).map { (desc, target) ->
             desc.withTarget(target.toDouble())
-        }
+        }.toRuleSet()
     }
 
     companion object {

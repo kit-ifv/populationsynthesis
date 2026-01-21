@@ -21,7 +21,7 @@ class EquivalenceClassIPU<AREA, H>(
 ) {
 
     override fun generateEquivalenceClasses(
-        rules: List<Rule<H>>,
+        rules: Collection<Rule<H>>,
         parentdropsize: Int
     ): Pair<Map<ScalableVector, List<H>>, List<TargetNumberObserver>> {
         // generate the vector mapping for each seed element.

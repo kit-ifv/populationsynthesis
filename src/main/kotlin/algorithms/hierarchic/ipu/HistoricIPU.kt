@@ -26,7 +26,7 @@ abstract class HistoricIPU<AREA, H>(
         }
     }
 
-    abstract fun generateEquivalenceClasses(rules: List<Rule<H>>, parentdropsize: Int) :  Pair<Map<ScalableVector, List<H>>, List<TargetNumberObserver>>
+    abstract fun generateEquivalenceClasses(rules: Collection<Rule<H>>, parentdropsize: Int) :  Pair<Map<ScalableVector, List<H>>, List<TargetNumberObserver>>
     fun calculate(
         highestArea: AREA,
         targetAreas: Collection<AREA>,

@@ -2,9 +2,11 @@ package examples
 
 import edu.kit.ifv.populationsynthesis.rules.ExhaustiveRuleGenerator
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
 import edu.kit.ifv.populationsynthesis.rules.delta
 import edu.kit.ifv.populationsynthesis.rules.relativeTotals
+import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -74,14 +76,14 @@ class ExampleIPURun {
             }
         }
 
-        override fun generateRules(): List<Rule<HH>> {
+        override fun generateRules(): RuleSet<HH> {
             val equalityTargets = targets.dropLast(1)
             val equalityRules = equalityTargets.map { (index, target) ->
                 HouseholdSizeContribution(index, EqualityOperator.EQUALS).makeRule(target)
 
             } + HouseholdSizeContribution(targets.last().index, EqualityOperator.GREATER_EQUALS).makeRule(targets.last().value)
 
-            return equalityRules
+            return equalityRules.toRuleSet()
 
         }
     }

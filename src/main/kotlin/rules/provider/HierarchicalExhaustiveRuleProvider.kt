@@ -1,19 +1,19 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
-import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
 
-class HierarchicalExhaustiveRuleProvider<AREA, H>(
-    val ruleProvider: ExhaustiveRuleProvider<AREA, H>,
-    override val composer: HierarchyRuleComposer<AREA, H>,
-) : ExhaustiveRuleProvider<AREA, H>(), HierarchicRuleProvider<AREA, H> {
+class HierarchicalExhaustiveRuleProvider<AREA, T>(
+    val ruleProvider: ExhaustiveRuleProvider<AREA, T>,
+    override val composer: HierarchyRuleComposer<AREA, T>,
+) : ExhaustiveRuleProvider<AREA, T>(), HierarchicRuleProvider<AREA, T> {
 
-    override fun getAllRules(): Map<AREA, Collection<Rule<H>>> {
+    override fun getAllRules(): Map<AREA, RuleSet<T>> {
         return ruleProvider.getAllRules()
     }
 
-    override fun getRuleGroups(target: AREA): Collection<CoverageGroup<H>> {
+    override fun getRuleGroups(target: AREA): Collection<CoverageGroup<T>> {
         return ruleProvider.getRuleGroups(target)
     }
 

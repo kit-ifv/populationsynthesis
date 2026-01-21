@@ -4,7 +4,8 @@ import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
 /**
- * Provide fast access to check whether an area has a rule for a given logic.
+ * Provide fast access to check whether an area has a rule for a given logic. RuleProvider usually returns the
+ * entire bulk of rules, which is cumbersome to operate upon
  */
 class RuleLookup<AREA, T> private constructor(private val map: Map<AREA, Map<LogicIdentifier, Rule<T>>>) {
 
@@ -15,7 +16,7 @@ class RuleLookup<AREA, T> private constructor(private val map: Map<AREA, Map<Log
     fun filter(predicate: (AREA) -> Boolean): RuleLookup<AREA, T> {
         return RuleLookup(map.filterKeys { predicate(it) })
     }
-
+    val areas = map.keys
     operator fun get(area: AREA, identifier: LogicIdentifier): Rule<T>? {
         return map[area]?.get(identifier)
     }
@@ -30,3 +31,6 @@ class RuleLookup<AREA, T> private constructor(private val map: Map<AREA, Map<Log
         }
     }
 }
+
+
+

@@ -20,7 +20,7 @@ seedHouseholds,
 ipu,
 
     ) {
-    override fun generateEquivalenceClasses(rules: List<Rule<H>>, parentdropsize: Int):  Pair<Map<ScalableVector, List<H>>, List<TargetNumberObserver>> {
+    override fun generateEquivalenceClasses(rules: Collection<Rule<H>>, parentdropsize: Int):  Pair<Map<ScalableVector, List<H>>, List<TargetNumberObserver>> {
         val vectors = seedHouseholds.associateWith { rules.toScalableVector(it) }
         val ruleObservers = rules.withIndex().drop(parentdropsize).map {
             RuleObserver.fromRule(it.value, it.index, vectors.values)

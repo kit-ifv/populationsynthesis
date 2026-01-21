@@ -2,10 +2,12 @@ package edu.kit.ifv.populationsynthesis.rules.composer
 
 import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraph
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDefinition
 import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
+import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 import examples.threelayerscenario.A
 import examples.threelayerscenario.Area
 import examples.threelayerscenario.B
@@ -52,21 +54,21 @@ class HierarchyComposerTest {
         val definition2 = RuleDefinition("2")
         val definition3 = RuleDefinition("3")
         val logicProvider: RuleProvider<Area, Target> = object : RuleProvider<Area, Target> {
-            override fun getRules(target: Area): Collection<Rule<Target>> {
+            override fun getRules(target: Area): RuleSet<Target> {
                 return when (target) {
                     A.A1 -> listOf(definition1).map { it.createNamedContribution().withTarget(1.0) }
                     A.A2 -> listOf(definition2).map { it.createNamedContribution().withTarget(1.0) }
                     B.B1 -> listOf(definition1, definition3).map { it.createNamedContribution().withTarget(2.0) }
                     else -> emptyList()
-                }
+                }.toRuleSet()
             }
 
-            override fun getAllRules(): Map<Area, Collection<Rule<Target>>> {
-                TODO("Not yet implemented")
+            override fun getAllRules(): Map<Area, RuleSet<Target>> {
+                return mapOf(A.A1 to getRules(A.A1), A.A2 to getRules(A.A2), B.B1 to getRules(B.B1))
             }
 
         }
-        val output = composer.compose(C.C1, logicProvider::getRules)
+        val output = composer.compose(C.C1, logicProvider)
         assertEquals(3, output.size)
     }
 

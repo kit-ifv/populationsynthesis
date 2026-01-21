@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules.covered
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.delta
 import edu.kit.ifv.populationsynthesis.rules.total
 
@@ -18,14 +19,14 @@ import edu.kit.ifv.populationsynthesis.rules.total
  * elements would be counted twice. In this case you cannot read the total Target from the rules alone, but need
  * an external source to define the total. (Like for example 28).
  */
-interface CoverageGroup<T> : List<Rule<T>> {
-    val rules: List<Rule<T>>
+interface CoverageGroup<T> : RuleSet<T> {
+
     val totalTarget: Double
 
     fun relativeDeltas(elements: Collection<T>): Map<Rule<T>, Double> {
-        return rules.delta(elements).mapValues { it.value / totalTarget }
+        return delta(elements).mapValues { it.value / totalTarget }
     }
     fun relativeTargets(elements: Collection<T>): Map<Rule<T>, Double> {
-        return rules.associateWith { it.target  }
+        return associateWith { it.target  }
     }
 }
