@@ -12,6 +12,11 @@ class MutableBitsetMap<T> private constructor(private val map: MutableMap<T, Bit
         return activeBitset.get(index)
     }
     override operator fun get(area: T): BitSet = map.getValue(area)
+
+    fun getOrPut(element: T, default: () ->BitSet = { BitSet() }): BitSet {
+        return map.getOrPut(element, default)
+    }
+
     operator fun set(element: T, bitset: BitSet) {
         map[element] = bitset
     }

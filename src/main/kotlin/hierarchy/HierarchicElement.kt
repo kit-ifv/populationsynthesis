@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.hierarchy
 
 interface HierarchicElement<T> {
-    fun getParent(element: T): T?
+    fun getParents(element: T): Collection<T>
     fun getAllAncestors(element: T): Collection<T>
     fun getImmediateChildren(element: T): List<T>
     fun getAllVertices(): Collection<T>
@@ -33,26 +33,4 @@ interface HierarchicElement<T> {
             it.isNotEmpty()
         }
     }
-}
-/**
- * Performs a downward traversal starting at [node]. For each visited node:
- * - if [expansionPredicate] is true, the node is replaced by its immediate children. (Which can be none if a leaf is
- * expanded)
- * - otherwise, the node is kept in the result
- *
- * Returns the resulting frontier (nodes that were not expanded).
- */
-fun <T> HierarchicElement<T>.expandIf(node: T, expansionPredicate: HierarchicElement<T>.(T) -> Boolean) :Set<T> {
-    val activeNodes : ArrayDeque<T> = ArrayDeque()
-    activeNodes.add(node)
-    val resultSet = mutableSetOf<T>()
-    while (!activeNodes.isEmpty()) {
-        val head = activeNodes.removeFirst()
-        if (expansionPredicate(head)) {
-            activeNodes.addAll(getImmediateChildren(head))
-        } else {
-            resultSet.add(head)
-        }
-    }
-    return resultSet
 }

@@ -1,7 +1,7 @@
 package examples.layerscenario
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraph
-import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraph
+import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 
 interface KonduriArea
 
@@ -18,7 +18,7 @@ class KonduriGeographicUnit private constructor(val code: Int): KonduriArea {
     }
 }
 
-val KonduriGraph: HierarchyGraph<KonduriArea> = MutableHierarchyGraph<KonduriArea>().apply {
+val KonduriGraph: HierarchyGraph<KonduriArea> = HierarchyGraphFactory.asForest {
     val top = KonduriRegion
 
 

@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules
 
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 
 
 /**
@@ -44,4 +45,8 @@ fun <T> Collection<Rule<T>>.toRuleSet(): RuleSet<T> {
  */
 fun <T> Collection<Rule<T>>.toRuleSet(accumulator: (Collection<Rule<T>>) -> Rule<T> = Collection<Rule<T>>::sumRule): RuleSet<T> {
     return MutableRuleSet.create(this, accumulator)
+}
+
+fun <T> Map<LogicIdentifier, Rule<T>>.toRuleSet(): RuleSet<T> {
+    return MutableRuleSet.create(this.toMutableMap())
 }

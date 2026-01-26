@@ -1,7 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules.composer
 
-import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraph
-import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDefinition
 import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
@@ -19,19 +18,6 @@ import kotlin.test.assertTrue
 class HierarchyComposerTest {
     private class Target
 
-    private class HelperRules(val text: String) {
-
-        fun generate(target: Double): Rule<Any> {
-            return Rule(target, NamedContribution.boolean(text) { true })
-        }
-
-        companion object {
-            val A = HelperRules("Hello")
-            val B = HelperRules("World")
-            val C = HelperRules("Else")
-        }
-    }
-
     private class RuleDefinition(val id: String) : ContributionDefinition<Target> {
         override fun createNamedContribution(): NamedContribution<Target> {
             return NamedContribution.boolean(id) {
@@ -43,7 +29,7 @@ class HierarchyComposerTest {
     @Test
     fun multilevelComposition() {
 
-        val graph = MutableHierarchyGraph<Area>().apply {
+        val graph = HierarchyGraphFactory.asForest {
             addRelationship(A.A1, B.B1)
             addRelationship(A.A2, B.B1)
             addRelationship(B.B1, C.C1)
@@ -72,7 +58,7 @@ class HierarchyComposerTest {
         assertEquals(3, output.size)
     }
 
-    private val graph = MutableHierarchyGraph<Area>().apply {
+    private val graph = HierarchyGraphFactory.asForest {
         addRelationship(A.A1, B.B1)
         addRelationship(A.A2, B.B1)
         addRelationship(A.A3, B.B2)

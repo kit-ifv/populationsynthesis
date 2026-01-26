@@ -1,8 +1,9 @@
 package examples.threelayerscenario
 
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.NakedIPU
-import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraph
+import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.hierarchy.groupByHighestAncestor
+import edu.kit.ifv.populationsynthesis.hierarchy.levels
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,19 +11,7 @@ import kotlin.test.assertNotEquals
 
 
 class ThreeLayerTest {
-    @Test
-    fun example() {
-        val hierarchicProvider = ABCRuleProvider.withHierarchy(ABCGraph)
 
-        val ipu = NakedIPU(
-            hierarchicProvider,
-            SeedElement.all,
-        )
-
-        val output = ipu.synthesizeAll()
-
-        println(output)
-    }
     @Test
     fun properCompostion() {
         val hierarchicProvider = ABCRuleProvider.withHierarchy(ABCGraph)
@@ -51,7 +40,7 @@ class ThreeLayerTest {
 
     @Test
     fun disallowHierarchicDuplicates() {
-        val graph = MutableHierarchyGraph<Area>().apply {
+        val graph = HierarchyGraphFactory.asForest {
             addRelationship(A.A1, B.B1)
         }
         val duplicatedRuleProvider =  MapRuleProvider<Area, SeedElement>().apply {
@@ -64,6 +53,24 @@ class ThreeLayerTest {
         assertEquals(rules.size, 4)
         assertNotEquals(rules.getValue("YesDescriptor(A)").target.toInt(), 7)
     }
+    @Test
+    fun example() {
+        val hierarchicProvider = ABCRuleProvider.withHierarchy(ABCGraph)
 
+        val ipu = NakedIPU(
+            hierarchicProvider,
+            SeedElement.all,
+        )
 
+        val output = ipu.synthesizeAll()
+
+        println(output)
+    }
+    @Test
+    fun levels() {
+        val output = ABCGraph.levels(C.C1).toList()
+        assertEquals(output[0], setOf(C.C1))
+        assertEquals(output[1], setOf(B.B1, B.B2))
+        assertEquals(output[2], setOf(A.A1, A.A2, A.A3, A.A4))
+    }
 }

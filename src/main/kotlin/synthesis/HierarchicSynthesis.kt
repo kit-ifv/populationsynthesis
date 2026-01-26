@@ -6,11 +6,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 
-abstract class HierarchicSynthesis<AREA, H>(
-    override val ruleProvider: HierarchicRuleProvider<AREA, H>
-): RuleBasedPopulationSynthesis<AREA, H> {
+abstract class HierarchicSynthesis<AREA, T>(
+    override val ruleProvider: HierarchicRuleProvider<AREA, T>
+): RuleBasedPopulationSynthesis<AREA, T> {
     val hierarchy = ruleProvider.hierarchy
-    final override fun synthesize(targetAreas: List<AREA>): Map<AREA, List<H>>   {
+    final override fun synthesize(targetAreas: List<AREA>): Map<AREA, List<T>>   {
         // Trace roots runs up to the highest ancestor. Should take into account intermediate areas.
         val rootRegions = hierarchy.groupByHighestAncestor(targetAreas)
 //        val independentRegions = separateIrrelevantRegions(rootRegions) Unnecessary, should be handled by hierarchy beforehand
@@ -29,7 +29,7 @@ abstract class HierarchicSynthesis<AREA, H>(
         return out.filterKeys { it in targetAreas }
     }
 
-    override fun synthesizeAll(): Map<AREA, List<H>> {
+    override fun synthesizeAll(): Map<AREA, List<T>> {
         return synthesize(hierarchy.getAllLeafs())
     }
 
@@ -39,7 +39,7 @@ abstract class HierarchicSynthesis<AREA, H>(
     protected abstract fun synthesize(
         highestArea: AREA,
         targetAreas: Collection<AREA>,
-    ): Map<AREA, List<H>>
+    ): Map<AREA, List<T>>
     private fun Map<AREA, *>.hasIrrelevantKeys(): Boolean {
         return keys.any { isIrrelevant(it) }
     }

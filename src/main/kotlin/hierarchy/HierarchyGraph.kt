@@ -10,10 +10,8 @@ open class HierarchyGraph<T>(
     protected open val childGraph: Graph<T, DefaultEdge>,
 ) : HierarchicElement<T> {
 
-    override fun getParent(element: T): T? {
-        val outEdges = parentGraph.outgoingEdgesOf(element)
-        if (outEdges.isEmpty()) return null
-        return parentGraph.getEdgeTarget(outEdges.first())
+    override fun getParents(element: T): Collection<T> {
+        return parentGraph.outgoingEdgesOf(element).map { parentGraph.getEdgeTarget(it) }
     }
 
     override fun partition(predicate: (T) -> Boolean): Pair<HierarchicElement<T>, HierarchicElement<T>> {
@@ -68,7 +66,7 @@ open class HierarchyGraph<T>(
 
     private fun groupByHighestSharedAncestor(targets: Set<T>): Map<T, Set<T>> {
         val activeNodes = allParentNodes(targets)
-        val roots = activeNodes.filter { getParent(it) == null }
+        val roots = activeNodes.filter { getParents(it).isEmpty() }
         return roots.associateWith { node ->
             getAllDescendantsInclusive(node).filter { getAllDescendantsInclusive(it).any { it in targets } }.toSet()
         }
@@ -79,9 +77,4 @@ open class HierarchyGraph<T>(
     }
 }
 
-/**
- * Convenience function to get vararg access.
- */
-fun <T> HierarchyGraph<T>.groupByHighestAncestor(vararg elements: T): Map<T, Collection<T>> {
-    return groupByHighestAncestor(elements.asList())
-}
+

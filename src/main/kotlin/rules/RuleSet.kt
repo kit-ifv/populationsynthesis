@@ -23,11 +23,9 @@ interface RuleSet<T>: Set<Rule<T>> {
 
     operator fun contains(key: String) = contains(LogicIdentifier(key))
     operator fun contains(key: LogicIdentifier): Boolean
-    companion object {
-        fun <T> create(rules: Map<LogicIdentifier, Rule<T>>): RuleSet<T> {
-            return MutableRuleSet.create(rules.toMutableMap())
-        }
-    }
+
+    fun getTarget(key: String) = getTarget(LogicIdentifier(key))
+    fun getTarget(key: LogicIdentifier): Double? = get(key)?.target
 }
 
 

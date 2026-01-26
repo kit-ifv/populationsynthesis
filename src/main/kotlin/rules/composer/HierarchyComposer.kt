@@ -5,9 +5,12 @@ import edu.kit.ifv.populationsynthesis.hierarchy.expandIf
 import edu.kit.ifv.populationsynthesis.rules.RuleLookup
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.BitsetMap
+import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.MutableBitsetMap
 import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.toBitsetMap
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import edu.kit.ifv.populationsynthesis.rules.sumRule
+import edu.kit.ifv.populationsynthesis.rules.toRuleSet
+
 /**
  * Composes a single [RuleSet] for a target area by aggregating rules defined across a hierarchy (DAG).
  *
@@ -29,7 +32,9 @@ class HierarchyComposer<AREA, T>(override val hierarchy: HierarchicElement<AREA>
         val relevantNodes = hierarchy.getAllChildren(target) + target
         val ruleLookup    = RuleLookup.fromProvider(ruleProvider).filter { it in relevantNodes }
         val allLogics     = ruleLookup.logics
-        val bitsetMap     = createBitsetMap(ruleProvider, ruleLookup)
+        val bitsetMap     = createCoverageBitsetMap(ruleProvider, ruleLookup)
+
+        val ambiguityMap  = bitsetMap.createAmbiguityBitsetMap()
         /*
          * The most complex part of rule composition. For each logic we step through the DAG Rule graph, starting
          * at our target node. Then we check whether a node can (or must) be replaced with its children.
@@ -40,14 +45,16 @@ class HierarchyComposer<AREA, T>(override val hierarchy: HierarchicElement<AREA>
          * a valid rule.
          *
          * This implementation will perform every CAN replacement.
+         *
          */
         val logicCoverageMapping = allLogics.withIndex().associate { (index, logic) ->
             logic to hierarchy.expandIf(target) { area ->
                 val isLeaf = isLeaf(area)
                 val ch = getImmediateChildren(area)
-                val childCoverage =bitsetMap.allAreFlagged(ch, index)
+                val childCoverage = bitsetMap.allAreFlagged(ch, index)
                 val hasRule = ruleLookup.hasRule(area, logic)
-                !isLeaf && (childCoverage || !hasRule)
+                val hasAmbiguity = ambiguityMap[area, index]
+                !isLeaf && (childCoverage || !hasRule || hasAmbiguity)
             }
         }
 
@@ -62,12 +69,41 @@ class HierarchyComposer<AREA, T>(override val hierarchy: HierarchicElement<AREA>
         val fusedRules = logicCoverageMapping.entries.associate { (k, v) ->
             k to v.mapNotNull { ruleLookup[it, k] }.sumRule()
         }
-        return RuleSet.create(fusedRules)
+        return fusedRules.toRuleSet()
 
     }
 
 
-    private fun createBitsetMap(
+
+    /*
+     * There is one difficult scenario: When the hierarchy is a DAG, a child node defines a rule, the child has
+     * multiple parents, the parents have multiple children and the parents also define the rule but the other
+     * children do not define a rule. In that instance the parent nodes MUST be replaced.
+     *
+     * Essentially this scenario translates to an ambiguity definition: If a (child) node has any different
+     * ancestors that also define a rule, and the ancestors are unrelated, then both of the ancestors MUST be
+     * replaced for this particular rule.
+     *
+     * This can be solved by iterating from each leaf. Once a node has more than 1 parent, then each of these parents,
+     * as well as all nodes later in the graph can be flagged as MUST replacement for that particular rule.
+     */
+    private fun BitsetMap<AREA>.createAmbiguityBitsetMap(): BitsetMap<AREA> {
+        val bitsetMap = MutableBitsetMap<AREA>()
+
+        val nodesWithMultipleParents = hierarchy.getAllVertices().filter { hierarchy.getParents(it).size > 1 }
+        nodesWithMultipleParents.forEach { ambiguousNode ->
+            val ancestors = hierarchy.getAllAncestors(ambiguousNode)
+            val currentBitset = this[ambiguousNode]
+            ancestors.forEach { ancestor ->
+                val ancestorBitset = bitsetMap.getOrPut(ancestor)
+                ancestorBitset.or(currentBitset)
+            }
+
+        }
+        return bitsetMap
+    }
+
+    private fun createCoverageBitsetMap(
         ruleProvider: RuleProvider<AREA, T>,
         ruleLookup: RuleLookup<AREA, T>
     ): BitsetMap<AREA> {
@@ -75,7 +111,7 @@ class HierarchyComposer<AREA, T>(override val hierarchy: HierarchicElement<AREA>
         val leafs = ruleLookup.areas.filter { hierarchy.isLeaf(it) }
 
 
-        val queue = ArrayDeque<AREA>(leafs.mapNotNull { hierarchy.getParent(it) })
+        val queue = ArrayDeque(leafs.mapNotNull { hierarchy.getParents(it) }.flatten())
         /* Create a bitset map where each node in the provider is associated with the bitset where defined rules
         *  for the area are set to 1. For example if an area has a definition for the following (indexed) Rules:
         *  R_0, R_2, R_3 then the bitset would look like this [1011].

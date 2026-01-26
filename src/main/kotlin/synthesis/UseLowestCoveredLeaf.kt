@@ -7,23 +7,24 @@ class UseLowestCoveredLeaf<AREA> : HandleRuleConflicts<AREA> {
         conflictingAreas: Collection<AREA>,
         hierarchicElement: HierarchicElement<AREA>,
     ): Collection<AREA> {
-        val leafs = conflictingAreas.filter { hierarchicElement.isLeaf(it) }
-        val completelyCovered = mutableSetOf<AREA>()
-        completelyCovered.addAll(leafs)
-        var nextRound = leafs.mapNotNull { hierarchicElement.getParent(it) }
-        while (nextRound.isNotEmpty()) {
-            nextRound.forEach { node ->
-                val isCovered = hierarchicElement.getImmediateChildren(node).all { it in completelyCovered }
-                if (isCovered) {
-                    completelyCovered.add(node)
-                }
-            }
-            nextRound = nextRound.mapNotNull { hierarchicElement.getParent(it) }
-        }
-
-        val (removable, unremovable) = conflictingAreas.filter { it !in leafs }.partition { it in completelyCovered }
-        val mustRemove = unremovable.flatMap { hierarchicElement.getAllChildren(it) }.toSet()
-
-        return conflictingAreas.filter { it !in removable && it !in mustRemove }
+        return TODO()
+//        val leafs = conflictingAreas.filter { hierarchicElement.isLeaf(it) }
+//        val completelyCovered = mutableSetOf<AREA>()
+//        completelyCovered.addAll(leafs)
+//        var nextRound = leafs.mapNotNull { hierarchicElement.getParents(it) }
+//        while (nextRound.isNotEmpty()) {
+//            nextRound.forEach { node ->
+//                val isCovered = hierarchicElement.getImmediateChildren(node).all { it in completelyCovered }
+//                if (isCovered) {
+//                    completelyCovered.add(node)
+//                }
+//            }
+//            nextRound = nextRound.mapNotNull { hierarchicElement.getParents(it) }
+//        }
+//
+//        val (removable, unremovable) = conflictingAreas.filter { it !in leafs }.partition { it in completelyCovered }
+//        val mustRemove = unremovable.flatMap { hierarchicElement.getAllChildren(it) }.toSet()
+//
+//        return conflictingAreas.filter { it !in removable && it !in mustRemove }
     }
 }

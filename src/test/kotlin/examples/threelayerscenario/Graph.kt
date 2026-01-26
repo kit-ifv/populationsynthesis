@@ -1,9 +1,9 @@
 package examples.threelayerscenario
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraph
-import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraph
+import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 
-internal val ABCGraph: HierarchyGraph<Area> = MutableHierarchyGraph<Area>().apply {
+internal val ABCGraph: HierarchyGraph<Area> = HierarchyGraphFactory.asForest {
     addRelationship(A.A1, B.B1)
     addRelationship(A.A2, B.B1)
     addRelationship(A.A3, B.B2)
