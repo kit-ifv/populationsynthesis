@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
 /**
  * A hierarchic rule provider uses a hierarchy to compose indirect rules.
  */
-interface HierarchicRuleProvider<AREA, H>: ComposingRuleProvider<AREA, H> {
-    override val composer: HierarchyRuleComposer<AREA, H>
+interface HierarchicRuleProvider<AREA, T>: ComposingRuleProvider<AREA, T> {
+    override val composer: HierarchyRuleComposer<AREA, T>
     val hierarchy: HierarchicElement<AREA> get() = composer.hierarchy
 }

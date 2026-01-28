@@ -71,15 +71,6 @@ class ScalableVector(private val vector: Collection<Double>, var scalar: Double 
         return array.contentHashCode()
     }
 
-    @Suppress("MagicNumber")
-    private fun IntArray.contentHashCode(): Int {
-        var result = 1
-        for (element in this) {
-            result = 31 * result + element
-        }
-        return result
-    }
-
     override fun toString(): String {
         return "ScalableVector(scalar=$scalar) $content"
     }

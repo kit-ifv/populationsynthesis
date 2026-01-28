@@ -23,7 +23,7 @@ fun interface GenericIPU {
         rules: Collection<Rule<I>>,
     ): List<Pair<Rule<I>, Double>> {
         val observers = rules.withIndex().map {
-            RuleObserver.Companion.fromRule(it.value, it.index, vectors)
+            RuleObserver.fromRule(it.value, it.index, vectors)
         }
         run(vectors, observers)
 

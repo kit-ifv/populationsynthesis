@@ -3,13 +3,14 @@ package edu.kit.ifv.populationsynthesis
 import edu.kit.ifv.populationsynthesis.algorithms.IPUOutput
 import edu.kit.ifv.populationsynthesis.algorithms.IntegerIPUOutput
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.utils.EquivalenceClass
 import kotlin.random.Random
 
 
-fun interface GenerateHouseholds<X, H> {
-    fun Map<X, List<H>>.extractFrom(): List<H>
+fun interface GenerateHouseholds<R, T> {
+    fun Map<R, List<T>>.extractFrom(): List<T>
 
-    fun extract(map: Map<X, List<H>>) = map.extractFrom()
+    fun extract(map: Map<R, List<T>>) = map.extractFrom()
 }
 
 open class GenericCollector<X, H>(

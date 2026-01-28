@@ -1,7 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
-import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 
 /**
