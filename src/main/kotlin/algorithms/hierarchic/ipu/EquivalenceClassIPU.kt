@@ -39,6 +39,10 @@ class EquivalenceClassIPU<AREA, T>(
         return MapBasedEquivalenceClass(equivalenceClasses) to ruleObservers
     }
 
+    override fun toHouseholds(vectors: ScalableVector): List<T> {
+        TODO("Not yet implemented")
+    }
+
     override fun generateScalableVectors(area: AREA): Pair<Collection<ScalableVector>, List<TargetNumberObserver>> {
         val parents = hierarchy.getAllAncestors(area)
         val ruleLookup = RuleLookup.fromProvider(ruleProvider)

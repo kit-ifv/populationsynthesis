@@ -22,6 +22,8 @@ seedHouseholds,
 ipu,
 
     ) {
+
+    private lateinit var vectorMapping: Map<ScalableVector, T>
     override fun generateScalableVectors(area: AREA): Pair<Collection<ScalableVector>, List<TargetNumberObserver>> {
         val parents = hierarchy.getAllAncestors(area)
         val ruleLookup = RuleLookup.fromProvider(ruleProvider)
@@ -29,11 +31,17 @@ ipu,
         val indexedRules = ruleLookup.getLogics(parents + area)
 
         val vectors = seedHouseholds.associateWith { indexedRules.map { it.rule }.toScalableVector(it) }
+        vectorMapping = seedHouseholds.associateBy {indexedRules.map { it.rule }.toScalableVector(it)   }
         val observers = ruleLookup[area].map { (index, rule) ->
             RuleObserver.fromRule(rule, index, vectors.values)
         }
         return vectors.values to observers
 
+    }
+
+    override fun toHouseholds(vectors: ScalableVector): List<T> {
+        val element = vectorMapping[vectors] ?: return emptyList()
+        return listOf(element)
     }
 
     override fun generateEquivalenceClasses(rules: Collection<Rule<T>>, parentdropsize: Int):  Pair<EquivalenceClass<ScalableVector, T>, List<TargetNumberObserver>> {

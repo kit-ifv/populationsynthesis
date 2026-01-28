@@ -22,17 +22,22 @@ abstract class HistoricIPU<AREA, T>(
         targetAreas: Collection<AREA>,
     ): Map<AREA, List<T>> {
         val vectors = calculate(highestArea, targetAreas)
+        val mapping = vectors.mapValues { (_, v) ->
+            v.associateWith { toHouseholds(it) }
+        }
         // Now the vectors should be scaled via side effect
-        return vectors.entries.associate { (k, v) ->
+        return mapping.entries.associate { (k, v) ->
             k to extractor.extract(v)
         }
     }
+
+    abstract fun toHouseholds(vectors: ScalableVector): List<T>
     abstract fun generateScalableVectors(area: AREA) : Pair<Collection<ScalableVector>, List<TargetNumberObserver>>
     abstract fun generateEquivalenceClasses(rules: Collection<Rule<T>>, parentdropsize: Int) :  Pair<EquivalenceClass<ScalableVector, T>, List<TargetNumberObserver>>
     fun calculate(
         highestArea: AREA,
         targetAreas: Collection<AREA>, // The lowest areas are the target areas. They must generate scalable vectors.
-    ): Map<AREA, EquivalenceClass<ScalableVector, T>> {
+    ): Map<AREA, Collection<ScalableVector>> {
         // And their equivalence class defintion is purely dependent on the rule definition of their parents
         // Basically, each area needs to spawn the rule observers of the rules that reside in its level
         // Question: Can we use different equivalence classes when some inheritance chain has a smaller rule set?
@@ -40,7 +45,7 @@ abstract class HistoricIPU<AREA, T>(
         val parents = (hierarchy.getAllChildren(highestArea) + highestArea).filter { !hierarchy.isLeaf(it) }
         val parentRuleset = ruleProvider.getRules(highestArea)
 
-        val leafsToScalableVectors = targetAreas.associateWith { target ->
+        val leafsToScalableVectors = targetAreas.filter{hierarchy.isLeaf(it)}.associateWith { target ->
             generateScalableVectors(target)
         }
         val ltSc = leafsToScalableVectors.mapValues { it.value.first }
@@ -63,10 +68,16 @@ abstract class HistoricIPU<AREA, T>(
         val additionalObservers = parentRuleset.withIndex().map { (index, rule) ->
             RuleObserver.fromRule(rule, index, allHouseholdsEncoded)
         }
+        val otherVectors = ltSc.values.flatten()
 
-        ipu.run(allHouseholdsEncoded, additionalObservers + observers.flatten())
-        // Abandons the observers. they are no longer required
-        return areasToEquivalenceClasses.mapValues { it.value.first }
+
+        ipu.run(otherVectors, parentObservers.flatten() + ltObs.values.flatten())
+
+        return ltSc
+//        ipu.run(otherVectors, parentObservers.flatten() + ltObs.values.flatten())
+//        ipu.run(allHouseholdsEncoded, additionalObservers + observers.flatten())
+//        // Abandons the observers. they are no longer required
+//        return areasToEquivalenceClasses.mapValues { it.value.first }
     }
 
 

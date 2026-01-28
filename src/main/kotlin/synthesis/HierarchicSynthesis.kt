@@ -11,8 +11,8 @@ abstract class HierarchicSynthesis<AREA, T>(
 ): RuleBasedPopulationSynthesis<AREA, T> {
     val hierarchy = ruleProvider.hierarchy
     final override fun synthesize(targetAreas: List<AREA>): Map<AREA, List<T>>   {
-        // Trace roots runs up to the highest ancestor. Should take into account intermediate areas.
-        val rootRegions = hierarchy.groupByHighestAncestor(targetAreas)
+        // Trace roots runs up to the highest ancestor. Should take into account intermediate areas. Ignore empty trees with no rules, they get nothing
+        val rootRegions = hierarchy.groupByHighestAncestor(targetAreas).filter { it.value.any{ruleProvider.getRules(it).isNotEmpty()} }
 //        val independentRegions = separateIrrelevantRegions(rootRegions) Unnecessary, should be handled by hierarchy beforehand
 
 //        TODO("Insert a method to inject pipeline to extract stuff.")

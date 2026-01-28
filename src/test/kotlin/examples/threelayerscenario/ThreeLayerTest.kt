@@ -5,6 +5,7 @@ import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.hierarchy.groupByHighestAncestor
 import edu.kit.ifv.populationsynthesis.hierarchy.levels
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
+import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -61,10 +62,10 @@ class ThreeLayerTest {
             hierarchicProvider,
             SeedElement.all,
         )
+        assertDoesNotThrow {
+            ipu.synthesizeAll()
+        }
 
-        val output = ipu.synthesizeAll()
-
-        println(output)
     }
     @Test
     fun levels() {
