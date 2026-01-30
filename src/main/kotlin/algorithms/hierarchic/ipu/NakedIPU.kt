@@ -4,12 +4,9 @@ import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
-import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleLookup
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toScalableVector
-import edu.kit.ifv.populationsynthesis.utils.EquivalenceClass
-import edu.kit.ifv.populationsynthesis.utils.MapBasedEquivalenceClass
 import java.util.*
 
 class NakedIPU<AREA, T>(
@@ -39,23 +36,9 @@ ipu,
 
     }
 
-    override fun toHouseholds(vectors: ScalableVector): List<T> {
+    override fun toElementRepresentations(vectors: ScalableVector): List<T> {
         val element = vectorMapping[vectors] ?: return emptyList()
         return listOf(element)
-    }
-
-    override fun generateEquivalenceClasses(rules: Collection<Rule<T>>, parentdropsize: Int):  Pair<EquivalenceClass<ScalableVector, T>, List<TargetNumberObserver>> {
-        val vectors = seedHouseholds.associateWith { rules.toScalableVector(it) }
-        val ruleObservers = rules.withIndex().drop(parentdropsize).map {
-            RuleObserver.fromRule(it.value, it.index, vectors.values)
-        }
-
-        val pairs = vectors.values.zip(seedHouseholds).map { (a, b) ->
-            a to listOf(b)
-        }
-        val mapping = identityHashMapOf(pairs)
-
-        return MapBasedEquivalenceClass(mapping) to ruleObservers
     }
 
     fun <K, V> identityHashMapOf(pairs: Collection<Pair<K, V>>): MutableMap<K, V> =
