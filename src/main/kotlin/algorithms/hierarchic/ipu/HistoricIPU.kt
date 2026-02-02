@@ -1,9 +1,10 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 
 import edu.kit.ifv.populationsynthesis.SampleAndCollect
+import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
-import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.rules.IndexedLogic
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
 
@@ -27,9 +28,17 @@ abstract class HistoricIPU<AREA, T>(
             k to extractor.extract(v)
         }
     }
-
+    abstract fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<T>>): Collection<ScalableVector>
     abstract fun toElementRepresentations(vectors: ScalableVector): List<T>
-    abstract fun generateScalableVectors(area: AREA) : Pair<Collection<ScalableVector>, List<TargetNumberObserver>>
+    open fun generateIPUComponents(area: AREA) : Pair<Collection<ScalableVector>, Collection<RuleObserver>> {
+        val parents = hierarchy.getAllAncestors(area)
+
+        val ruleObserverBuilder = RuleObserverBuilder(ruleProvider)
+        val indexedRules = ruleObserverBuilder.getLogics(parents + area)
+        val vectors = spawnVectorsFrom(indexedRules)
+        val observers = ruleObserverBuilder.buildFromVectors(area, vectors)
+        return vectors to observers
+    }
     fun calculate(
         highestArea: AREA,
         targetAreas: Collection<AREA>, // The lowest areas are the target areas. They must generate scalable vectors.
@@ -42,7 +51,7 @@ abstract class HistoricIPU<AREA, T>(
 
 
         val leafsToScalableVectors = leafs.associateWith { target ->
-            generateScalableVectors(target)
+            generateIPUComponents(target)
         }
         val ltSc = leafsToScalableVectors.mapValues { it.value.first }
         val ltObs = leafsToScalableVectors.mapValues { it.value.second }

@@ -1,8 +1,10 @@
 package edu.kit.ifv.populationsynthesis.rules.composer
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
+import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDefinition
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
@@ -40,17 +42,33 @@ class HierarchyComposerTest {
         val definition2 = RuleDefinition("2")
         val definition3 = RuleDefinition("3")
         val logicProvider: RuleProvider<Area, Target> = object : RuleProvider<Area, Target> {
+
+            private val A1Rules = listOf(definition1.createNamedContribution().withTarget(1.0))
+            private val A2Rules = listOf(definition2.createNamedContribution().withTarget(1.0))
+            private val B1Rules = listOf(definition1.createNamedContribution().withTarget(2.0),definition3.createNamedContribution().withTarget(2.0))
             override fun getRules(target: Area): RuleSet<Target> {
                 return when (target) {
-                    A.A1 -> listOf(definition1).map { it.createNamedContribution().withTarget(1.0) }
-                    A.A2 -> listOf(definition2).map { it.createNamedContribution().withTarget(1.0) }
-                    B.B1 -> listOf(definition1, definition3).map { it.createNamedContribution().withTarget(2.0) }
+                    A.A1 -> A1Rules
+                    A.A2 -> A2Rules
+                    B.B1 -> B1Rules
                     else -> emptyList()
                 }.toRuleSet()
             }
 
             override fun getAllRules(): Map<Area, RuleSet<Target>> {
                 return mapOf(A.A1 to getRules(A.A1), A.A2 to getRules(A.A2), B.B1 to getRules(B.B1))
+            }
+
+            override fun get(
+                target: Area,
+                logicIdentifier: LogicIdentifier
+            ): Rule<Target>? {
+                return when(target) {
+                    A.A1 -> A1Rules.find { it.logic.identifier == logicIdentifier }
+                    A.A2 -> A2Rules.find { it.logic.identifier == logicIdentifier }
+                    B.B1 -> B1Rules.find { it.logic.identifier == logicIdentifier }
+                    else -> null
+                }
             }
 
         }

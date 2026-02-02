@@ -1,14 +1,14 @@
 package edu.kit.ifv.populationsynthesis.rules.composer.bitsets
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.RuleLookup
+import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import java.util.BitSet
 import kotlin.collections.component1
 import kotlin.collections.component2
 
-fun <AREA> RuleLookup<AREA, *>.toBitsetMap(
+fun <AREA> LogicIndexer<AREA, *>.toBitsetMap(
     ruleProvider: RuleProvider<AREA, *>
 ): MutableBitsetMap<AREA> {
     val indexer = logics.withIndex().associate { it.value to it.index }

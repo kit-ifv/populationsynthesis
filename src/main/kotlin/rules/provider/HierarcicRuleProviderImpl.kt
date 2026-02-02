@@ -1,9 +1,11 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
+import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyComposer
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 
 
 class HierarchicRuleProviderImpl<AREA, T>(
@@ -18,5 +20,12 @@ class HierarchicRuleProviderImpl<AREA, T>(
 
     override fun getAllRules(): Map<AREA, RuleSet<T>> {
         return ruleProvider.getAllRules()
+    }
+
+    override fun get(
+        target: AREA,
+        logicIdentifier: LogicIdentifier
+    ): Rule<T>? {
+        return ruleProvider[target, logicIdentifier]
     }
 }

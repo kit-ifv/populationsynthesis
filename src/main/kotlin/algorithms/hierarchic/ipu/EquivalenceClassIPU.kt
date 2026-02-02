@@ -4,10 +4,13 @@ import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
-import edu.kit.ifv.populationsynthesis.rules.RuleLookup
+import edu.kit.ifv.populationsynthesis.rules.IndexedLogic
+import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
+import edu.kit.ifv.populationsynthesis.rules.toScalableVector
+import edu.kit.ifv.populationsynthesis.utils.EquivalenceClass
 import edu.kit.ifv.populationsynthesis.utils.formEquivalenceClass
+import edu.kit.ifv.populationsynthesis.utils.log
 
 class EquivalenceClassIPU<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, T>,
@@ -19,26 +22,26 @@ class EquivalenceClassIPU<AREA, T>(
     ipu,
 ) {
 
+    private lateinit var equivalenceClasses: EquivalenceClass<ScalableVector, T>
+    override fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<T>>): Collection<ScalableVector> {
+        equivalenceClasses = seedHouseholds.associateWith { indexedRules.toScalableVector(it) }.formEquivalenceClass()
+        return equivalenceClasses.representatives
+    }
+
     override fun toElementRepresentations(vectors: ScalableVector): List<T> {
-        TODO("Not yet implemented")
+        return TODO()
     }
 
-    override fun generateScalableVectors(area: AREA): Pair<Collection<ScalableVector>, List<TargetNumberObserver>> {
-        val parents = hierarchy.getAllAncestors(area)
-        val ruleLookup = RuleLookup.fromProvider(ruleProvider)
-
-        val indexedRules = ruleLookup.getLogics(parents)
-
-        val equivalenceClasses = seedHouseholds.associateWith { indexedRules.map { it.rule }.toScalableVectorOld(it) }.formEquivalenceClass()
-
-        val representatives = equivalenceClasses.representatives
-        val observers = ruleLookup[area].map { (index, rule) ->
-            RuleObserver.fromRule(rule, index, representatives)
-        }
-
-
-        return equivalenceClasses.representatives to observers
-
-    }
+//    override fun generateScalableVectors(area: AREA): Pair<Collection<ScalableVector>, Collection<RuleObserver>> {
+//        val parents = hierarchy.getAllAncestors(area)
+//
+//        val ruleObserverBuilder = RuleObserverBuilder(ruleProvider)
+//        val indexedRules = ruleObserverBuilder.getLogics(parents + area)
+//
+//        val equivalenceClasses = seedHouseholds.associateWith { indexedRules.toScalableVector(it) }.formEquivalenceClass()
+//        val observers = ruleObserverBuilder.buildFromVectors(area, equivalenceClasses.representatives)
+//        return equivalenceClasses.representatives to observers
+//
+//    }
 }
 

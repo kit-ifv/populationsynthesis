@@ -4,6 +4,7 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyComposer
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
@@ -17,6 +18,13 @@ class KonduriRuleProvider(val ruleProvider: RuleProvider<KonduriArea, KonduriHou
 
     override fun getAllRules(): Map<KonduriArea, RuleSet<KonduriHousehold>> {
         return ruleProvider.getAllRules()
+    }
+
+    override fun get(
+        target: KonduriArea,
+        logicIdentifier: LogicIdentifier
+    ): Rule<KonduriHousehold>? {
+        return ruleProvider[target, logicIdentifier]
     }
 }
 
