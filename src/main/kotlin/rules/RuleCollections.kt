@@ -1,9 +1,14 @@
 package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.rules.contribution.Contribution
 
-fun <T> Collection<Rule<T>>.toScalableVector(element: T): ScalableVector {
-    return ScalableVector.createFromRules(element, this)
+fun <T> Collection<Rule<T>>.toScalableVectorOld(element: T): ScalableVector {
+    return map { it.logic }.toScalableVector(element)
+}
+
+fun <T> Collection<Contribution<T>>.toScalableVector(element: T): ScalableVector {
+    return ScalableVector.createFromLogics(element, this)
 }
 
 fun <T> Collection<Rule<T>>.sumRule(): Rule<T> {

@@ -67,7 +67,7 @@ class HierarchyComposer<AREA, T>(override val hierarchy: HierarchicElement<AREA>
          * with the summation strategy.
          */
         val fusedRules = logicCoverageMapping.entries.associate { (k, v) ->
-            k to v.mapNotNull { ruleLookup[it, k] }.sumRule()
+            k to v.mapNotNull { ruleLookup[it, k]?.rule }.sumRule()
         }
         return fusedRules.toRuleSet()
 

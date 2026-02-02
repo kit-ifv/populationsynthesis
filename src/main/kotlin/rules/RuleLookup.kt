@@ -2,6 +2,7 @@ package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.rules.contribution.Contribution
 import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
@@ -16,6 +17,16 @@ class RuleLookup<AREA, T> private constructor(private val map: Map<AREA, Map<Log
         map.values.flatMap { it.keys }.toSet()
     }
 
+    val logicFunctions: Map<LogicIdentifier, Contribution<T>> by lazy {
+
+        map.values.flatMap { it.entries }.associate { (id, c) ->
+            id to c.logic
+        }
+
+    }
+
+    fun allContributions() = logicFunctions.values
+
     /**
      * Since the logics are fixed, we can assign an index for each logic.
      */
@@ -28,15 +39,25 @@ class RuleLookup<AREA, T> private constructor(private val map: Map<AREA, Map<Log
         return RuleLookup(map.filterKeys { predicate(it) })
     }
 
-    operator fun get(area: AREA, identifier: LogicIdentifier): Rule<T>? {
-        return map[area]?.get(identifier)
+    operator fun get(area: AREA, identifier: LogicIdentifier): IndexedRule<T>? {
+        val rule = map[area]?.get(identifier) ?: return null
+        return rule.withIndex()
     }
 
     operator fun get(area: AREA): Set<IndexedRule<T>> {
         val rules = map[area]?.entries ?: return emptySet()
-        return rules.map { (logic, rule) ->
-            rule.withIndex(logicIndex[logic]!!)
+        return rules.map { (_, rule) ->
+            rule.withIndex()
         }.toSet()
+    }
+
+    private fun Rule<T>.withIndex(): IndexedRule<T> {
+        return IndexedRule(rule = this, index = getLogicIndex(this))
+    }
+
+    private fun getLogicIndex(rule: Rule<T>): Int {
+        return logicIndex[rule.logic.identifier]
+            ?: throw IllegalStateException("A rule lookup should always be able to produce an index for a rule. Failed for rule=$rule \n logicMapping $logicIndex")
     }
 
     fun getLogics(elements: Collection<AREA>): Set<IndexedRule<T>> {
@@ -66,8 +87,12 @@ data class IndexedRule<T>(
     }
 }
 
+fun <T> Collection<IndexedRule<T>>.reindex(): Collection<IndexedRule<T>> {
+    TODO()
+}
+
 fun <T> Collection<IndexedRule<T>>.toScalableVector(element: T): ScalableVector {
-    return map { it.rule }.toScalableVector(element)
+    return map { it.rule }.toScalableVectorOld(element)
 }
 
 fun <T> Rule<T>.withIndex(index: Int): IndexedRule<T> {

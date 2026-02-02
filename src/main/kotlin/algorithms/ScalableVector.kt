@@ -20,7 +20,7 @@ import edu.kit.ifv.populationsynthesis.rules.contribution.Contribution
  * @param vector The integer array representing the attribute values of the household encoding.
  * @param scalar The scaling factor applied to the vector, representing how many instances of the household are desired (default is 1.0).
  */
-class ScalableVector(private val vector: Collection<Double>, var scalar: Double = 1.0) {
+class ScalableVector private constructor(private val vector: Collection<Double>, var scalar: Double = 1.0) {
     private val array: DoubleArray = vector.toDoubleArray()
     val signature: Signature = array.withIndex().filter { it.value != 0.0 }.associate { (i, value) -> i to value }
 
@@ -79,7 +79,11 @@ class ScalableVector(private val vector: Collection<Double>, var scalar: Double 
          * creates a Scalable Vector for a target [surveyHousehold] based on the ruleset defined in [rules]
          */
         fun <T> createFromRules(surveyHousehold: T, rules: Collection<Rule<T>>): ScalableVector {
-            return ScalableVector(rules.map { it.contributionOf(surveyHousehold) })
+            return createFromLogics(surveyHousehold, rules.map { it.logic })
+        }
+
+        fun <T> createFromLogics(surveyHousehold: T, logics: Collection<Contribution<T>>): ScalableVector {
+            return ScalableVector(logics.map { it.amount(surveyHousehold) })
         }
 
         fun <T> createFrom(surveyHousehold: T, contributions: Collection<Contribution<T>>): ScalableVector {

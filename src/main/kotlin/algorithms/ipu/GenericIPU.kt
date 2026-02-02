@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.PerformanceLoggingIPU
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.toScalableVector
+import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
 import edu.kit.ifv.populationsynthesis.utils.invertMap
 import java.nio.file.Path
 
@@ -31,7 +31,7 @@ fun interface GenericIPU {
     }
 
     fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {
-        val vectorMapping = elements.associateWith { rules.toScalableVector(it) }
+        val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
         calculateDirect(vectorMapping.values, rules)
         return vectorMapping.map { (k, v) ->
             IPUOutput(k, v.scalar)
@@ -64,7 +64,7 @@ fun interface GenericIPU {
         ipuCalculationCallback: (List<Pair<Rule<I>, Double>>) -> Unit = {},
         resultConverter: (Map<ScalableVector, List<I>>) -> X
     ): X {
-        val vectorMapping = elements.associateWith { rules.toScalableVector(it) }
+        val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
         val inverseMap = vectorMapping.invertMap()
         val uniqueVectors = inverseMap.keys
 

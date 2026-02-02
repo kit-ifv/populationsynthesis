@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
 import edu.kit.ifv.populationsynthesis.rules.RuleLookup
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-import edu.kit.ifv.populationsynthesis.rules.toScalableVector
+import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
 import edu.kit.ifv.populationsynthesis.utils.formEquivalenceClass
 
 class EquivalenceClassIPU<AREA, T>(
@@ -29,7 +29,7 @@ class EquivalenceClassIPU<AREA, T>(
 
         val indexedRules = ruleLookup.getLogics(parents)
 
-        val equivalenceClasses = seedHouseholds.associateWith { indexedRules.map { it.rule }.toScalableVector(it) }.formEquivalenceClass()
+        val equivalenceClasses = seedHouseholds.associateWith { indexedRules.map { it.rule }.toScalableVectorOld(it) }.formEquivalenceClass()
 
         val representatives = equivalenceClasses.representatives
         val observers = ruleLookup[area].map { (index, rule) ->

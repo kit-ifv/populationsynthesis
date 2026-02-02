@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
 import edu.kit.ifv.populationsynthesis.rules.RuleLookup
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-import edu.kit.ifv.populationsynthesis.rules.toScalableVector
+import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
 import java.util.*
 
 class NakedIPU<AREA, T>(
@@ -27,8 +27,8 @@ ipu,
 
         val indexedRules = ruleLookup.getLogics(parents + area)
 
-        val vectors = seedHouseholds.associateWith { indexedRules.map { it.rule }.toScalableVector(it) }
-        vectorMapping = seedHouseholds.associateBy {indexedRules.map { it.rule }.toScalableVector(it)   }
+        val vectors = seedHouseholds.associateWith { indexedRules.map { it.rule }.toScalableVectorOld(it) }
+        vectorMapping = seedHouseholds.associateBy {indexedRules.map { it.rule }.toScalableVectorOld(it)   }
         val observers = ruleLookup[area].map { (index, rule) ->
             RuleObserver.fromRule(rule, index, vectors.values)
         }
