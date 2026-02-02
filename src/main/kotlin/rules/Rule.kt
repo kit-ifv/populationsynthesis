@@ -1,8 +1,12 @@
 package edu.kit.ifv.populationsynthesis.rules
 
+import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 
-class Rule<in T>(val target: Double, val logic : NamedContribution<T>) {
+class Rule<in T>(val target: Double, val logic: NamedContribution<T>) {
+
+    val identifier: LogicIdentifier = logic.identifier
+
     fun contributionOf(element: T): Double = logic.amount(element)
     fun total(elements: Collection<T>): Double = elements.sumOf { contributionOf(it) }
 

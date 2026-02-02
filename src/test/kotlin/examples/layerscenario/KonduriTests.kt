@@ -1,16 +1,41 @@
 package examples.layerscenario
 
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.EquivalenceClassIPU
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.HistoricIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.NakedIPU
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.fail
+
+
+private typealias IPUSpawner = (KonduriRuleProvider, GenericIPU) -> HistoricIPU<KonduriArea, KonduriHousehold>
 
 class KonduriTests {
 
     private val contributions =
         RTypeSet.generateContributions() + HTypeSet.generateContributions() + PTypeSet.generateContributions()
+
+    companion object {
+        @JvmStatic
+        fun ipuFactories(): List<Arguments> = listOf(
+            Arguments.of(
+                "NakedIPU", { rp: KonduriRuleProvider, iters: GenericIPU -> NakedIPU(rp, KonduriHousehold.all, iters) }
+            ),
+            Arguments.of(
+                "EquivalenceIPU",
+                { rp: KonduriRuleProvider, iters: GenericIPU -> EquivalenceClassIPU(rp, KonduriHousehold.all, iters) }
+            )
+
+        )
+
+    }
+
 
     @Test
     fun conversion() {
@@ -32,23 +57,24 @@ class KonduriTests {
             expected.map { it.toDouble() })
     }
 
-    @Test
-    fun testLegacyIPU() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("ipuFactories")
+    fun testLegacyIPU(
+        name: String,
+        spawner: IPUSpawner
+    ) {
         val ruleProvider = KonduriRuleProvider()
         val iterationAtRegionLevel = GenericIPU { _, observers ->
             observers.take(3).forEach { it.optimize() }
 
         }
-        val ipu = NakedIPU(
+        val ipu = spawner.invoke(
             ruleProvider,
-            KonduriHousehold.all,
             iterationAtRegionLevel
         )
         val outp = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
 
         val vectorsGeo1 = outp[KonduriGeographicUnit.geo1]?.toList() ?: emptyList()
-
-//        val expectedScalars = vectorsGeo1.associate { it.value.first() to it.key }
         val expectedScalars = vectorsGeo1
         assertEquals(expectedScalars[0].scalar, 13 + 2.0 / 3)
         assertEquals(expectedScalars[1].scalar, 21 + 1.0 / 2)
@@ -61,21 +87,21 @@ class KonduriTests {
 
     }
 
-    @Test
-    fun afterControllingGeoIteration1() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("ipuFactories")
+    fun afterControllingGeoIteration1(name: String, spawner: IPUSpawner) {
         val ruleProvider = KonduriRuleProvider()
         val iterationAtRegionLevel = GenericIPU { _, observers ->
             observers.take(4).forEach { it.optimize() }
 
         }
-        val ipu = NakedIPU(
+        val ipu = spawner.invoke(
             ruleProvider,
-            KonduriHousehold.all,
             iterationAtRegionLevel
         )
-        val outp = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
+        val output = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
 
-        val vectorsGeo1 = outp[KonduriGeographicUnit.geo1]?.toList() ?: emptyList()
+        val vectorsGeo1 = output[KonduriGeographicUnit.geo1]?.toList() ?: fail("The output for geo1 should be present")
 
         val expectedScalars = vectorsGeo1
         assertEquals(expectedScalars[0].scalar, 13.87, 0.01)
@@ -88,8 +114,9 @@ class KonduriTests {
         assertEquals(expectedScalars[7].scalar, 13.67, 0.01)
     }
 
-    @Test
-    fun afterFull1000Iterations() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("ipuFactories")
+    fun afterFull1000Iterations(name: String, spawner: IPUSpawner) {
         val ruleProvider = KonduriRuleProvider()
         val iterationAtRegionLevel = GenericIPU { _, observers ->
             repeat(1000) {
@@ -97,14 +124,13 @@ class KonduriTests {
                 observers.forEach { it.optimize() }
             }
         }
-        val ipu = NakedIPU(
+        val ipu = spawner(
             ruleProvider,
-            KonduriHousehold.all,
             iterationAtRegionLevel
         )
-        val outp = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
+        val output = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
 
-        val vectorsGeo1 = outp[KonduriGeographicUnit.geo1]?.toList() ?: emptyList()
+        val vectorsGeo1 = output[KonduriGeographicUnit.geo1]?.toList() ?: fail("The output for geo1 should be present")
 
         val expectedScalars = vectorsGeo1
 
@@ -118,7 +144,7 @@ class KonduriTests {
         assertEquals(expectedScalars[7].scalar, 8.22, 0.01)
 
 
-        val vectorsGeo2 = outp[KonduriGeographicUnit.geo2]?.toList() ?: emptyList()
+        val vectorsGeo2 = output[KonduriGeographicUnit.geo2]?.toList() ?: fail("The output for geo2 should be present")
 
         val expectedScalars2 = vectorsGeo2
         assertEquals(expectedScalars2[0].scalar, 4.46, 0.01)
