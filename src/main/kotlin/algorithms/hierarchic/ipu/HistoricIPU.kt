@@ -28,9 +28,10 @@ abstract class HistoricIPU<AREA, T>(
             k to extractor.extract(v)
         }
     }
+
     abstract fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<T>>): Collection<ScalableVector>
     abstract fun toElementRepresentations(vectors: ScalableVector): List<T>
-    open fun generateIPUComponents(area: AREA) : Pair<Collection<ScalableVector>, Collection<RuleObserver>> {
+    open fun generateIPUComponents(area: AREA): Pair<Collection<ScalableVector>, Collection<RuleObserver>> {
         val parents = hierarchy.getAllAncestors(area)
 
         val ruleObserverBuilder = RuleObserverBuilder(ruleProvider)
@@ -39,6 +40,7 @@ abstract class HistoricIPU<AREA, T>(
         val observers = ruleObserverBuilder.buildFromVectors(area, vectors)
         return vectors to observers
     }
+
     fun calculate(
         highestArea: AREA,
         targetAreas: Collection<AREA>, // The lowest areas are the target areas. They must generate scalable vectors.
@@ -57,10 +59,9 @@ abstract class HistoricIPU<AREA, T>(
         val ltObs = leafsToScalableVectors.mapValues { it.value.second }
 
 
-
         val parentObservers = parents.map { parent ->
             val relevantLeafs = hierarchy.getAllChildren(parent).filter { it in targetAreas }
-            val vectors = relevantLeafs.mapNotNull {ltSc[it]}
+            val vectors = relevantLeafs.mapNotNull { ltSc[it] }
             RuleObserverBuilder(ruleProvider).buildFromVectors(parent, vectors.flatten())
         }
         // Here the generation of households should happen for each non leaf node, and the observer should only get the
@@ -74,7 +75,6 @@ abstract class HistoricIPU<AREA, T>(
 
         return ltSc
     }
-
 
 
 }

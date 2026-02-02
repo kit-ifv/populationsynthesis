@@ -25,6 +25,7 @@ abstract class MutableHierarchyGraph<T> private constructor(
         parentGraph.addVertex(target)
         childGraph.addVertex(target)
     }
+
     protected fun <V, E> reachable(g: Graph<V, E>, start: V, goal: V): Boolean {
         if (start == goal) return true
         val seen = HashSet<V>()

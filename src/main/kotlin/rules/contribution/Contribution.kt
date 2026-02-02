@@ -9,7 +9,7 @@ package edu.kit.ifv.populationsynthesis.rules.contribution
  *  will be) but it could be anything:  workplaces, exotic fruits, or phylogenetic variants of rattlesnakes.
  *
  *  The core idea remains the same. A contribution function assigns a numeric "contribution" to the element, whatever
- *  its type may be. 
+ *  its type may be.
  */
 fun interface Contribution<in T> {
     fun amount(element: T): Double

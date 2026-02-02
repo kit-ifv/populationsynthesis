@@ -15,7 +15,7 @@ import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
  * the uniqueness and allowing for duplicates only introduced an error source.
  */
 
-interface RuleSet<T>: Set<Rule<T>> {
+interface RuleSet<T> : Set<Rule<T>> {
     operator fun get(key: String) = get(LogicIdentifier(key))
     operator fun get(key: LogicIdentifier): Rule<T>?
 

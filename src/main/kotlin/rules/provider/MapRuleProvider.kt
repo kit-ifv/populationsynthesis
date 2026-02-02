@@ -36,6 +36,7 @@ class MapRuleProvider<AREA, T>(
         }
         set(target, ruleset)
     }
+
     fun set(target: AREA, rules: MutableRuleSet<T>) {
         ruleMap[target] = rules
     }

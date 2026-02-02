@@ -9,6 +9,7 @@ import kotlin.test.assertEquals
 class KullbackLeiblerTest {
     private val p = NumericProbDist.build(9, 12, 4)
     private val q = NumericProbDist.build(1, 1, 1)
+
     @Test
     fun calculatePQ() {
         assertEquals(p.kullbackLeibler(q), 0.0852996, 0.0000001)
@@ -18,6 +19,7 @@ class KullbackLeiblerTest {
     fun calculateQP() {
         assertEquals(q.kullbackLeibler(p), 0.097455, 0.000001)
     }
+
     @Test
     fun calculateIdentity() {
         assertEquals(p.kullbackLeibler(p), 0.0)

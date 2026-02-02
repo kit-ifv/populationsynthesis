@@ -24,7 +24,6 @@ interface HierarchicElement<T> {
     fun groupByHighestAncestor(elements: Collection<T> = getAllLeafs()): Map<T, Collection<T>>
 
 
-
     fun getDependencies(elements: Collection<T>): Map<T, List<T>> {
         return elements.associateWith {
             val descendants = getAllChildren(it).toSet()

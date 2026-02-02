@@ -4,30 +4,32 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicalRuleProviderLegacy
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.math.abs
 import kotlin.math.max
 
 open class Evaluator<AREA, H>(open val ruleProvider: RuleProvider<AREA, H>) {
 
-    open fun evaluate(output: Map<AREA, Collection<H>>):  List<AreaIPUOutput<AREA>> {
+    open fun evaluate(output: Map<AREA, Collection<H>>): List<AreaIPUOutput<AREA>> {
         TODO()
     }
 }
 
-class HierarchicEvaluator<AREA, H>(override val ruleProvider: HierarchicalRuleProviderLegacy<AREA, H>) : Evaluator<AREA, H>(ruleProvider) {
+class HierarchicEvaluator<AREA, H>(override val ruleProvider: HierarchicalRuleProviderLegacy<AREA, H>) :
+    Evaluator<AREA, H>(ruleProvider) {
     override fun evaluate(output: Map<AREA, Collection<H>>): List<AreaIPUOutput<AREA>> {
         val ruleMapping = ruleProvider.getAllRules()
         val ruleResults = ruleMapping.flatMap { (area, rules) ->
 
-            val subareas = listOf(area) + (runCatching { ruleProvider.getAllDescendants(area)}.getOrNull() ?:emptyList())
-            if(subareas.any {it in output}) {
+            val subareas =
+                listOf(area) + (runCatching { ruleProvider.getAllDescendants(area) }.getOrNull() ?: emptyList())
+            if (subareas.any { it in output }) {
                 val currentHHs = subareas.flatMap {
                     output[it] ?: emptyList()
                 }
                 rules.toIPUOutput(area, currentHHs)
-            } else { emptyList() }
+            } else {
+                emptyList()
+            }
         }
         return ruleResults
     }
@@ -69,12 +71,13 @@ data class IPUOutputLog(
 
     val percentDifference = abs(difference.toDouble()) / max(1.0, expected)
 }
+
 data class AreaIPUOutput<AREA>(
     val zone: AREA,
     val original: IPUOutputLog,
 ) {
     fun isImperfect() = original.isImperfect()
 
-    val expected get()= original.expected
+    val expected get() = original.expected
     val actual get() = original.actual
 }

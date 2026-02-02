@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules.composer.bitsets
 
-import java.util.BitSet
+import java.util.*
 
 
 class MutableBitsetMap<T> private constructor(private val map: MutableMap<T, BitSet>) : BitsetMap<T> {
@@ -11,9 +11,10 @@ class MutableBitsetMap<T> private constructor(private val map: MutableMap<T, Bit
         val activeBitset = map[element] ?: return false
         return activeBitset.get(index)
     }
+
     override operator fun get(area: T): BitSet = map.getValue(area)
 
-    fun getOrPut(element: T, default: () ->BitSet = { BitSet() }): BitSet {
+    fun getOrPut(element: T, default: () -> BitSet = { BitSet() }): BitSet {
         return map.getOrPut(element, default)
     }
 
@@ -32,7 +33,7 @@ class MutableBitsetMap<T> private constructor(private val map: MutableMap<T, Bit
     }
 
     private fun Collection<BitSet>.andAll(): BitSet {
-        if(isEmpty()) return BitSet() // Empty bitset for an empty collection.
+        if (isEmpty()) return BitSet() // Empty bitset for an empty collection.
 
         val first = first().clone() as BitSet
         drop(1).forEach {

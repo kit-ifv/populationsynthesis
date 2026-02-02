@@ -45,7 +45,11 @@ class HierarchyComposerTest {
 
             private val A1Rules = listOf(definition1.createNamedContribution().withTarget(1.0))
             private val A2Rules = listOf(definition2.createNamedContribution().withTarget(1.0))
-            private val B1Rules = listOf(definition1.createNamedContribution().withTarget(2.0),definition3.createNamedContribution().withTarget(2.0))
+            private val B1Rules = listOf(
+                definition1.createNamedContribution().withTarget(2.0),
+                definition3.createNamedContribution().withTarget(2.0)
+            )
+
             override fun getRules(target: Area): RuleSet<Target> {
                 return when (target) {
                     A.A1 -> A1Rules
@@ -63,7 +67,7 @@ class HierarchyComposerTest {
                 target: Area,
                 logicIdentifier: LogicIdentifier
             ): Rule<Target>? {
-                return when(target) {
+                return when (target) {
                     A.A1 -> A1Rules.find { it.logic.identifier == logicIdentifier }
                     A.A2 -> A2Rules.find { it.logic.identifier == logicIdentifier }
                     B.B1 -> B1Rules.find { it.logic.identifier == logicIdentifier }
@@ -119,7 +123,7 @@ class HierarchyComposerTest {
 
     @Test
     fun bestCoverage() {
-        val provider = ruleCProvider().apply { addRule(C.C1, HelperRules.C.generate(100.0))}.withHierarchy(graph)
+        val provider = ruleCProvider().apply { addRule(C.C1, HelperRules.C.generate(100.0)) }.withHierarchy(graph)
         val rules = provider.getComposedRules(C.C1)
         assertTrue(HelperRules.C.text in rules)
         assertEquals(rules[HelperRules.C.text]!!.target, 8.5)
@@ -132,6 +136,7 @@ class HierarchyComposerTest {
         assertTrue(HelperRules.C.text in rules)
         assertEquals(rules[HelperRules.C.text]!!.target, 8.5)
     }
+
     private fun ruleCProvider(): MapRuleProvider<Area, Any> {
         return MapRuleProvider<Area, Any>().apply {
             addRule(A.A1, HelperRules.C.generate(1.0))

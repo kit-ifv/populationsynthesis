@@ -10,6 +10,6 @@ import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
  * A2 (Rule:= Age [10,20], 20.0) then we can automatically induce a Rule B (Rule:= Age[10,20], 30).
  *
  */
-interface HierarchyRuleComposer<AREA, T>: RuleComposer<AREA, T> {
+interface HierarchyRuleComposer<AREA, T> : RuleComposer<AREA, T> {
     val hierarchy: HierarchicElement<AREA>
 }

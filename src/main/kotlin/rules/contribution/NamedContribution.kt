@@ -34,6 +34,7 @@ class NamedContribution<in T> private constructor(
     override fun toString(): String {
         return "NamedContribution($identifier)"
     }
+
     companion object {
         internal inline fun <T> boolean(
             identifier: String,

@@ -1,8 +1,8 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
 import edu.kit.ifv.populationsynthesis.rules.sumRule
 import edu.kit.ifv.populationsynthesis.synthesis.HandleRuleConflicts
 import edu.kit.ifv.populationsynthesis.synthesis.UseLowestCoveredLeaf
@@ -13,9 +13,9 @@ interface HierarchicalRuleProviderLegacy<AREA, H> : RuleProvider<AREA, H> {
     val hierarchy: HierarchicElement<AREA>
 
     fun partition(predicate: (AREA) -> Boolean): Pair<
-        HierarchicalRuleProviderLegacy<AREA, H>,
-        HierarchicalRuleProviderLegacy<AREA, H>
-        >
+            HierarchicalRuleProviderLegacy<AREA, H>,
+            HierarchicalRuleProviderLegacy<AREA, H>
+            >
 
     fun getAllDescendants(target: AREA) = hierarchy.getAllChildren(target)
     fun getAllDescendantRules(target: AREA) = getAllDescendants(target).associateWith { getRules(it) }

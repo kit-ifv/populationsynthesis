@@ -59,7 +59,7 @@ class NoDescriptor(val code: String, val lambda: (SeedElement) -> Boolean) :
     }
 }
 
-internal val ABCRuleProvider: RuleProvider<Area, SeedElement>  = MapRuleProvider<Area, SeedElement>().apply {
+internal val ABCRuleProvider: RuleProvider<Area, SeedElement> = MapRuleProvider<Area, SeedElement>().apply {
     addRules(C.C1, HelpGenerator.C(16, 16))
     addRules(B.B1, HelpGenerator.B(12, 12))
     addRules(B.B2, HelpGenerator.B(4, 4))

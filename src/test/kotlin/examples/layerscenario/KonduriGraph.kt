@@ -5,13 +5,14 @@ import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 
 interface KonduriArea
 
-object KonduriRegion: KonduriArea
+object KonduriRegion : KonduriArea
 
-class KonduriGeographicUnit private constructor(val code: Int): KonduriArea {
+class KonduriGeographicUnit private constructor(val code: Int) : KonduriArea {
 
     override fun toString(): String {
         return "Geo $code"
     }
+
     companion object {
         val geo1 = KonduriGeographicUnit(1)
         val geo2 = KonduriGeographicUnit(2)

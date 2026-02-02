@@ -18,6 +18,7 @@ interface RuleProvider<AREA, T> {
     fun getAllRules(): Map<AREA, RuleSet<T>>
 
     operator fun get(target: AREA, logicIdentifier: LogicIdentifier): Rule<T>?
+
     /**
      * Since a hierarchy can have more nodes than defined in the rule provider we must create a fresh instance
      * with updated elements
@@ -35,10 +36,12 @@ interface RuleProvider<AREA, T> {
         return HierarchicRuleProviderImpl(ruleProvider, hierarchy)
 
     }
+
     fun getSum(targets: Collection<AREA>, logicIdentifier: LogicIdentifier): Rule<T> {
         val rules = targets.mapNotNull { get(it, logicIdentifier) }
         return rules.sumRule()
     }
+
     context(logicIndexer: LogicIndexer<AREA, T>)
     fun buildObservers(target: AREA, vectors: Collection<ScalableVector>): Collection<RuleObserver> {
         val li = logicIndexer.getLogic(target)

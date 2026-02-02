@@ -3,7 +3,6 @@ package edu.kit.ifv.populationsynthesis.rules.covered
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.delta
-import edu.kit.ifv.populationsynthesis.rules.total
 
 /**
  * A coverage group captures a collection of rules that are associated to a specific observed attribute over
@@ -26,7 +25,8 @@ interface CoverageGroup<T> : RuleSet<T> {
     fun relativeDeltas(elements: Collection<T>): Map<Rule<T>, Double> {
         return delta(elements).mapValues { it.value / totalTarget }
     }
+
     fun relativeTargets(elements: Collection<T>): Map<Rule<T>, Double> {
-        return associateWith { it.target  }
+        return associateWith { it.target }
     }
 }

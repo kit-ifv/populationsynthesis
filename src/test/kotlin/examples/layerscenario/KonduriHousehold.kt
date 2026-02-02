@@ -9,9 +9,11 @@ class KonduriHousehold(
     constructor(identifier: Int, regionCode: Int, householdCode: Int, members: List<KonduriPerson>) : this(
         identifier, RegionHouseholdType.decode(regionCode), HouseholdType.decode(householdCode), members,
     )
+
     override fun toString() = "Kon.HH.($identifier)"
+
     companion object {
-        operator fun get(index: Int): KonduriHousehold  = all[index - 1]
+        operator fun get(index: Int): KonduriHousehold = all[index - 1]
         private var counter = 0
         fun build(rCode: Int, hCode: Int, p1Code: Int, p2Code: Int, p3Code: Int): KonduriHousehold {
             val people = mutableListOf<KonduriPerson>()
@@ -24,7 +26,7 @@ class KonduriHousehold(
             repeat(p3Code) {
                 people.add(KonduriPerson(3))
             }
-            return KonduriHousehold(++counter,rCode, hCode, people)
+            return KonduriHousehold(++counter, rCode, hCode, people)
         }
 
         val first = build(3, 1, 1, 1, 1)
@@ -45,11 +47,12 @@ class KonduriHousehold(
 class KonduriPerson(
     val personType: PersonType,
 ) {
-    constructor(code: Int): this(PersonType.decode(code))
+    constructor(code: Int) : this(PersonType.decode(code))
 }
 
 enum class PersonType(val code: Int) {
     ONE(1), TWO(2), THREE(3);
+
     companion object {
 
         fun decode(code: Int): PersonType {
@@ -60,6 +63,7 @@ enum class PersonType(val code: Int) {
 
 enum class HouseholdType(val code: Int) {
     ONE(1), TWO(2);
+
     companion object {
 
         fun decode(code: Int): HouseholdType {

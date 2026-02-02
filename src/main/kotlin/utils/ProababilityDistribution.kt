@@ -3,7 +3,7 @@ package edu.kit.ifv.populationsynthesis.utils
 import kotlin.math.ln
 
 
-interface DiscreteProbabilityDistribution<T> :  Iterable<Probability> {
+interface DiscreteProbabilityDistribution<T> : Iterable<Probability> {
     val size: Int
     fun probabilityOfType(value: T): Probability = probabilityOf(mapIndex(value))
     fun probabilityOf(index: Int): Probability
@@ -20,13 +20,15 @@ interface DiscreteProbabilityDistribution<T> :  Iterable<Probability> {
     }
 }
 
-class NumericProbDist(private val probabilities: Array<Probability>): DiscreteProbabilityDistribution<Int> {
+class NumericProbDist(private val probabilities: Array<Probability>) : DiscreteProbabilityDistribution<Int> {
 
-    constructor(doubles: Collection<Double>): this(doubles.map { it.asProbability() }.toTypedArray())
+    constructor(doubles: Collection<Double>) : this(doubles.map { it.asProbability() }.toTypedArray())
+
     override val size: Int = probabilities.size
     override fun probabilityOf(index: Int): Probability {
         return probabilities[index]
     }
+
     override fun mapIndex(value: Int): Int = value
     override fun iterator(): Iterator<Probability> {
         return probabilities.iterator()
@@ -34,7 +36,7 @@ class NumericProbDist(private val probabilities: Array<Probability>): DiscretePr
 
     companion object {
         fun build(observedValues: Collection<Number>): NumericProbDist {
-            val targets = observedValues.map{it.toDouble()}
+            val targets = observedValues.map { it.toDouble() }
             val sum = targets.sum()
 
             return NumericProbDist(targets.map { it / sum })
@@ -52,8 +54,7 @@ class ArrayProbabilityDistribution<T> internal constructor(
 ) : DiscreteProbabilityDistribution<T>, Iterable<Probability> {
 
 
-
-     override fun probabilityOfType(value: T): Probability {
+    override fun probabilityOfType(value: T): Probability {
         return probabilities[mapIndex(value)]
     }
 
@@ -64,6 +65,7 @@ class ArrayProbabilityDistribution<T> internal constructor(
     override fun probabilityOf(index: Int): Probability {
         return probabilities[index]
     }
+
     override val size: Int = probabilities.size
     override fun iterator(): Iterator<Probability> {
         return probabilities.iterator()

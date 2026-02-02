@@ -1,15 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
-import examples.threelayerscenario.A
-import examples.threelayerscenario.ABCGraph
-import examples.threelayerscenario.ABCRuleProvider
-import examples.threelayerscenario.Area
-import examples.threelayerscenario.B
-import examples.threelayerscenario.C
-import examples.threelayerscenario.HelpGenerator
-import examples.threelayerscenario.SeedElement
-import org.junit.jupiter.api.Assertions.*
+import examples.threelayerscenario.*
 import kotlin.test.Test
 
 class HistoricIPUTest {

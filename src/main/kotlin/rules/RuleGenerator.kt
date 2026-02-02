@@ -5,6 +5,6 @@ package edu.kit.ifv.populationsynthesis.rules
  */
 
 fun interface RuleGenerator<T> {
-    fun generateRules() : RuleSet<T>
+    fun generateRules(): RuleSet<T>
 }
 

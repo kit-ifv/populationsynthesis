@@ -12,7 +12,8 @@ data class RuleObserverBuilder<AREA, T>(
     val ruleProvider: RuleProvider<AREA, T>,
     val logicIndexer: LogicIndexer<AREA, T>
 ) {
-    constructor(ruleProvider: RuleProvider<AREA, T>): this(ruleProvider, LogicIndexer.fromProvider(ruleProvider))
+    constructor(ruleProvider: RuleProvider<AREA, T>) : this(ruleProvider, LogicIndexer.fromProvider(ruleProvider))
+
     fun build(area: AREA, elements: Collection<T>): Collection<RuleObserver> {
 
         val indexedRules = logicIndexer.allContributions()

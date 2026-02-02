@@ -74,6 +74,7 @@ class ScalableVector internal constructor(private val vector: Collection<Double>
     override fun toString(): String {
         return "ScalableVector(scalar=$scalar) $content"
     }
+
     companion object {
         /**
          * creates a Scalable Vector for a target [element] based on the ruleset defined in [rules]

@@ -32,6 +32,7 @@ class MutableRuleSet<T> private constructor(
             add(rule)
         }
     }
+
     operator fun plus(rules: Collection<Rule<T>>): MutableRuleSet<T> {
         return MutableRuleSet(this.rules.toMutableMap()).apply {
             add(rules)
@@ -48,6 +49,7 @@ class MutableRuleSet<T> private constructor(
     }
 
     fun clear() = rules.clear()
+
     companion object {
 
         fun <T> empty(): MutableRuleSet<T> = MutableRuleSet(mutableMapOf())

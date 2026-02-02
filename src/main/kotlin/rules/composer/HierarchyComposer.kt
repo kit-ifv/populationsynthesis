@@ -8,7 +8,6 @@ import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.BitsetMap
 import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.MutableBitsetMap
 import edu.kit.ifv.populationsynthesis.rules.composer.bitsets.toBitsetMap
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
-import edu.kit.ifv.populationsynthesis.rules.sumRule
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 /**

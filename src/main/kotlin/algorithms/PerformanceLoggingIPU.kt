@@ -8,7 +8,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.writeText
 import kotlin.time.measureTime
 
-data class PerformanceLoggingIPU(val original: GenericIPU, val path: Path): GenericIPU {
+data class PerformanceLoggingIPU(val original: GenericIPU, val path: Path) : GenericIPU {
     override fun run(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
@@ -16,7 +16,7 @@ data class PerformanceLoggingIPU(val original: GenericIPU, val path: Path): Gene
 
         val duration = measureTime { original.run(vectors, observers) }
         val text = "$original; ${vectors.size}; ${observers.size}; $duration\n"
-        if(path.exists()) path.appendText(text) else {
+        if (path.exists()) path.appendText(text) else {
             path.parent.createDirectories()
             path.writeText(text)
         }

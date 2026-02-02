@@ -9,8 +9,8 @@ package edu.kit.ifv.populationsynthesis.hierarchy
  * Returns the resulting frontier (nodes that were not expanded).
  */
 // TODO this is only accurate on forests, augment it to support DAGs
-fun <T> HierarchicElement<T>.expandIf(node: T, expansionPredicate: HierarchicElement<T>.(T) -> Boolean) :Set<T> {
-    val activeNodes : ArrayDeque<T> = ArrayDeque()
+fun <T> HierarchicElement<T>.expandIf(node: T, expansionPredicate: HierarchicElement<T>.(T) -> Boolean): Set<T> {
+    val activeNodes: ArrayDeque<T> = ArrayDeque()
     activeNodes.add(node)
     val resultSet = mutableSetOf<T>()
     while (!activeNodes.isEmpty()) {
@@ -29,8 +29,8 @@ fun <T> HierarchicElement<T>.levels(node: T): Sequence<Collection<T>> {
 
     return sequence {
         var current: Set<T> = setOf(node)
-        while(current.isNotEmpty()) {
-            val next = current.flatMap { getImmediateChildren(it)}.toSet()
+        while (current.isNotEmpty()) {
+            val next = current.flatMap { getImmediateChildren(it) }.toSet()
             yield(current)
             current = next
 

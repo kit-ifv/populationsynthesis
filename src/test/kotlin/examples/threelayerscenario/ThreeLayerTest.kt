@@ -44,7 +44,7 @@ class ThreeLayerTest {
         val graph = HierarchyGraphFactory.asForest {
             addRelationship(A.A1, B.B1)
         }
-        val duplicatedRuleProvider =  MapRuleProvider<Area, SeedElement>().apply {
+        val duplicatedRuleProvider = MapRuleProvider<Area, SeedElement>().apply {
             addRules(B.B1, HelpGenerator.B(2, 2))
             addRules(B.B1, HelpGenerator.A(2, 2)) // Oh no, I mistyped. Or maybe intent. Should not be added with A.A1
             addRules(A.A1, HelpGenerator.A(5, 5))
@@ -54,6 +54,7 @@ class ThreeLayerTest {
         assertEquals(rules.size, 4)
         assertNotEquals(rules.getValue("YesDescriptor(A)").target.toInt(), 7)
     }
+
     @Test
     fun example() {
         val hierarchicProvider = ABCRuleProvider.withHierarchy(ABCGraph)
@@ -67,6 +68,7 @@ class ThreeLayerTest {
         }
 
     }
+
     @Test
     fun levels() {
         val output = ABCGraph.levels(C.C1).toList()

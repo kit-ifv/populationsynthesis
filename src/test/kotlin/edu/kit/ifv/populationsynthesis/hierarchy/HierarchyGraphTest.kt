@@ -4,7 +4,8 @@ import examples.threelayerscenario.A
 import examples.threelayerscenario.Area
 import examples.threelayerscenario.B
 import examples.threelayerscenario.C
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class HierarchyGraphTest {
@@ -21,6 +22,7 @@ class HierarchyGraphTest {
         assertEquals(output.size, 1)
         assertTrue(C.C1 in output)
     }
+
     @Test
     fun guardIsAvoidedWhenNotNeeded() {
         val graph = HierarchyGraphFactory.asDAG<Area>(guard = C.C1) {

@@ -44,8 +44,10 @@ class LogicIndexer<AREA, T> private constructor(
 
     val areas = logicMap.keys
     fun getIndex(rule: Rule<T>): Int {
-        return logicIndices[rule.identifier]?: throw IllegalStateException("Rule ${rule.identifier} not found in this logic indexer logics=$logics")
+        return logicIndices[rule.identifier]
+            ?: throw IllegalStateException("Rule ${rule.identifier} not found in this logic indexer logics=$logics")
     }
+
     fun filter(predicate: (AREA) -> Boolean): LogicIndexer<AREA, T> {
         val newMap = logicMap.filterKeys { predicate(it) }
         val keptLogics = newMap.flatMap { it.value.map { it.logicIdentifier } }.toSet()

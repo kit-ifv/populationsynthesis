@@ -1,11 +1,15 @@
 package edu.kit.ifv.populationsynthesis.hierarchy
 
 import org.jgrapht.Graphs
-import kotlin.collections.iterator
 
 class DAGHierarchyGraph<T>(private val guard: T) : MutableHierarchyGraph<T>() {
     override fun addRelationship(child: T, parent: T) {
-        if (childGraph.containsVertex(child) && childGraph.containsVertex(parent) && reachable(childGraph, child, parent)) {
+        if (childGraph.containsVertex(child) && childGraph.containsVertex(parent) && reachable(
+                childGraph,
+                child,
+                parent
+            )
+        ) {
             throw IllegalArgumentException("Introducing $child->$parent would introduce a cycle in the hierarchy graph.")// or throw IllegalArgumentException("Adding $parent -> $child would create a cycle")
         }
 
@@ -25,11 +29,11 @@ class DAGHierarchyGraph<T>(private val guard: T) : MutableHierarchyGraph<T>() {
             }
         }
         // If a node is covered by multiple parents then all those parents must be collected under the guard node as a catch all mechanism
-        val badParentNodes = owners.values.filter{it.size > 1}.flatten().toSet()
+        val badParentNodes = owners.values.filter { it.size > 1 }.flatten().toSet()
 
         val newTargets = targets.toMutableMap()
         val allDuplicateNodes = badParentNodes.mapNotNull { targets[it] }.flatten().toSet()
-        if(allDuplicateNodes.isNotEmpty()) {
+        if (allDuplicateNodes.isNotEmpty()) {
             newTargets[guard] = allDuplicateNodes
             badParentNodes.forEach {
                 newTargets.remove(it)

@@ -1,12 +1,7 @@
 package examples
 
-import edu.kit.ifv.populationsynthesis.rules.ExhaustiveRuleGenerator
-import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.RuleSet
+import edu.kit.ifv.populationsynthesis.rules.*
 import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
-import edu.kit.ifv.populationsynthesis.rules.delta
-import edu.kit.ifv.populationsynthesis.rules.relativeTotals
-import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,13 +21,14 @@ class ExampleIPURun {
         }
     }
 
-    private class HH(val members: List<Person>)  {
+    private class HH(val members: List<Person>) {
         companion object {
             fun random(size: Int, random: Random = Random(1)): HH {
                 return HH((0 until size).map { Person.random(random) })
             }
         }
     }
+
     private enum class EqualityOperator(val symbol: String, val operation: (Int, Int) -> Boolean) {
         EQUALS("==", { a, b ->
             a == b
@@ -51,13 +47,8 @@ class ExampleIPURun {
         }
 
 
-
         override fun generateDescription(): String = toString()
     }
-
-
-    
-    
 
 
     private class TestSizeRules private constructor(private val targets: List<IndexedValue<Double>>) :
@@ -81,7 +72,10 @@ class ExampleIPURun {
             val equalityRules = equalityTargets.map { (index, target) ->
                 HouseholdSizeContribution(index, EqualityOperator.EQUALS).makeRule(target)
 
-            } + HouseholdSizeContribution(targets.last().index, EqualityOperator.GREATER_EQUALS).makeRule(targets.last().value)
+            } + HouseholdSizeContribution(
+                targets.last().index,
+                EqualityOperator.GREATER_EQUALS
+            ).makeRule(targets.last().value)
 
             return equalityRules.toRuleSet()
 

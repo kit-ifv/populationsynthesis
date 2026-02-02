@@ -6,7 +6,7 @@ package edu.kit.ifv.populationsynthesis.rules.contribution
  * the [generateDescription] function. Developers should ensure that the returned String will be the same when the
  * evaluation function would evaluate identical.
  */
-abstract class BooleanContributionDefinition<T>: ContributionDefinition<T> {
+abstract class BooleanContributionDefinition<T> : ContributionDefinition<T> {
     /**
      * Important: The string returned by this method is used for equality checks for the [NamedContribution].
      * Please make sure that objects return the same description if and only if their evaluation behaviour is
@@ -15,7 +15,7 @@ abstract class BooleanContributionDefinition<T>: ContributionDefinition<T> {
     abstract fun generateDescription(): String
     abstract fun evaluation(element: T): Boolean
 
-    final override fun createNamedContribution() : NamedContribution<T> {
+    final override fun createNamedContribution(): NamedContribution<T> {
         return NamedContribution.Companion.boolean(generateDescription(), logic = ::evaluation)
     }
 }

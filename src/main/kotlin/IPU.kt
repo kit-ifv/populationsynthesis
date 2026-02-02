@@ -3,7 +3,6 @@ package edu.kit.ifv.populationsynthesis
 import edu.kit.ifv.populationsynthesis.algorithms.IPUOutput
 import edu.kit.ifv.populationsynthesis.algorithms.IntegerIPUOutput
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
-import edu.kit.ifv.populationsynthesis.utils.EquivalenceClass
 import kotlin.random.Random
 
 
@@ -24,6 +23,7 @@ open class GenericCollector<X, H>(
         }
     }
 }
+
 /**
  * Select an exact amount from a list, if the list is not sufficiently long enough, it will be artificially filled by
  * repeating the elements. each list or list repetition element is shuffled. In order to return a random list of exactly

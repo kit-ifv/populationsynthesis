@@ -1,6 +1,5 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
-import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.RuleComposer
 
