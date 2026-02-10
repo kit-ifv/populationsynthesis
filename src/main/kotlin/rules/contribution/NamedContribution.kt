@@ -36,15 +36,15 @@ class NamedContribution<in T> private constructor(
     }
 
     companion object {
-        internal inline fun <T> boolean(
+        fun <T> boolean(
             identifier: String,
-            crossinline logic: (T) -> Boolean
+            logic: (T) -> Boolean
         ) =
             NamedContribution<T>(LogicIdentifier(identifier)) {
                 if (logic(it)) 1.0 else 0.0
             }
 
-        internal inline fun <T> numeric(identifier: String, crossinline logic: (T) -> Number) =
+        fun <T> numeric(identifier: String, logic: (T) -> Number) =
             NamedContribution<T>(LogicIdentifier(identifier)) {
                 logic(it).toDouble()
             }

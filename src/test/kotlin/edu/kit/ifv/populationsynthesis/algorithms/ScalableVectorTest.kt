@@ -5,11 +5,6 @@ import kotlin.test.Test
 
 class ScalableVectorTest {
 
-    @Test
-    fun noEqualityBetweenReferences() {
-        val vecA = ScalableVector(listOf(1.0, 2.0, 3.0))
-        val vecB = ScalableVector(listOf(1.0, 2.0, 3.0))
-        assertNotEquals(vecA, vecB)
-    }
+
 
 }

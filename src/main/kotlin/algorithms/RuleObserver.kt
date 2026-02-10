@@ -19,6 +19,35 @@ abstract class RuleObserver(
     private val observedIndex: Int,
     val vectors: List<ScalableVector>,
 ) {
+
+    init {
+
+        require(vectors.all { it.size > observedIndex }) {
+            val badVectors = vectors.filter { it.size <= observedIndex }
+            """Behold! An observer hath been wrought in error: the given vector is too short to suffer the demanded index.
+
+            At least one ScalableVector does not contain an entry at `observedIndex`.
+            Since this observer reads from that index for all vectors, every vector
+            must have a length strictly greater than `observedIndex`.
+            The observed index is $observedIndex. 
+            There are the (${badVectors.size}) failing vectors out of (${vectors.size})
+            firstFail = ${badVectors.first()}
+            """.trimIndent()
+        }
+        require(sanityCheck()) {
+            val badVectors = vectors.filter { it.appliesToRule(observedIndex) }
+            """Hearken! This observer is vain, for some among the vectors bears a zero mark at the ordained index.
+                
+            Some vectors have a zero value at `observedIndex`. This means the observer
+            would never observe or influence any household, making it ineffective
+            and likely indicative of a configuration or rule-definition error.
+            The observed index is $observedIndex. 
+            There are the (${badVectors.size}) failing vectors out of (${vectors.size})
+            firstFail = ${badVectors.first()}
+            """.trimIndent()
+
+        }
+    }
     /**
      * Sums the current values for the given [observedIndex] across all the vectors.
      *
@@ -69,6 +98,8 @@ abstract class RuleObserver(
     abstract val expected: Double
     val actual: Double get() = sum()
 
+
+    open val delta: Double get() = expected - actual
     /**
      * Optimizes the vectors by scaling all of them proportionally, ensuring that the sum matches the expected value.
      */
@@ -100,4 +131,5 @@ abstract class RuleObserver(
         }
     }
 }
+
 

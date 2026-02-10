@@ -21,9 +21,11 @@ import edu.kit.ifv.populationsynthesis.rules.contribution.Contribution
  * @param scalar The scaling factor applied to the vector, representing how many instances of the household are desired (default is 1.0).
  */
 class ScalableVector internal constructor(private val vector: Collection<Double>, var scalar: Double = 1.0) {
+
+    internal constructor(vararg numbers: Number) : this(numbers.map { it.toDouble() }, 1.0)
     private val array: DoubleArray = vector.toDoubleArray()
     val signature: Signature = array.withIndex().filter { it.value != 0.0 }.associate { (i, value) -> i to value }
-
+    val size : Int get() = array.size
     /**
      * A read-only property that provides a list view of the [array] for external access.
      * The underlying array is unfortunately mutable, but the list provides an immutable view to prevent external modification.

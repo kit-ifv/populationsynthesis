@@ -41,9 +41,19 @@ class MapRuleProvider<AREA, T>(
         ruleMap[target] = rules
     }
 
-    fun addRules(area: AREA, ruleGenerator: RuleGenerator<T>) {
+    fun addRules(area: AREA, ruleGenerator: RuleGenerator<in T>) {
         addRules(area, ruleGenerator.generateRules())
 
+    }
+
+    fun loadFromOtherRuleProvider(
+        ruleProvider: RuleProvider<AREA, in T>,
+        predicate: (Map.Entry<AREA, RuleSet<in T>>) -> Boolean = { true },
+    ) {
+        val rules = ruleProvider.getAllRules().filter(predicate)
+        rules.forEach { area, rules ->
+            addRules(area, rules)
+        }
     }
 
     fun addRule(area: AREA, rule: Rule<T>) {

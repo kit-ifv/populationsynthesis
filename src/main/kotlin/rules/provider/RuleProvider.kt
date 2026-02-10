@@ -20,8 +20,10 @@ interface RuleProvider<AREA, T> {
     operator fun get(target: AREA, logicIdentifier: LogicIdentifier): Rule<T>?
 
     /**
-     * Since a hierarchy can have more nodes than defined in the rule provider we must create a fresh instance
-     * with updated elements
+     * Link this rule provider with a [HierarchicElement] to generate a [HierarchicRuleProvider].
+     * Will construct a fresh rule provider from scratch and copy rules from this into the new provider
+     * Nodes from the hierarchy that are not present in this rule provider will be added to the new rule provider
+     * and have an empty rule set defined for them.
      */
     fun withHierarchy(hierarchy: HierarchicElement<AREA>): HierarchicRuleProvider<AREA, T> {
         val ruleProvider = MapRuleProvider<AREA, T>()

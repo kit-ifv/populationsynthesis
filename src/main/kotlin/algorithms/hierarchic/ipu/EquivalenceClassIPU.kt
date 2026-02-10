@@ -25,19 +25,8 @@ class EquivalenceClassIPU<AREA, T>(
     }
 
     override fun toElementRepresentations(vectors: ScalableVector): List<T> {
-        return TODO()
+        return equivalenceClasses.getValue(vectors)
     }
 
-//    override fun generateScalableVectors(area: AREA): Pair<Collection<ScalableVector>, Collection<RuleObserver>> {
-//        val parents = hierarchy.getAllAncestors(area)
-//
-//        val ruleObserverBuilder = RuleObserverBuilder(ruleProvider)
-//        val indexedRules = ruleObserverBuilder.getLogics(parents + area)
-//
-//        val equivalenceClasses = seedHouseholds.associateWith { indexedRules.toScalableVector(it) }.formEquivalenceClass()
-//        val observers = ruleObserverBuilder.buildFromVectors(area, equivalenceClasses.representatives)
-//        return equivalenceClasses.representatives to observers
-//
-//    }
 }
 
