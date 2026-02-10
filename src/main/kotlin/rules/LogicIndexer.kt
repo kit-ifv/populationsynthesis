@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
 /**
@@ -35,8 +35,8 @@ class LogicIndexer<AREA, T> private constructor(
     }
 
     private val logicIndices = logics.withIndex().associate { it.value to it.index }
-    private val contributionFunctions = logicMap.values.flatMap { it.map { it.logic } }
-    fun allContributions() = contributionFunctions
+    private val measurementFunctions = logicMap.values.flatMap { it.map { it.logic } }
+    fun allMeasurements() = measurementFunctions
 
 
     val areas = logicMap.keys

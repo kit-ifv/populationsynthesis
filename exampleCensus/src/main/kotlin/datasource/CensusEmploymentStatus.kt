@@ -1,8 +1,7 @@
 package edu.kit.ifv.populationsynthesis.datasource
 
-import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 

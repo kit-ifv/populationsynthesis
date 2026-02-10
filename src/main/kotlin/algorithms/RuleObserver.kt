@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
 /**
  * The RuleObserver class is responsible for monitoring a set of households encoded as vectors (represented by [ScalableVector])

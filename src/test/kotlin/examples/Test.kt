@@ -4,7 +4,7 @@ import examples.households.AgeRules
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 
-class ContributionTest {
+class MeasurementTest {
     @Test
     fun test() {
         val ruleSpawner = AgeRules(10, 18, 66)

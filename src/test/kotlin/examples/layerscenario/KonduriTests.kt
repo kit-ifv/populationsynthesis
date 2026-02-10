@@ -18,8 +18,8 @@ private typealias IPUSpawner = (KonduriRuleProvider, GenericIPU) -> HistoricIPU<
 
 class KonduriTests {
 
-    private val contributions =
-        RTypeSet.generateContributions() + HTypeSet.generateContributions() + PTypeSet.generateContributions()
+    private val measurements =
+        RTypeSet.generateMeasurements() + HTypeSet.generateMeasurements() + PTypeSet.generateMeasurements()
 
     companion object {
         @JvmStatic
@@ -53,7 +53,7 @@ class KonduriTests {
 
     private fun test(konduriHousehold: KonduriHousehold, vararg expected: Int) {
         assertContentEquals(
-            ScalableVector.createFrom(konduriHousehold, contributions).content,
+            ScalableVector.createFrom(konduriHousehold, measurements).content,
             expected.map { it.toDouble() })
     }
 

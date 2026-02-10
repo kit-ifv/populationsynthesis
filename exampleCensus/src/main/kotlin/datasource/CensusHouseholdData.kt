@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import edu.kit.ifv.populationsynthesis.datasource.input.ARSKey
 import edu.kit.ifv.populationsynthesis.datasource.input.standardParse
-import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
-import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDefinition
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.covered.ExplicitTargetCoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.provider.MutableExhaustiveRuleProvider
@@ -86,7 +86,7 @@ data class CensusHouseholdData(
 }
 
 
-object HouseholdRuleFactory : ContributionDefinition<CensusHousehold> {
+object HouseholdRuleFactory : MeasurementDefinition<CensusHousehold> {
 
     enum class EqualityOp(val symbol: String) {
         EQUALS("=="),
@@ -101,13 +101,13 @@ object HouseholdRuleFactory : ContributionDefinition<CensusHousehold> {
 
     }
 
-    override fun createNamedContribution(): NamedContribution<CensusHousehold> {
+    override fun createNamedMeasurement(): NamedMeasurement<CensusHousehold> {
         TODO("Not yet implemented")
     }
 }
 
 class HouseholdSizeDefinition(val targetSize: Int, val equalityOp: EqualityOp) :
-    BooleanContributionDefinition<CensusHousehold>() {
+    BooleanMeasurementDefinition<CensusHousehold>() {
     override fun generateDescription(): String {
         return "Household $targetSize $equalityOp"
     }

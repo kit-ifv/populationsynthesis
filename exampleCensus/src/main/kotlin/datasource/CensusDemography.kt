@@ -3,13 +3,11 @@ package edu.kit.ifv.populationsynthesis.datasource
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import edu.kit.ifv.populationsynthesis.datasource.input.ARSKey
-import edu.kit.ifv.populationsynthesis.datasource.input.standardParse
-import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.covered.ExplicitTargetCoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
-import java.io.InputStream
 
 /**
  * This is
@@ -102,14 +100,14 @@ data class CensusDemography(
 
 }
 object AgeRuleFactory {
-    fun createLogic(acceptedInterval: IntRange): NamedContribution<CensusHousehold> {
-        return NamedContribution.numeric("Age Rule [${acceptedInterval.first}..${acceptedInterval.last}]") { household ->
+    fun createLogic(acceptedInterval: IntRange): NamedMeasurement<CensusHousehold> {
+        return NamedMeasurement.numeric("Age Rule [${acceptedInterval.first}..${acceptedInterval.last}]") { household ->
             household.members.count { it.age in acceptedInterval }
         }
     }
 }
 
-class AgeDefinition(val range: IntRange): BooleanContributionDefinition<CensusPerson>() {
+class AgeDefinition(val range: IntRange): BooleanMeasurementDefinition<CensusPerson>() {
     override fun generateDescription(): String {
         return "Age in [${range.first}..${range.last}]"
     }

@@ -1,4 +1,4 @@
-package edu.kit.ifv.populationsynthesis.rules.contribution
+package edu.kit.ifv.populationsynthesis.rules.measurement
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
 
@@ -12,14 +12,14 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
  * independently spawned from different implementors.
  */
 
-class NamedContribution<in T> private constructor(
+class NamedMeasurement<in T> private constructor(
     val identifier: LogicIdentifier,
-    val logic: Contribution<T>,
-) : Contribution<T> by logic {
+    val logic: Measurement<T>,
+) : Measurement<T> by logic {
 
 
     override fun equals(other: Any?): Boolean {
-        if (other !is NamedContribution<*>) return false
+        if (other !is NamedMeasurement<*>) return false
         return identifier == other.identifier
     }
 
@@ -40,12 +40,12 @@ class NamedContribution<in T> private constructor(
             identifier: String,
             logic: (T) -> Boolean
         ) =
-            NamedContribution<T>(LogicIdentifier(identifier)) {
+            NamedMeasurement<T>(LogicIdentifier(identifier)) {
                 if (logic(it)) 1.0 else 0.0
             }
 
         fun <T> numeric(identifier: String, logic: (T) -> Number) =
-            NamedContribution<T>(LogicIdentifier(identifier)) {
+            NamedMeasurement<T>(LogicIdentifier(identifier)) {
                 logic(it).toDouble()
             }
 

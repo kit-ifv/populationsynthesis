@@ -16,7 +16,7 @@ data class RuleObserverBuilder<AREA, T>(
 
     fun build(area: AREA, elements: Collection<T>): Collection<RuleObserver> {
 
-        val indexedRules = logicIndexer.allContributions()
+        val indexedRules = logicIndexer.allMeasurements()
         val equivalenceClasses = elements.associateWith { indexedRules.toScalableVector(it) }.formEquivalenceClass()
 
         return build(area, equivalenceClasses)

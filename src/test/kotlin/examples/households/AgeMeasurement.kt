@@ -1,10 +1,10 @@
 package examples.households
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
 
-data class AgeContribution(
+data class AgeMeasurement(
     val range: IntRange,
-) : BooleanContributionDefinition<TestPerson>() {
+) : BooleanMeasurementDefinition<TestPerson>() {
     override fun evaluation(element: TestPerson): Boolean {
         return element.age in range
     }

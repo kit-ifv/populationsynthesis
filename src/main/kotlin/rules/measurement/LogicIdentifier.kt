@@ -1,4 +1,4 @@
-package edu.kit.ifv.populationsynthesis.rules.contribution
+package edu.kit.ifv.populationsynthesis.rules.measurement
 
 /**
  * This string wrapper represents a random name that has been given to a contribution function. The constructor also

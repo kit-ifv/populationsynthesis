@@ -2,7 +2,7 @@ package edu.kit.ifv.populationsynthesis.algorithms
 
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.contribution.Contribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
 /**
  * A [ScalableVector] represents a vectorized encoding of household attributes, where each element of the vector
@@ -85,12 +85,12 @@ class ScalableVector internal constructor(private val vector: Collection<Double>
             return createFromLogics(element, rules.map { it.logic })
         }
 
-        fun <T> createFromLogics(element: T, logics: Collection<Contribution<T>>): ScalableVector {
-            return ScalableVector(logics.map { it.amount(element) })
+        fun <T> createFromLogics(element: T, logics: Collection<Measurement<T>>): ScalableVector {
+            return ScalableVector(logics.map { it.measure(element) })
         }
 
-        fun <T> createFrom(element: T, contributions: Collection<Contribution<T>>): ScalableVector {
-            return ScalableVector(contributions.map { it.amount(element) })
+        fun <T> createFrom(element: T, measurements: Collection<Measurement<T>>): ScalableVector {
+            return ScalableVector(measurements.map { it.measure(element) })
         }
     }
 }

@@ -1,13 +1,13 @@
 package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
-import edu.kit.ifv.populationsynthesis.rules.contribution.Contribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
 fun <T> Collection<Rule<T>>.toScalableVectorOld(element: T): ScalableVector {
     return map { it.logic }.toScalableVector(element)
 }
 
-fun <T> Collection<Contribution<T>>.toScalableVector(element: T): ScalableVector {
+fun <T> Collection<Measurement<T>>.toScalableVector(element: T): ScalableVector {
     return ScalableVector.createFromLogics(element, this)
 }
 

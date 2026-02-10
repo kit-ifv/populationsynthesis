@@ -3,9 +3,9 @@ package edu.kit.ifv.populationsynthesis.rules.composer
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDefinition
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
@@ -20,9 +20,9 @@ import kotlin.test.assertTrue
 class HierarchyComposerTest {
     private class Target
 
-    private class RuleDefinition(val id: String) : ContributionDefinition<Target> {
-        override fun createNamedContribution(): NamedContribution<Target> {
-            return NamedContribution.boolean(id) {
+    private class RuleDefinition(val id: String) : MeasurementDefinition<Target> {
+        override fun createNamedMeasurement(): NamedMeasurement<Target> {
+            return NamedMeasurement.boolean(id) {
                 false
             }
         }
@@ -43,11 +43,11 @@ class HierarchyComposerTest {
         val definition3 = RuleDefinition("3")
         val logicProvider: RuleProvider<Area, Target> = object : RuleProvider<Area, Target> {
 
-            private val A1Rules = listOf(definition1.createNamedContribution().withTarget(1.0))
-            private val A2Rules = listOf(definition2.createNamedContribution().withTarget(1.0))
+            private val A1Rules = listOf(definition1.createNamedMeasurement().withTarget(1.0))
+            private val A2Rules = listOf(definition2.createNamedMeasurement().withTarget(1.0))
             private val B1Rules = listOf(
-                definition1.createNamedContribution().withTarget(2.0),
-                definition3.createNamedContribution().withTarget(2.0)
+                definition1.createNamedMeasurement().withTarget(2.0),
+                definition3.createNamedMeasurement().withTarget(2.0)
             )
 
             override fun getRules(target: Area): RuleSet<Target> {

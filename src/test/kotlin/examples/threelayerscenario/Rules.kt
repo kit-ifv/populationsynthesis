@@ -2,8 +2,8 @@ package examples.threelayerscenario
 
 import edu.kit.ifv.populationsynthesis.rules.ExhaustiveRuleGenerator
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
-import edu.kit.ifv.populationsynthesis.rules.contribution.ContributionDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
@@ -12,7 +12,7 @@ class HelpGenerator(code: String, val yes: Int, val no: Int, val elementor: (See
     ExhaustiveRuleGenerator<SeedElement> {
     val contributors = descriptors(code, elementor)
     override fun generateRules(): RuleSet<SeedElement> {
-        return contributors.map { it.createNamedContribution() }.zip(listOf(yes, no)).map { (desc, target) ->
+        return contributors.map { it.createNamedMeasurement() }.zip(listOf(yes, no)).map { (desc, target) ->
             desc.withTarget(target.toDouble())
         }.toRuleSet()
     }
@@ -32,12 +32,12 @@ class HelpGenerator(code: String, val yes: Int, val no: Int, val elementor: (See
     }
 }
 
-fun descriptors(code: String, lambda: (SeedElement) -> Boolean): List<ContributionDefinition<SeedElement>> {
+fun descriptors(code: String, lambda: (SeedElement) -> Boolean): List<MeasurementDefinition<SeedElement>> {
     return listOf(YesDescriptor(code, lambda), NoDescriptor(code, lambda))
 }
 
 class YesDescriptor(val code: String, val lambda: (SeedElement) -> Boolean) :
-    BooleanContributionDefinition<SeedElement>() {
+    BooleanMeasurementDefinition<SeedElement>() {
     override fun generateDescription(): String {
         return "YesDescriptor($code)"
     }
@@ -48,7 +48,7 @@ class YesDescriptor(val code: String, val lambda: (SeedElement) -> Boolean) :
 }
 
 class NoDescriptor(val code: String, val lambda: (SeedElement) -> Boolean) :
-    BooleanContributionDefinition<SeedElement>() {
+    BooleanMeasurementDefinition<SeedElement>() {
     override fun generateDescription(): String {
         return "NoDescriptor($code)"
 

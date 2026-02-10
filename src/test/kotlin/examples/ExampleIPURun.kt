@@ -1,7 +1,7 @@
 package examples
 
 import edu.kit.ifv.populationsynthesis.rules.*
-import edu.kit.ifv.populationsynthesis.rules.contribution.BooleanContributionDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -38,10 +38,10 @@ class ExampleIPURun {
         })
     }
 
-    private data class HouseholdSizeContribution(
+    private data class HouseholdSizeMeasurement(
         val targetSize: Int,
         val equalityOp: EqualityOperator,
-    ) : BooleanContributionDefinition<HH>() {
+    ) : BooleanMeasurementDefinition<HH>() {
         override fun evaluation(element: HH): Boolean {
             return equalityOp.operation(element.members.size, targetSize)
         }
@@ -70,9 +70,9 @@ class ExampleIPURun {
         override fun generateRules(): RuleSet<HH> {
             val equalityTargets = targets.dropLast(1)
             val equalityRules = equalityTargets.map { (index, target) ->
-                HouseholdSizeContribution(index, EqualityOperator.EQUALS).makeRule(target)
+                HouseholdSizeMeasurement(index, EqualityOperator.EQUALS).makeRule(target)
 
-            } + HouseholdSizeContribution(
+            } + HouseholdSizeMeasurement(
                 targets.last().index,
                 EqualityOperator.GREATER_EQUALS
             ).makeRule(targets.last().value)

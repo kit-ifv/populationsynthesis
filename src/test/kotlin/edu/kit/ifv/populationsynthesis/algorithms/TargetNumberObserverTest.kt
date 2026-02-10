@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test

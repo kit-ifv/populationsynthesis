@@ -1,16 +1,16 @@
 package edu.kit.ifv.populationsynthesis.rules
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 
-class Rule<in T>(val target: Double, val logic: NamedContribution<T>) {
+class Rule<in T>(val target: Double, val logic: NamedMeasurement<T>) {
 
     val identifier: LogicIdentifier = logic.identifier
 
-    fun contributionOf(element: T): Double = logic.amount(element)
-    fun total(elements: Collection<T>): Double = elements.sumOf { contributionOf(it) }
+    fun measure(element: T): Double = logic.measure(element)
+    fun total(elements: Collection<T>): Double = elements.sumOf { measure(it) }
 
-    fun appliesTo(element: T): Boolean = contributionOf(element) != 0.0
+    fun appliesTo(element: T): Boolean = measure(element) != 0.0
 
     fun delta(output: Collection<T>): Double = target - total(output)
 

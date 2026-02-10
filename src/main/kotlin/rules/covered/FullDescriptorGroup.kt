@@ -1,9 +1,9 @@
 package edu.kit.ifv.populationsynthesis.rules.covered
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
-class FullDescriptorGroup<T>(val descriptors: List<NamedContribution<T>>) : List<NamedContribution<T>> by descriptors {
+class FullDescriptorGroup<T>(val descriptors: List<NamedMeasurement<T>>) : List<NamedMeasurement<T>> by descriptors {
 
     fun loadTargets(targets: Collection<Double>): FullCoverageGroup<T> {
         require(targets.size == descriptors.size) { "Mismatch descriptor size ${descriptors.size}, targets ${targets.size}" }

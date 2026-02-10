@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules
 
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
 class MutableRuleSet<T> private constructor(
     private val rules: MutableMap<LogicIdentifier, Rule<T>>

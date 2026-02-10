@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.statistics
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicalRuleProviderLegacy
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import kotlin.math.abs

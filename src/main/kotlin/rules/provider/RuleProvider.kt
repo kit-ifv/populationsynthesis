@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.sumRule
 
 /**

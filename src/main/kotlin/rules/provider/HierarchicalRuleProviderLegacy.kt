@@ -2,7 +2,7 @@ package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.sumRule
 import edu.kit.ifv.populationsynthesis.synthesis.HandleRuleConflicts
 import edu.kit.ifv.populationsynthesis.synthesis.UseLowestCoveredLeaf
@@ -26,7 +26,7 @@ interface HierarchicalRuleProviderLegacy<AREA, H> : RuleProvider<AREA, H> {
         return rules + (target to getRules(target))
     }
 
-    fun getAllRuleLogics(): List<NamedContribution<H>>
+    fun getAllRuleLogics(): List<NamedMeasurement<H>>
     operator fun contains(area: AREA): Boolean
 
     /**

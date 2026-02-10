@@ -5,7 +5,7 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyComposer
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
 
 class HierarchicRuleProviderImpl<AREA, T>(

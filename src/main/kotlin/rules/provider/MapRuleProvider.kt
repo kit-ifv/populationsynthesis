@@ -4,7 +4,7 @@ import edu.kit.ifv.populationsynthesis.rules.MutableRuleSet
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleGenerator
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
 class MapRuleProvider<AREA, T>(
     private val ruleMap: MutableMap<AREA, MutableRuleSet<T>> = mutableMapOf(),

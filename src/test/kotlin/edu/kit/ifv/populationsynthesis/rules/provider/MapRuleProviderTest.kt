@@ -1,7 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
-import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.contribution.NamedContribution
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import org.junit.jupiter.api.Assertions.*
 import kotlin.test.Test
 
@@ -11,10 +10,10 @@ class MapRuleProviderTest {
     private data class Reg(val id: Boolean) {}
     private val R = Reg(true)
 
-    private val ARule = NamedContribution.numeric<A>("This is A") {
+    private val ARule = NamedMeasurement.numeric<A>("This is A") {
         1.0
     }.withTarget(10.0)
-    private val BRule = NamedContribution.boolean<B>("This is B") {
+    private val BRule = NamedMeasurement.boolean<B>("This is B") {
         true
     }.withTarget(10.0)
     @Test

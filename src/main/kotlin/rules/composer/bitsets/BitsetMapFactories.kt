@@ -2,7 +2,7 @@ package edu.kit.ifv.populationsynthesis.rules.composer.bitsets
 
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.contribution.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import java.util.*
 
