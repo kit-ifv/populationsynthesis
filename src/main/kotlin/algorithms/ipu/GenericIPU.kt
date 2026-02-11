@@ -54,7 +54,15 @@ fun interface GenericIPU {
         ipuCalculationCallback: (List<RuleObserver>) -> Unit = {},
     ): List<IPUOutput<Signature>> {
         return internalGroupedCalculation(elements, rules, ipuCalculationCallback) {
-            it.keys.map { IPUOutput(it.signature, it.scalar) }
+            val expectedAmounts = it.keys.sumOf { it.scalar }
+            val collectedAmounts = it.values.sumOf { it.size }
+            val plannedDelta = expectedAmounts / collectedAmounts
+            val shifts = it.entries.associate { (k, v) ->
+                k to Pair(k.scalar / expectedAmounts, (v.size.toDouble() / collectedAmounts))
+            }
+            it.keys.map {
+                IPUOutput(it.signature, it.scalar)
+            }
         }
     }
 
@@ -66,11 +74,21 @@ fun interface GenericIPU {
     ): X {
         val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
         val inverseMap = vectorMapping.invertMap()
-        val uniqueVectors = inverseMap.keys
+        val uniqueVectors = inverseMap.toVectors()
+
 
         val errors = calculateDirect(uniqueVectors, rules)
         ipuCalculationCallback(errors)
         return resultConverter(inverseMap)
+    }
+
+    private fun <I> Map<ScalableVector, List<I>>.toVectors() : List<ScalableVector> {
+        return entries.map { (scalableVector, associatedElements) ->
+            scalableVector.apply {
+//                scalar = associatedElements.size.toDouble()
+            }
+
+        }
     }
 
     fun withLogging(path: Path) = PerformanceLoggingIPU(this, path)

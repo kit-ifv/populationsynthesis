@@ -24,7 +24,7 @@ fun main() {
 
     val newIpu = HierarchicDistribution(hierarchicRuleProvider, population.households,
 //        HierarchicDistributionConfig(ipu = TabooListIPU(blockAmount = 5, iterations =  1000)
-        HierarchicDistributionConfig(ipu = SparkNNLS()
+        HierarchicDistributionConfig(ipu = GenericIPU.legacy
 
         )
     )
