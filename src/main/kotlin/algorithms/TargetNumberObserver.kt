@@ -4,8 +4,8 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import kotlin.math.abs
 import kotlin.math.max
 
-class TargetNumberObserver(
-    identifier: LogicIdentifier,
+class TargetNumberObserver constructor(
+    identifier: String,
     observedIndex: Int,
     vectors: List<ScalableVector>,
     override val expected: Double,

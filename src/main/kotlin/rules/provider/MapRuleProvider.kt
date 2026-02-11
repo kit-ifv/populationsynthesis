@@ -8,6 +8,7 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
 class MapRuleProvider<AREA, T>(
     private val ruleMap: MutableMap<AREA, MutableRuleSet<T>> = mutableMapOf(),
+    private val construction: () -> MutableRuleSet<T> = ::MutableRuleSet
 ) :
     RuleProvider<AREA, T> {
 
@@ -25,7 +26,7 @@ class MapRuleProvider<AREA, T>(
 
     fun addRules(area: AREA, rules: Collection<Rule<T>>) {
         val orDefault = ruleMap.getOrPut(area) {
-            MutableRuleSet()
+            construction()
         }
         orDefault.add(rules)
     }

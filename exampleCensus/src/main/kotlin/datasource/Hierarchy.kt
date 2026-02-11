@@ -4,6 +4,7 @@ import edu.kit.ifv.populationsynthesis.datasource.input.ARSKey
 import edu.kit.ifv.populationsynthesis.datasource.input.AreaHierarchy
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
+import edu.kit.ifv.populationsynthesis.rules.MutableRuleSet
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
@@ -22,6 +23,17 @@ object RuleProviderFactory {
                 it.key == ARSKey.MARNE_NORDSEE
             }
 
+        }
+    }
+
+    fun marneOnly() : RuleProvider<ARSKey, CensusHousehold> {
+        return createRuleProvider {
+            loadFromOtherRuleProvider(demographyInfo.ageProvider){
+                it.key == ARSKey.MARNE_NORDSEE
+            }
+            loadFromOtherRuleProvider(householdInfo.sizeProvider){
+                it.key == ARSKey.MARNE_NORDSEE
+            }
         }
     }
 }
@@ -48,9 +60,15 @@ object HierarchyFactory {
             addRelationship(ARSKey.VOLSEMENHUSEN, ARSKey.MARNE_NORDSEE)
         }
     }
+
+    fun marneOnly(): HierarchicElement<ARSKey> {
+        return HierarchyGraphFactory.asForest {
+            addVertex(ARSKey.MARNE_NORDSEE)
+        }
+    }
 }
-fun createRuleProvider(lambda: MapRuleProvider<ARSKey, CensusHousehold>.() -> Unit): RuleProvider<ARSKey, CensusHousehold> {
-    val ruleProvider = MapRuleProvider<ARSKey, CensusHousehold>()
+fun createRuleProvider(constructor: () -> MutableRuleSet<CensusHousehold> = ::MutableRuleSet, lambda: MapRuleProvider<ARSKey, CensusHousehold>.() -> Unit): RuleProvider<ARSKey, CensusHousehold> {
+    val ruleProvider = MapRuleProvider<ARSKey, CensusHousehold>(construction = constructor)
     ruleProvider.lambda()
     return ruleProvider
 }

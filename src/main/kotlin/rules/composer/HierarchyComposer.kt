@@ -27,7 +27,10 @@ class HierarchyComposer<AREA, T>(override val hierarchy: HierarchicElement<AREA>
 
 
     override fun compose(target: AREA, ruleProvider: RuleProvider<AREA, T>): RuleSet<T> {
-        val relevantNodes = hierarchy.getAllChildren(target) + target
+
+        val allChildren = hierarchy.getAllChildren(target)
+        if(allChildren.isEmpty()) return ruleProvider.getRules(target)
+        val relevantNodes = allChildren + target
         val logicIndexer = LogicIndexer.fromProvider(ruleProvider).filter { it in relevantNodes }
         val allLogics = logicIndexer.logics
         val bitsetMap = createCoverageBitsetMap(ruleProvider, logicIndexer)

@@ -11,6 +11,8 @@ fun <T> Collection<Measurement<T>>.toScalableVector(element: T): ScalableVector 
     return ScalableVector.createFromLogics(element, this)
 }
 
+
+
 fun <T> Collection<Rule<T>>.sumRule(): Rule<T> {
     require(isNotEmpty()) {
         "Cannot fuse empty"

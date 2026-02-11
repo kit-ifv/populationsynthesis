@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
 /**
@@ -8,16 +9,17 @@ import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
  * entire bulk of rules, which is cumbersome to operate upon. Does not contain composition strategy or anything
  * like that.
  */
-class LogicIndexer<AREA, T> private constructor(
-    val logics: Set<LogicIdentifier>,
+class LogicIndexer<AREA, T> internal constructor(
+    logicMape: Map<LogicIdentifier, Measurement<T>>,
     private val logicMap: Map<AREA, Set<IndexedLogic<T>>>,
+
 ) {
 
     companion object {
         fun <AREA, T> fromProvider(ruleProvider: RuleProvider<AREA, T>): LogicIndexer<AREA, T> {
             val map = ruleProvider.getAllRules()
-            val logics = map.values.flatMap { it.map { it.identifier } }.toSet()
-            val indexer = logics.withIndex().associate { it.value to it.index }
+            val logics = map.values.flatMap { it.map { it.identifier to it.logic } }.toMap()
+            val indexer = logics.keys.withIndex().associate { it.value to it.index }
             val newlyMap: Map<AREA, Set<IndexedLogic<T>>> = map.mapValues {
                 it.value.map { rule ->
                     IndexedLogic(
@@ -33,21 +35,23 @@ class LogicIndexer<AREA, T> private constructor(
             )
         }
     }
-
+    val logics = logicMape.keys
+    val size get() = logics.size
+    private val measurementFunctions: Set<Measurement<T>> = logicMape.values.toSet()
     private val logicIndices = logics.withIndex().associate { it.value to it.index }
-    private val measurementFunctions = logicMap.values.flatMap { it.map { it.logic } }
+
     fun allMeasurements() = measurementFunctions
 
 
     val areas = logicMap.keys
-    fun getIndex(rule: Rule<T>): Int {
+    fun getIndex(rule: Rule<*>): Int {
         return logicIndices[rule.identifier]
             ?: throw IllegalStateException("Rule ${rule.identifier} not found in this logic indexer logics=$logics")
     }
 
     fun filter(predicate: (AREA) -> Boolean): LogicIndexer<AREA, T> {
         val newMap = logicMap.filterKeys { predicate(it) }
-        val keptLogics = newMap.flatMap { it.value.map { it.logicIdentifier } }.toSet()
+        val keptLogics = newMap.flatMap { it.value.map { it.logicIdentifier to it.logic } }.toMap()
 
 
         return LogicIndexer(keptLogics, logicMap.filterKeys { predicate(it) })

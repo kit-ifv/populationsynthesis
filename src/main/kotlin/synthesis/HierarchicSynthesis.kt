@@ -42,41 +42,5 @@ abstract class HierarchicSynthesis<AREA, T>(
         targetAreas: Collection<AREA>,
     ): Map<AREA, List<T>>
 
-    private fun Map<AREA, *>.hasIrrelevantKeys(): Boolean {
-        return keys.any { isIrrelevant(it) }
-    }
 
-    // We don't need to bother catering to areas that have no rules attached to them. TODO also if their ruleset is entirely dominated by the descendants.
-    private fun isIrrelevant(area: AREA) = ruleProvider.getRules(area).isEmpty()
-
-    private fun Map<AREA, *>.irrelevantKeys() = keys.filter { isIrrelevant(it) }
-    private fun separateIrrelevantRegions(original: Map<AREA, Collection<AREA>>): Map<AREA, Collection<AREA>> {
-        val workspace = original.toMutableMap()
-        // TODO when none of the higher elements in the hierarchy define rules then the target area should
-        //   point to itself, but right now it will point
-        val flatTargets = original.values.flatten()
-        while (workspace.hasIrrelevantKeys()) {
-            val irrelevantKeys = workspace.irrelevantKeys()
-            irrelevantKeys.forEach { key ->
-                println("Killing $key because no rules")
-                // Just to be safe that all values from the irrelevant key are touched by the children. Theoretically this
-                // should never be able to occur, based on the graph structure and inputs
-                val safetyCheck = workspace[key]!!.filter { it in flatTargets }
-                workspace.remove(key)
-                val children = hierarchy.getImmediateChildren(key)
-
-                val newInserts = children.associateWith { child ->
-                    val grandChildren = hierarchy.getAllChildren(child)
-                    grandChildren
-                }
-                workspace.putAll(newInserts)
-
-                require(newInserts.values.flatten().containsAll(safetyCheck)) {
-                    "This should not happen ever"
-                }
-            }
-        }
-
-        return workspace.mapValues { it.value.filter { it in flatTargets } }
-    }
 }

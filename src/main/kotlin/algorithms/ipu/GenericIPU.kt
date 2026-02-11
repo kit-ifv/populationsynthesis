@@ -21,13 +21,12 @@ fun interface GenericIPU {
     fun <I> calculateDirect(
         vectors: Collection<ScalableVector>,
         rules: Collection<Rule<I>>,
-    ): List<Pair<Rule<I>, Double>> {
+    ): List<RuleObserver> {
         val observers = rules.withIndex().map {
             RuleObserver.fromRule(it.value, it.index, vectors)
         }
         run(vectors, observers)
-
-        return rules.zip(observers.map { it.actual })
+        return observers
     }
 
     fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {
@@ -52,7 +51,7 @@ fun interface GenericIPU {
     fun <I> calculateSignature(
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
-        ipuCalculationCallback: (List<Pair<Rule<I>, Double>>) -> Unit = {},
+        ipuCalculationCallback: (List<RuleObserver>) -> Unit = {},
     ): List<IPUOutput<Signature>> {
         return internalGroupedCalculation(elements, rules, ipuCalculationCallback) {
             it.keys.map { IPUOutput(it.signature, it.scalar) }
@@ -62,7 +61,7 @@ fun interface GenericIPU {
     private fun <X, I> internalGroupedCalculation(
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
-        ipuCalculationCallback: (List<Pair<Rule<I>, Double>>) -> Unit = {},
+        ipuCalculationCallback: (List<RuleObserver>) -> Unit = {},
         resultConverter: (Map<ScalableVector, List<I>>) -> X
     ): X {
         val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }

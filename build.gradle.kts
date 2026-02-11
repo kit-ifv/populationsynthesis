@@ -21,6 +21,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kandy-lets-plot:0.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
+    implementation("it.unimi.dsi:fastutil:8.5.16")
 }
 
 tasks.test {

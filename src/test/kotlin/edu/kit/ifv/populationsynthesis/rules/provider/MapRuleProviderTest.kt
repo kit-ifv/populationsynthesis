@@ -26,7 +26,7 @@ class MapRuleProviderTest {
         }
         val rules = initialRuleProvider.getRules(R)
         assertEquals(1, rules.size)
-        assertEquals(0, initialRuleProvider.getRules(R).size)
+        assertEquals(0, initialRuleProvider.getRules(Reg(false)).size)
     }
     @Test
     fun canSetWeakerSets() {

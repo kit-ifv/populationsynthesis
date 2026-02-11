@@ -3,14 +3,14 @@ package edu.kit.ifv.populationsynthesis.datasource
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import edu.kit.ifv.populationsynthesis.datasource.input.ARSKey
-import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
-import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
+import edu.kit.ifv.populationsynthesis.measurements.PersonAgeDefinition
+import edu.kit.ifv.populationsynthesis.measurements.asHouseholdDefinition
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.covered.ExplicitTargetCoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 /**
- * This is
+ * This is a representation of our raw data input that we
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class CensusDemography(
@@ -56,6 +56,7 @@ data class CensusDemography(
         40..59,
         60..66,
         67..74,
+        75..Int.MAX_VALUE,
     )
 
     private val targetValues = listOf(
@@ -72,14 +73,17 @@ data class CensusDemography(
         Alter_infr__11,
     )
 
+
     fun ageRules(): CoverageGroup<CensusHousehold> {
+        val definitions = intervals.map { PersonAgeDefinition(it).asHouseholdDefinition() }
+        val rules = targetValues.zip(definitions).filter { it.first != null }.map { (target, definition) ->
+            definition.makeRule(target!!, description = "${this.arsKey.description} ${definition.createNamedMeasurement().identifier}")
 
-        val rules = targetValues.zip(intervals).filter { it.first != null }.map { (target, interval) ->
-            AgeRuleFactory.createLogic(interval).withTarget(target!!.toDouble())
-        }
-        return ExplicitTargetCoverageGroup(rules.toRuleSet(), Insgesamt_!!.toDouble())
+        }.toRuleSet()
+
+        return ExplicitTargetCoverageGroup(rules, Insgesamt_!!)
+
     }
-
 
     fun familientandRules(): CoverageGroup<CensusHousehold> {
         return TODO()
@@ -99,23 +103,7 @@ data class CensusDemography(
 
 
 }
-object AgeRuleFactory {
-    fun createLogic(acceptedInterval: IntRange): NamedMeasurement<CensusHousehold> {
-        return NamedMeasurement.numeric("Age Rule [${acceptedInterval.first}..${acceptedInterval.last}]") { household ->
-            household.members.count { it.age in acceptedInterval }
-        }
-    }
-}
 
-class AgeDefinition(val range: IntRange): BooleanMeasurementDefinition<CensusPerson>() {
-    override fun generateDescription(): String {
-        return "Age in [${range.first}..${range.last}]"
-    }
-
-    override fun evaluation(element: CensusPerson): Boolean {
-        return element.age in range
-    }
-}
 
 
 /**
@@ -142,9 +130,6 @@ class CensusDemographyRuleCollector(
     }
     val sexProvider by lazy {
         buildExhaustiveProvider(CensusDemography::sexRules)
-    }
-    operator fun get(arsKey: ARSKey): CensusDemography? {
-        return map[arsKey]
     }
 
     companion object {

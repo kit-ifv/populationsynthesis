@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import edu.kit.ifv.populationsynthesis.datasource.input.ARSKey
 import edu.kit.ifv.populationsynthesis.datasource.input.standardParse
-import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
-import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
-import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
+import edu.kit.ifv.populationsynthesis.measurements.HouseholdSizeDefinition
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.covered.ExplicitTargetCoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.provider.MutableExhaustiveRuleProvider
@@ -22,7 +20,7 @@ data class CensusHouseholdData(
     val Name: String,
     val Reg_Ebene: String,
     @JsonProperty("0_Insgesamt_")
-    val Insgesamt_val: String?, // Haushalte insgesamt (Anzahl)
+    val Insgesamt_val: Int?, // Haushalte insgesamt (Anzahl)
     val HH_SIZE_NAT__1: Int?, // Haushalte mit einer Person (Anzahl)
     val HH_SIZE_NAT__2: Int?, // Haushalte mit zwei Personen (Anzahl)
     val HH_SIZE_NAT__3: Int?, // Haushalte mit drei Personen (Anzahl)
@@ -54,28 +52,44 @@ data class CensusHouseholdData(
         HH_SIZE_NAT__3,
         HH_SIZE_NAT__4,
         HH_SIZE_NAT__5,
+        HH_SIZE_NAT__6,
     )
 
-    private val definitions = (0..4).map {
+    private val definitions = (1..5).map {
         HouseholdSizeDefinition(it, HouseholdSizeDefinition.EqualityOp.EQUALS)
     }
 
+    /**
+     * All HH sizes to 4 with equals, the rest falls into a larger category.
+     */
     fun sizeRules(): CoverageGroup<CensusHousehold> {
-        val equalRules = targetValues.zip(definitions).filter { it.first != null }.map { (target, definition) ->
-            definition.makeRule(target!!.toDouble())
-        }
+        return buildSizeCoverageGroup(4)
+    }
+    /**
+     * All HH sizes to 5 with equals, the rest falls into a larger category.
+     */
+    fun expandedSizeRules(): CoverageGroup<CensusHousehold> {
+        return buildSizeCoverageGroup(5)
 
-        val greaterTarget = HH_SIZE_NAT__5 + HH_SIZE_NAT__6
-
-        val geRule = greaterTarget?.let {
-            HouseholdSizeDefinition(5, HouseholdSizeDefinition.EqualityOp.GREATER_OR_EQUAL).makeRule(it.toDouble())
-        }
-        val potentialRules = (equalRules + geRule).filterNotNull()
-        return ExplicitTargetCoverageGroup(rules = potentialRules.toRuleSet(), totalTarget = Insgesamt_val!!.toDouble())
     }
 
-    fun expandedSizeRules(): CoverageGroup<CensusHousehold> {
-        return ExplicitTargetCoverageGroup()
+    private fun buildSizeCoverageGroup(lastExplicitSize: Int): CoverageGroup<CensusHousehold> {
+        val defs = definitions.take(lastExplicitSize) + HouseholdSizeDefinition(
+            lastExplicitSize + 1,
+            HouseholdSizeDefinition.EqualityOp.GREATER_OR_EQUAL
+        )
+        val targets = targetValues.take(lastExplicitSize) + targetValues.drop(lastExplicitSize).fold(null) { a, b ->
+            a + b
+
+        }
+        val rules = defs.zip(targets).mapNotNull { (definition, target) ->
+
+            target?.let {
+                definition.makeRule(it)
+            }
+
+        }.toRuleSet()
+        return ExplicitTargetCoverageGroup(rules = rules, target = requireNotNull(Insgesamt_val))
     }
     operator fun Int?.plus(other: Int?): Int? {
         return this?.plus(other?:0) ?: other
@@ -85,81 +99,17 @@ data class CensusHouseholdData(
     fun seniorenTypRules(): CoverageGroup<CensusHousehold> = TODO()
 }
 
-
-object HouseholdRuleFactory : MeasurementDefinition<CensusHousehold> {
-
-    enum class EqualityOp(val symbol: String) {
-        EQUALS("=="),
-        NOT_EQUALS("!="),
-        LESS_THAN("<"),
-        LESS_OR_EQUAL("<="),
-        GREATER_THAN(">"),
-        GREATER_OR_EQUAL(">=")
-    }
-
-    fun createLogic(size: Int, operator: EqualityOp) {
-
-    }
-
-    override fun createNamedMeasurement(): NamedMeasurement<CensusHousehold> {
-        TODO("Not yet implemented")
-    }
-}
-
-class HouseholdSizeDefinition(val targetSize: Int, val equalityOp: EqualityOp) :
-    BooleanMeasurementDefinition<CensusHousehold>() {
-    override fun generateDescription(): String {
-        return "Household $targetSize $equalityOp"
-    }
-
-    override fun evaluation(element: CensusHousehold): Boolean {
-        return equalityOp.test(element.members.size, targetSize)
-
-    }
-
-    enum class EqualityOp(val symbol: String) {
-        EQUALS("==") {
-            override fun <T : Comparable<T>> test(a: T, b: T): Boolean {
-                return a == b
-            }
-
-        },
-        NOT_EQUALS("!=") {
-            override fun <T : Comparable<T>> test(a: T, b: T): Boolean {
-                return a != b
-            }
-        },
-        LESS_THAN("<") {
-            override fun <T : Comparable<T>> test(a: T, b: T): Boolean {
-                return a < b
-            }
-        },
-        LESS_OR_EQUAL("<=") {
-            override fun <T : Comparable<T>> test(a: T, b: T): Boolean {
-                return a <= b
-            }
-        },
-        GREATER_THAN(">") {
-            override fun <T : Comparable<T>> test(a: T, b: T): Boolean {
-                return a > b
-            }
-        },
-        GREATER_OR_EQUAL(">=") {
-            override fun <T : Comparable<T>> test(a: T, b: T): Boolean {
-                return a >= b
-            }
-        };
-
-        abstract fun <T : Comparable<T>> test(a: T, b: T): Boolean
-    }
-}
-
 class CensusHouseholdRuleCollector(
     map: Map<ARSKey, CensusHouseholdData>
 ) : CensusDataset<CensusHouseholdData, CensusHousehold>(map) {
     val sizeProvider by lazy {
         buildExhaustiveProvider(CensusHouseholdData::sizeRules)
     }
+
+    val size6plusProvider by lazy {
+        buildExhaustiveProvider(CensusHouseholdData::expandedSizeRules)
+    }
+
 
     val familienTypProvider by lazy {
         buildExhaustiveProvider(CensusHouseholdData::familienTypRules)
@@ -191,6 +141,10 @@ abstract class CensusDataset<I, O>(protected val map: Map<ARSKey, I>) {
                 add(key, value.extractor())
             }
         }
+
+    operator fun get(arsKey: ARSKey): I? {
+        return map[arsKey]
+    }
 }
 
 internal fun resourceStream(owner: Class<*>, name: String): InputStream =

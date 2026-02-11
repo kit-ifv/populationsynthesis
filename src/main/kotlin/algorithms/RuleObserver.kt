@@ -15,7 +15,7 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
  * @param vectors A list of [ScalableVector] objects representing the household data in vectorized form.
  */
 abstract class RuleObserver(
-    val name: LogicIdentifier,
+    val name: String,
     private val observedIndex: Int,
     val vectors: List<ScalableVector>,
 ) {
@@ -31,7 +31,7 @@ abstract class RuleObserver(
             must have a length strictly greater than `observedIndex`.
             The observed index is $observedIndex. 
             There are the (${badVectors.size}) failing vectors out of (${vectors.size})
-            firstFail = ${badVectors.first()}
+            firstFail = ${badVectors.firstOrNull()}
             """.trimIndent()
         }
         require(sanityCheck()) {
@@ -43,7 +43,7 @@ abstract class RuleObserver(
             and likely indicative of a configuration or rule-definition error.
             The observed index is $observedIndex. 
             There are the (${badVectors.size}) failing vectors out of (${vectors.size})
-            firstFail = ${badVectors.first()}
+            firstFail = ${badVectors.firstOrNull()}
             """.trimIndent()
 
         }
@@ -123,7 +123,7 @@ abstract class RuleObserver(
             allHouseholdsEncoded: Collection<ScalableVector>,
         ): TargetNumberObserver {
             return TargetNumberObserver(
-                rule.logic.identifier,
+                rule.description,
                 observedIndex,
                 allHouseholdsEncoded.filter { it.appliesToRule(observedIndex) },
                 rule.target

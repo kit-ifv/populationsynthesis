@@ -1,18 +1,19 @@
-//package edu.kit.ifv.populationsynthesis.algorithms.hierarchic
-//
-//import edu.kit.ifv.populationsynthesis.rules.Rule
-//import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-//
-////: MinimalistHousehold<out RULES>
-//class NewDistributor< AREA, H>(
-//
-//    val ruleProvider: HierarchicRuleProvider<AREA, H>,
+package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
+
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
+import edu.kit.ifv.populationsynthesis.rules.Rule
+import edu.kit.ifv.populationsynthesis.rules.RuleSet
+import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
+
+class NewDistributor< AREA, T>()
+
+//    val ruleProvider: HierarchicRuleProvider<AREA, T>,
 //    val config: HierarchicDistributionConfig,
 //
 //    ) {
 //    val initialDistribution: InitialSignatureDistributor = config.signatureDistributor
 //    fun distribute(
-//        parentRuleset: List<Rule<H>>,
+//        parentRuleset: RuleSet<T>,
 //        targetAmounts: Collection<SignatureAmount>,
 //        subregions: Collection<AREA>,
 //    ): Map<AREA, List<SignatureAmount>> {
@@ -45,36 +46,36 @@
 //            region to partition.output()
 //        }
 //    }
+
+//    private fun verify(targetAmounts: Collection<SignatureAmount>, partitions: List<Partition>): Boolean {
+//        val fulfilledConditions = targetAmounts.map { (sig, amount) ->
+//            partitions.sumOf { it.count(sig) } == amount }
+//        return fulfilledConditions.all { it }
+//    }
+
+//    fun toIPUOutput(
+//        partitions: List<Partition>,
+//        subregions: Collection<AREA>,
+//        logics: List<NamedCountRule<ISurveyHousehold<out RULES>>>,
+//    ): List<IPUOutputLog> {
+//        val zipper = partitions.zip(subregions)
+//        return zipper.cartesianProduct(logics.withIndex().toList()).map { (l, p) ->
+//            val (partition, subregion) = l
+//            val (idx, rule) = p
+//            IPUOutputLog("$subregion ${rule.ruleDescription}", partition.getExpected(idx), partition.getActual(idx))
+//        }
+//    }
 //
-////    private fun verify(targetAmounts: Collection<SignatureAmount>, partitions: List<Partition>): Boolean {
-////        val fulfilledConditions = targetAmounts.map { (sig, amount) ->
-////            partitions.sumOf { it.count(sig) } == amount }
-////        return fulfilledConditions.all { it }
-////    }
+//    private fun verify(groupedHouseholds: Map<Signature, List<SurveyHousehold<out RULES>>>, partitions: List<Partition>) {
+//        val target = groupedHouseholds.values.withIndex().map { (sig, hhs) ->
+//            val actual = partitions.sumOf { it.amount(SignatureIndex(sig)) }
+//            val expected = hhs.size
 //
-////    fun toIPUOutput(
-////        partitions: List<Partition>,
-////        subregions: Collection<AREA>,
-////        logics: List<NamedCountRule<ISurveyHousehold<out RULES>>>,
-////    ): List<IPUOutputLog> {
-////        val zipper = partitions.zip(subregions)
-////        return zipper.cartesianProduct(logics.withIndex().toList()).map { (l, p) ->
-////            val (partition, subregion) = l
-////            val (idx, rule) = p
-////            IPUOutputLog("$subregion ${rule.ruleDescription}", partition.getExpected(idx), partition.getActual(idx))
-////        }
-////    }
-////
-////    private fun verify(groupedHouseholds: Map<Signature, List<SurveyHousehold<out RULES>>>, partitions: List<Partition>) {
-////        val target = groupedHouseholds.values.withIndex().map { (sig, hhs) ->
-////            val actual = partitions.sumOf { it.amount(SignatureIndex(sig)) }
-////            val expected = hhs.size
-////
-////            actual == expected
-////        }
-////
-////        require(target.all { it }) {
-////            "There is a mismatch between assigned sigs and target households"
-////        }
-////    }
+//            actual == expected
+//        }
+//
+//        require(target.all { it }) {
+//            "There is a mismatch between assigned sigs and target households"
+//        }
+//    }
 //}

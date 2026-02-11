@@ -27,8 +27,8 @@ class NamedMeasurement<in T> private constructor(
         return identifier.hashCode()
     }
 
-    fun withTarget(target: Double): Rule<T> {
-        return Rule(target, this)
+    fun withTarget(target: Number): Rule<T> {
+        return Rule(target.toDouble(), this)
     }
 
     override fun toString(): String {

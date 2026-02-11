@@ -2,8 +2,17 @@ package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
-class MutableRuleSet<T> private constructor(
-    private val rules: MutableMap<LogicIdentifier, Rule<T>>
+/**
+ * A mutable rule set that enforces uniqueness of rule logic identifiers.
+ *
+ * Each rule is indexed by its [LogicIdentifier]. Adding a rule whose logic identifier
+ * already exists in the set is considered an error and will result in an exception.
+ *
+ * This strict behavior avoids ambiguity by ensuring that at most one rule exists
+ * per logic definition.
+ */
+open class MutableRuleSet<T> private constructor(
+    protected val rules: MutableMap<LogicIdentifier, Rule<T>>
 ) : AbstractSet<Rule<T>>(), RuleSet<T> {
 
     private constructor(rules: Collection<Rule<T>>) : this(rules.associateBy { it.logic.identifier }.toMutableMap())
@@ -22,9 +31,11 @@ class MutableRuleSet<T> private constructor(
     }
 
 
-    fun add(rule: Rule<T>) {
-        val existingTarget = rules[rule.logic.identifier]?.target ?: 0.0
-        rules[rule.logic.identifier] = rule + existingTarget
+    open fun add(rule: Rule<T>) {
+        require(rule.logic.identifier !in rules) {
+            "The rule logic ${rule.logic.identifier} has been already set. To avoid ambiguity I will simply crash"
+        }
+        rules[rule.logic.identifier] = rule
     }
 
     fun add(rules: Collection<Rule<T>>) {
@@ -70,3 +81,36 @@ class MutableRuleSet<T> private constructor(
         }
     }
 }
+
+
+/**
+ * A mutable rule set that allows rules to be redefined.
+ *
+ * If a rule with the same logic identifier already exists, the existing rule
+ * is silently replaced by the new one.
+ *
+ * This strategy is useful when later definitions should take precedence
+ * over earlier ones.
+ */
+class OverwritableRuleSet<T> : MutableRuleSet<T>() {
+    override fun add(rule: Rule<T>) {
+        rules[rule.logic.identifier] = rule
+    }
+}
+/**
+ * A mutable rule set that aggregates rules with identical logic identifiers.
+ *
+ * When a rule is added whose logic identifier already exists in the set,
+ * the rule is merged with the existing one by summing their target values.
+ * The underlying logic is preserved and only the target is accumulated.
+ *
+ * This strategy is useful when multiple independent contributions to the
+ * same logical rule should be combined rather than rejected or replaced.
+ */
+class AggregatingRuleSet<T> : MutableRuleSet<T>() {
+    override fun add(rule: Rule<T>) {
+        val existingTarget = rules[rule.logic.identifier]?.target ?: 0.0
+        rules[rule.logic.identifier] = rule + existingTarget
+    }
+}
+
