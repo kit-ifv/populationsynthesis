@@ -1,0 +1,14 @@
+package edu.kit.ifv.populationsynthesis.algorithms.ipu
+
+import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
+import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+
+class NickRowellImplementation: GenericIPU {
+    override fun run(
+        vectors: Collection<ScalableVector>,
+        observers: Collection<RuleObserver>
+    ) {
+        //TODO https://github.com/NickRowell/researchtools has a NNLS implementation
+        TODO()
+    }
+}

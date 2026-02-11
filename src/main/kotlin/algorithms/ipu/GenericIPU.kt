@@ -80,14 +80,7 @@ fun interface GenericIPU {
          * The original algorithm of hierarchical IPU using no external interrupt criterion.
          */
         @Suppress("MagicNumber")
-        val legacy = GenericIPU { vectors, observers ->
-
-            repeat(1000) {
-                observers.forEach {
-                    it.optimize()
-                }
-            }
-        }
+        val legacy = CyclicIPU(1000)
 
         @Suppress("MagicNumber")
         val newAlgorithm = GenericIPU { vectors, observers ->
@@ -130,7 +123,8 @@ fun interface GenericIPU {
                     indexedObservers.remove(target)
                 }
             }
-
+            val worst = observers.maxBy { it.absoluteDifference }
+            worst.optimize()
         }
 
         val functionalTabooList = GenericIPU { vectors, observers ->

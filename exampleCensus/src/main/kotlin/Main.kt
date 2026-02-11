@@ -4,7 +4,11 @@ import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.Hierar
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.EquivalenceClassIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.NakedIPU
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.EvilLSQRIPU
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.MaximumAnnihilator
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.SparkNNLS
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.TabooListIPU
 import edu.kit.ifv.populationsynthesis.datasource.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.datasource.RuleProviderFactory
 import edu.kit.ifv.populationsynthesis.evaluation.Verification
@@ -19,7 +23,10 @@ fun main() {
 
 
     val newIpu = HierarchicDistribution(hierarchicRuleProvider, population.households,
-        HierarchicDistributionConfig(ipu = GenericIPU.limitOptimization)
+//        HierarchicDistributionConfig(ipu = TabooListIPU(blockAmount = 5, iterations =  1000)
+        HierarchicDistributionConfig(ipu = SparkNNLS()
+
+        )
     )
 
     val ipu = EquivalenceClassIPU(hierarchicRuleProvider, population.households)
@@ -27,5 +34,7 @@ fun main() {
 //    val output = ipu.synthesizeAll()
     val output = newIpu.synthesizeAll()
     val verificationOutput = Verification().verify(hierarchicRuleProvider, output)
+
+    println("DONE")
 
 }

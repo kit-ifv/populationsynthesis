@@ -22,6 +22,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
     implementation("it.unimi.dsi:fastutil:8.5.16")
+    implementation("org.ejml:ejml-all:0.43")
+    implementation("org.apache.spark:spark-mllib_2.13:3.5.4")
 }
 
 tasks.test {
