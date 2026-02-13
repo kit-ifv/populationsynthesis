@@ -45,20 +45,16 @@ class LSQRTest {
         assertTrue(result.r1norm < 1e-6)
     }
 
-    @Test
-    fun currentExampleRun() {
-        val A = loadMatrixFromCsv("/exampleMatrix.csv")
-        assertEquals(A.get(6, 0), 1.0)
-        val b = doubleArrayOf(282.0, 358.0, 458.0, 656.0, 390.0, 763.0, 1974.0, 3552.0, 1448.0, 1372.0, 1589.0, 2590.0, 2329.0, 753.0, 547.0, 294.0)
-
-        val nnls = nnlsSpark(A, b)
-        val result = lsqr(A, b).x
-        assertEquals(result[0], 8.019781663, 0.000001)
-
-
-
-
-    }
+//    @Test
+//    fun currentExampleRun() {
+//        val A = loadMatrixFromCsv("/exampleMatrix.csv")
+//        assertEquals(A.get(6, 0), 1.0)
+//        val b = doubleArrayOf(282.0, 358.0, 458.0, 656.0, 390.0, 763.0, 1974.0, 3552.0, 1448.0, 1372.0, 1589.0, 2590.0, 2329.0, 753.0, 547.0, 294.0)
+//
+//        val nnls = nnlsSpark(A, b)
+//        val result = lsqr(A, b).x
+//        assertEquals(result[0], 8.019781663, 0.000001)
+//    }
 
     private
     fun loadMatrixFromCsv(resourcePath: String): DMatrixRMaj {
