@@ -1,11 +1,6 @@
-package edu.kit.ifv.populationsynthesis.datasource
+package edu.kit.ifv.populationsynthesis.input.rules
 
-import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
-import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
-import edu.kit.ifv.populationsynthesis.rules.toRuleSet
-
-data class CensusEmploymentStatus(
+data class CensusEmploymentStatusData(
     val Berichtszeitpunkt: String,
     val _RS: String,
     val Name: String,
@@ -26,16 +21,4 @@ data class CensusEmploymentStatus(
     val ERWERBSTAT_KURZ_STP__2_M: Int?, // Personen nach Erwerbsstatus "Nichterwerbspersonen" männlich (Anzahl)
     val ERWERBSTAT_KURZ_STP__2_W: Int?, // Personen nach Erwerbsstatus "Nichterwerbspersonen" weiblich (Anzahl)
 
-) {
-
-}
-
-
-
-fun <AREA, T> RuleProvider<AREA, T>.get(target: AREA, logicIdentifiers: Set<LogicIdentifier>): RuleSet<T> {
-
-    return logicIdentifiers.mapNotNull { logicIdentifier ->
-        get(target, logicIdentifier)
-    }.toRuleSet()
-
-}
+)

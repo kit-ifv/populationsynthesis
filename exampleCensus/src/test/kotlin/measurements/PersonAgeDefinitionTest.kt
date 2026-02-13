@@ -1,9 +1,9 @@
 package measurements
 
-import edu.kit.ifv.populationsynthesis.datasource.CensusHousehold
-import edu.kit.ifv.populationsynthesis.datasource.CensusPerson
-import edu.kit.ifv.populationsynthesis.measurements.PersonAgeDefinition
-import edu.kit.ifv.populationsynthesis.measurements.asHouseholdDefinition
+import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
+import edu.kit.ifv.populationsynthesis.domain.population.CensusPerson
+import edu.kit.ifv.populationsynthesis.rules.measurements.PersonAgeDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurements.asHouseholdDefinition
 import org.junit.jupiter.api.Assertions.*
 import kotlin.test.Test
 

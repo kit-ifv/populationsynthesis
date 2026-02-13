@@ -2,12 +2,11 @@ package edu.kit.ifv.populationsynthesis.algorithms.ipu
 
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
-import edu.kit.ifv.populationsynthesis.algorithms.lsqr
 import org.apache.spark.mllib.optimization.NNLS
 import org.ejml.data.DMatrixRMaj
 import org.ejml.dense.row.CommonOps_DDRM
 
-class SparkNNLS: GenericIPU {
+object SparkNonnegativeLeastSquares: GenericIPU {
     override fun run(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>

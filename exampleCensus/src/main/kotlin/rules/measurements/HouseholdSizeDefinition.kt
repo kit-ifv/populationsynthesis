@@ -1,6 +1,6 @@
-package edu.kit.ifv.populationsynthesis.measurements
+package edu.kit.ifv.populationsynthesis.rules.measurements
 
-import edu.kit.ifv.populationsynthesis.datasource.CensusHousehold
+import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
 
 /**

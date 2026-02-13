@@ -3,10 +3,8 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 import edu.kit.ifv.populationsynthesis.GenericCollector
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.IntegerIPUOutput
-import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyAmountDistro
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.standardRoundingStrategy
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
@@ -34,16 +32,13 @@ class HierarchicDistribution<AREA, T>(
      */
     fun initialSolution(target: AREA): List<SignatureAmount> {
         val rules = ruleProvider.getComposedRules(target)
-        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules) {
-            it.forEach {
-                val output = "$target, (${it.expected} ${it.actual})"
-                println(output)
-            }
-        }
+        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
+
+
 
         val integerIPUResult = standardRoundingStrategy.integerizeIPUOutput(oIpu)
 
-        rules.verify(integerIPUResult)
+//        rules.verify(integerIPUResult)
         // TODO would be nice to see how much the integerization causes the initial solution quality to drop.
         val sigs = integerIPUResult.map { (element, amount) ->
             SignatureAmount(element, amount)

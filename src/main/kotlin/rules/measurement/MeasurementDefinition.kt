@@ -11,4 +11,9 @@ interface MeasurementDefinition<T> {
         logic = createNamedMeasurement(),
         description = description
     )
+
+    fun makeOptionalRule(target: Number?, description: String? = null): Rule<T>? {
+        return target?.let { makeRule(it, description) }
+    }
+
 }

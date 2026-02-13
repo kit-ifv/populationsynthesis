@@ -1,9 +1,9 @@
-package edu.kit.ifv.populationsynthesis.datasource.input
+package edu.kit.ifv.populationsynthesis.domain.area
 
 data class ARSKey(
     val arsKey: String,
     val description: String = "",
-    val level: AreaHierarchy = AreaHierarchy.fromString(arsKey),
+    val level: AreaLevel = AreaLevel.Companion.fromString(arsKey),
 ) {
     override fun equals(other: Any?): Boolean {
         if (other !is ARSKey) return false
@@ -17,7 +17,7 @@ data class ARSKey(
     }
 
     operator fun contains(value: ARSKey): Boolean {
-        if (level == AreaHierarchy.DEUTSCHLAND) return true // Germany contains every key that is in germany
+        if (level == AreaLevel.DEUTSCHLAND) return true // Germany contains every key that is in germany
         if (value == this) return true
         return level.ordinal < value.level.ordinal && value.arsKey.startsWith(this.arsKey)
     }
@@ -32,8 +32,8 @@ data class ARSKey(
         )
     }
 
-    fun simplify(level: AreaHierarchy): ARSKey {
-        if (level == AreaHierarchy.ORT || level == AreaHierarchy.ORTSTEIL) {
+    fun simplify(level: AreaLevel): ARSKey {
+        if (level == AreaLevel.ORT || level == AreaLevel.ORTSTEIL) {
             throw UnsupportedOperationException("ORT and ORTSTEIL are NOT PART of the defined key set and thus their amount of digits is project specific.")
         }
         val key1 = arsKey.take(level.digits)
@@ -45,7 +45,7 @@ data class ARSKey(
             ARSKey(
                 arsKey = "091620000000",
                 description = "München, Landeshauptstadt",
-                level = AreaHierarchy.GEMEINDE
+                level = AreaLevel.GEMEINDE
             )
         val OBERBAYERN = ARSKey(
             arsKey = "091",
@@ -54,24 +54,24 @@ data class ARSKey(
         val DEUTSCHLAND = ARSKey(
             arsKey = "00",
             "DEUTSCHLAND",
-            level = AreaHierarchy.DEUTSCHLAND
+            level = AreaLevel.DEUTSCHLAND
         )
         val MARNE_NORDSEE = ARSKey(
             arsKey = "010515166",
             "MARNE_NORDSEE",
-            level = AreaHierarchy.GEMEINDEVERBAND
+            level = AreaLevel.GEMEINDEVERBAND
         )
 
         val NORDRHEIN_WESTFALEN = ARSKey(
             arsKey = "05",
             description = "NORDRHEIN_WESTFALEN",
-            level = AreaHierarchy.BUNDESLAND
+            level = AreaLevel.BUNDESLAND
         )
 
         val HERZOGTUM_LAUENBURG = ARSKey(
             arsKey = "01053",
             description = "HERZOGTUM_LAUENBURG",
-            level = AreaHierarchy.LANDKREIS
+            level = AreaLevel.LANDKREIS
         )
 
 
@@ -94,4 +94,3 @@ data class ARSKey(
 
 
 }
-

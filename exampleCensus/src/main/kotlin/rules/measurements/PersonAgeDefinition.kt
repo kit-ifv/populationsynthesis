@@ -1,6 +1,7 @@
-package edu.kit.ifv.populationsynthesis.measurements
+package edu.kit.ifv.populationsynthesis.rules.measurements
 
-import edu.kit.ifv.populationsynthesis.datasource.CensusPerson
+import edu.kit.ifv.populationsynthesis.domain.population.AgeGroupCode
+import edu.kit.ifv.populationsynthesis.domain.population.CensusPerson
 import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
 
 /**
@@ -20,10 +21,8 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefin
  * it improves reuse and keeps the core measurement semantics narrowly focused.
  */
 class PersonAgeDefinition(val range: IntRange) : BooleanMeasurementDefinition<CensusPerson>() {
-    /**
-     * Convenience constructor that creates an open-ended age range starting at [lowerBound].
-     */
-    constructor(lowerBound: Int) : this(lowerBound..Int.MAX_VALUE)
+
+    constructor(ageCode: AgeGroupCode) : this(ageCode.ageInterval)
 
     override fun generateDescription(): String {
         return "Age in [${range.first}..${range.last}]"

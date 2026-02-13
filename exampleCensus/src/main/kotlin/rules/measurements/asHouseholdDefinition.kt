@@ -1,7 +1,7 @@
-package edu.kit.ifv.populationsynthesis.measurements
+package edu.kit.ifv.populationsynthesis.rules.measurements
 
-import edu.kit.ifv.populationsynthesis.datasource.CensusHousehold
-import edu.kit.ifv.populationsynthesis.datasource.CensusPerson
+import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
+import edu.kit.ifv.populationsynthesis.domain.population.CensusPerson
 import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
 import edu.kit.ifv.populationsynthesis.rules.measurement.NumericMeasurementDefinition
 
@@ -12,7 +12,8 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.NumericMeasurementDefin
  * This is advanced stuff and only necessary for high level code deduplication. In most instances it is entirely
  * sufficient to define measurements over the object that you are measuring.
  */
-fun MeasurementDefinition<CensusPerson>.asHouseholdDefinition(): MeasurementDefinition<CensusHousehold> {
+fun MeasurementDefinition<CensusPerson>.asHouseholdDefinition(): MeasurementDefinition<CensusHousehold>{
+
     val original = createNamedMeasurement()
     return object : NumericMeasurementDefinition<CensusHousehold>() {
         override fun generateDescription(): String {

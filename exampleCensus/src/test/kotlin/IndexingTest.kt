@@ -1,9 +1,9 @@
-import edu.kit.ifv.populationsynthesis.Population
+import edu.kit.ifv.populationsynthesis.domain.population.Population
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.EquivalenceClassIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.RuleObserverBuilder
-import edu.kit.ifv.populationsynthesis.datasource.HierarchyFactory
-import edu.kit.ifv.populationsynthesis.datasource.RuleProviderFactory
-import edu.kit.ifv.populationsynthesis.datasource.input.ARSKey
+import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
+import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
+import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
 import kotlin.test.Test
 
 class IndexingTest {

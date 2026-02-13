@@ -18,12 +18,24 @@ dependencies {
     implementation("org.apache.commons:commons-statistics-inference:1.2")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.20.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.0")
-    implementation("org.jetbrains.kotlinx:kandy-lets-plot:0.8.0")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
     implementation("it.unimi.dsi:fastutil:8.5.16")
     implementation("org.ejml:ejml-all:0.43")
     implementation("org.apache.spark:spark-mllib_2.13:3.5.4")
+//    api("org.jetbrains.kotlin:kotlin-gradle-statistics:2.3.10")
+    api("org.jetbrains.kotlinx:kandy-lets-plot:0.8.3")
+    api("org.jetbrains.kotlinx:kandy-api:0.8.3")
+    api("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.11.2")
+    api("org.jetbrains.lets-plot:lets-plot-image-export:4.8.2")
+    api("org.jetbrains.lets-plot:lets-plot-batik:4.8.2")
+    implementation(platform("org.apache.logging.log4j:log4j-bom:2.24.3"))
+    implementation("org.apache.logging.log4j:log4j-api")
+    implementation("org.apache.logging.log4j:log4j-core")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl")
+    implementation("org.apache.logging.log4j:log4j-1.2-api")
+
 }
 
 tasks.test {

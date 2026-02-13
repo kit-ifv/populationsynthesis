@@ -1,8 +1,8 @@
-import edu.kit.ifv.populationsynthesis.datasource.HierarchyFactory
-import edu.kit.ifv.populationsynthesis.datasource.RuleProviderFactory
-import edu.kit.ifv.populationsynthesis.datasource.input.ARSKey
-import edu.kit.ifv.populationsynthesis.measurements.PersonAgeDefinition
-import edu.kit.ifv.populationsynthesis.measurements.asHouseholdDefinition
+import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
+import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
+import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
+import edu.kit.ifv.populationsynthesis.rules.measurements.PersonAgeDefinition
+import edu.kit.ifv.populationsynthesis.rules.measurements.asHouseholdDefinition
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -8,9 +8,8 @@ import edu.kit.ifv.populationsynthesis.algorithms.lsqr
 import org.ejml.data.DMatrixRMaj
 import java.io.File
 import kotlin.io.path.Path
-import kotlin.system.exitProcess
 
-class EvilLSQRIPU: GenericIPU {
+object LeastSquareRegression: GenericIPU {
     override fun run(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>

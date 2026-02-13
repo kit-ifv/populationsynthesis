@@ -1,6 +1,6 @@
-package edu.kit.ifv.populationsynthesis.measurements
+package edu.kit.ifv.populationsynthesis.rules.measurements
 
-import edu.kit.ifv.populationsynthesis.datasource.CensusHousehold
+import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.rules.measurement.NumericMeasurementDefinition
 
 /**
@@ -10,7 +10,7 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.NumericMeasurementDefin
  * member and aggregating the results by summation.
  *
  * Unlike [PersonAgeDefinition], which produces a boolean result per person, this definition
- * produces a numeric measurement over [edu.kit.ifv.populationsynthesis.datasource.CensusHousehold], representing the number of matching
+ * produces a numeric measurement over [CensusHousehold], representing the number of matching
  * household members.
  *
  * This is the most common form used when constructing household-level rules, as it directly

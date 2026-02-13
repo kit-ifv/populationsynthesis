@@ -1,4 +1,4 @@
-package edu.kit.ifv.populationsynthesis.datasource.input
+package edu.kit.ifv.populationsynthesis.input
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext

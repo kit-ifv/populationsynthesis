@@ -54,12 +54,21 @@ fun interface GenericIPU {
         ipuCalculationCallback: (List<RuleObserver>) -> Unit = {},
     ): List<IPUOutput<Signature>> {
         return internalGroupedCalculation(elements, rules, ipuCalculationCallback) {
-            val expectedAmounts = it.keys.sumOf { it.scalar }
-            val collectedAmounts = it.values.sumOf { it.size }
-            val plannedDelta = expectedAmounts / collectedAmounts
-            val shifts = it.entries.associate { (k, v) ->
-                k to Pair(k.scalar / expectedAmounts, (v.size.toDouble() / collectedAmounts))
-            }
+//            val expectedAmounts = it.keys.sumOf { it.scalar }
+//            val collectedAmounts = it.values.sumOf { it.size }
+//            val plannedDelta = expectedAmounts / collectedAmounts
+//            val shifts = it.entries.associate { (k, v) ->
+//                k to Pair(k.scalar / expectedAmounts, (v.size.toDouble() / collectedAmounts))
+//            }
+//
+//
+//            val df = mapOf(
+//                "actuals" to it.entries.map { (k, v) -> k.scalar / expectedAmounts },
+//                "expecteds" to it.entries.map { (k, v) -> (v.size.toDouble() / collectedAmounts) },
+//
+//            )
+//            plotLogHistograms(df)
+
             it.keys.map {
                 IPUOutput(it.signature, it.scalar)
             }
