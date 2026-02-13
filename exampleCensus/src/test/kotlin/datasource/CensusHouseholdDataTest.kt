@@ -1,8 +1,8 @@
 package datasource
 
-import edu.kit.ifv.populationsynthesis.domain.rules.CensusHouseholdRules
-import edu.kit.ifv.populationsynthesis.datasource.createRuleProvider
 import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
+import edu.kit.ifv.populationsynthesis.domain.rules.CensusHouseholdRules
+import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory.createRuleProvider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.assertThrows
