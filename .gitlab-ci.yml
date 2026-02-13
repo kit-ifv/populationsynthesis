@@ -1,4 +1,4 @@
-# The .gitlab-ci.yml makes use of some variables stored in repositories config:
+# The ..gitlab-ci.yml makes use of some variables stored in repositories config:
 #
 #  MAJOR: the current releases major version number
 #   - automatically incremented after each major-release-job
