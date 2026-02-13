@@ -65,11 +65,22 @@ publishing {
     repositories {
         maven {
             name = "nexus"
-            url = uri(System.getenv("NEXUS_URL") ?: "https://nexus.ifv.kit.edu/repository/maven-snapshots/")
+            val repoUrl =
+                (findProperty("localUrl") as String?)
+                    ?: System.getenv("NEXUS_URL")
+                    ?: "https://nexus.ifv.kit.edu/repository/maven-snapshots/"
+
+            url = uri(repoUrl)
+
 
             credentials {
-                username = System.getenv("NEXUS_USER")
-                password = System.getenv("NEXUS_PASSWORD")
+                username =
+                    (findProperty("localRepoUser") as String?)
+                        ?: System.getenv("NEXUS_USER")
+
+                password =
+                    (findProperty("localRepoPassword") as String?)
+                        ?: System.getenv("NEXUS_PASSWORD")
             }
         }
     }
