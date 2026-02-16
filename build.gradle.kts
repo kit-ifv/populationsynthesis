@@ -55,10 +55,7 @@ kotlin {
 
 
 publishing {
-    version = project.findProperty("buildVersion") as String? ?: "1.0-SNAPSHOT"
     publications.withType<MavenPublication>().configureEach {
-        groupId = "edu.kit.ifv.mobitopp"
-        artifactId = "synthesisalgorithms" // must be simple: [A-Za-z0-9_.-]
         version = (findProperty("buildVersion") as String?) ?: project.version.toString()
     }
     publications {
