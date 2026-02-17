@@ -51,6 +51,12 @@ kotlin {
         freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
+
+java {
+    withSourcesJar()
+    // optional but nice:
+    // withJavadocJar()
+}
 publishing {
     publications {
         create<MavenPublication>("mavenKotlin") {

@@ -26,6 +26,13 @@
 variables:
   BUILD_VERSION: "$MAJOR.$MINOR.$BUILD_NUMBER"
 
+cache:
+  key: "gradle-$CI_PROJECT_ID"
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+    - .kotlin
+
 stages: # List of stages for jobs, and their order of execution
   - build
   - test
