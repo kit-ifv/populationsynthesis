@@ -3,3 +3,4 @@ plugins {
 }
 rootProject.name = "synthesisalgorithms"
 include("exampleCensus")
+include("domain")

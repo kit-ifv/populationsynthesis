@@ -23,9 +23,8 @@ dependencies {
     implementation("org.apache.commons:commons-statistics-inference:1.2")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.20.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.0")
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
+    api("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
     implementation("it.unimi.dsi:fastutil:8.5.16")
     implementation("org.ejml:ejml-all:0.43")
     implementation("org.apache.spark:spark-mllib_2.13:3.5.4")
@@ -53,38 +52,34 @@ kotlin {
     }
 }
 
+subprojects {
+    plugins.withId("maven-publish") {
+        publishing {
+            publications.withType<MavenPublication>().configureEach {
+                // usually redundant if you set project.version above, but harmless
+                version = (findProperty("buildVersion") as String?) ?: project.version.toString()
+            }
 
-publishing {
-    publications.withType<MavenPublication>().configureEach {
-        version = (findProperty("buildVersion") as String?) ?: project.version.toString()
-    }
-    publications {
-        create<MavenPublication>("mavenKotlin") {
-            from(components["kotlin"])
-        }
-    }
+            repositories {
+                maven {
+                    name = "nexus"
+                    val repoUrl =
+                        (findProperty("localUrl") as String?)
+                            ?: System.getenv("NEXUS_URL")
+                            ?: "https://nexus.ifv.kit.edu/repository/maven-snapshots/"
 
-    repositories {
-        maven {
-            name = "nexus"
-            val repoUrl =
-                (findProperty("localUrl") as String?)
-                    ?: System.getenv("NEXUS_URL")
-                    ?: "https://nexus.ifv.kit.edu/repository/maven-snapshots/"
+                    url = uri(repoUrl)
 
-            url = uri(repoUrl)
-
-
-            credentials {
-                username =
-                    (findProperty("localRepoUser") as String?)
-                        ?: System.getenv("NEXUS_USER")
-
-                password =
-                    (findProperty("localRepoPassword") as String?)
-                        ?: System.getenv("NEXUS_PASSWORD")
+                    credentials {
+                        username =
+                            (findProperty("localRepoUser") as String?)
+                                ?: System.getenv("NEXUS_USER")
+                        password =
+                            (findProperty("localRepoPassword") as String?)
+                                ?: System.getenv("NEXUS_PASSWORD")
+                    }
+                }
             }
         }
     }
 }
-
