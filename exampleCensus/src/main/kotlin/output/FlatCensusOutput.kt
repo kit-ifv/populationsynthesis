@@ -7,7 +7,6 @@ import edu.kit.ifv.populationsynthesis.domain.population.HouseholdID
 data class FlatCensusOutput(
     val area: String,
     val householdID: HouseholdID,
-
     @field:JsonUnwrapped
     val censusPerson: CensusPerson,
 )
