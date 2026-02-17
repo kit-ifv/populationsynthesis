@@ -52,7 +52,7 @@ kotlin {
     }
 }
 
-subprojects {
+allprojects  {
     plugins.withId("maven-publish") {
         publishing {
             publications.withType<MavenPublication>().configureEach {
