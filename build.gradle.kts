@@ -51,6 +51,14 @@ kotlin {
         freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
+publishing {
+    publications {
+        create<MavenPublication>("mavenKotlin") {
+            from(components["kotlin"])
+            artifactId = "synthesisalgorithms"
+        }
+    }
+}
 
 allprojects  {
     plugins.withId("maven-publish") {
