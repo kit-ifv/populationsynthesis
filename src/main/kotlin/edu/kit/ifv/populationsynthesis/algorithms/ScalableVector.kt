@@ -1,11 +1,112 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
+interface ScalableVector {
+    var scalar: Double
+    val signature: Signature
+    @Deprecated("I would like to drop this field.")
+    val size: Int
+    fun currentValueForIndex(index: Int): Double
+    fun attributeForIndex(index: Int): Double
+    fun appliesToRule(ruleIndex: Int): Boolean
+    @Deprecated("I would like to drop this method.")
+    fun content(maxSize: Int): List<Double>
+
+    companion object {
+        /**
+         * creates a Scalable Vector for a target [element] based on the ruleset defined in [rules]
+         */
+        fun <T> createFromRules(element: T, rules: Collection<Rule<T>>): ArrayScalableVector {
+            return createFromLogics(element, rules.map { it.logic })
+        }
+
+        fun <T> createFromLogics(element: T, logics: Collection<Measurement<T>>): ArrayScalableVector {
+            return ArrayScalableVector(logics.map { it.measure(element) })
+        }
+
+        fun <T> createFrom(element: T, measurements: Collection<Measurement<T>>): ArrayScalableVector {
+            return ArrayScalableVector(measurements.map { it.measure(element) })
+        }
+    }
+}
+
+class SignatureScalableVector(override val signature: Signature, override var scalar: Double) : ScalableVector {
+    override val size: Int
+        get() = signature.maxKey
+
+    override fun currentValueForIndex(index: Int): Double {
+        return signature[index] * scalar
+    }
+
+    override fun attributeForIndex(index: Int): Double {
+        return signature[index]
+    }
+
+    override fun appliesToRule(ruleIndex: Int): Boolean {
+        return signature.hasKey(ruleIndex)
+    }
+
+    override fun content(maxSize: Int): List<Double> {
+        return (0 until  signature.maxKey).map { signature[it] }
+    }
+}
+
+class ArrayScalableVector internal constructor(private val array: DoubleArray, override var scalar: Double) : ScalableVector {
+    internal constructor(vararg numbers: Number) : this(numbers.toList())
+    internal constructor(numbers: Collection<Number>) : this(numbers.map { it.toDouble() }.toDoubleArray(), 1.0)
+    override val signature: Signature = Signature.fromValues(array.toList())
+    override val size: Int = array.size
+    override fun currentValueForIndex(index: Int): Double {
+        return array[index] * scalar
+    }
+
+    override fun attributeForIndex(index: Int): Double {
+        return array[index]
+    }
+
+    override fun content(maxSize: Int): List<Double> {
+        require(maxSize == size) {
+            "This should not happen"
+        }
+        return array.toList()
+    }
+    val content get() = array.toList()
+    override fun appliesToRule(ruleIndex: Int): Boolean {
+        return array[ruleIndex] != 0.0
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return if(other !is ArrayScalableVector) false
+        else array.contentEquals(other.array)
+    }
+
+    override fun hashCode(): Int {
+        return array.contentHashCode()
+    }
+}
+
+
+
+//class MapScalableVector(private val , override var scalar: Double = 1.0): ScalableElement {
+//    override fun currentValueForIndex(index: Int): Double {
+//        return signature[index]  * scalar
+//    }
+//
+//    override fun attributeForIndex(index: Int): Double {
+//        return signature[index]
+//    }
+//
+//    override fun appliesToRule(ruleIndex: Int): Boolean {
+//        return signature[ruleIndex] != 0.0
+//    }
+//}
+
 /**
- * A [ScalableVector] represents a vectorized encoding of household attributes, where each element of the vector
+ * A [ScalableVectore] represents a vectorized encoding of household attributes, where each element of the vector
  * corresponds to a specific attribute, and the `scalar` factor indicates how many instances of the household encoding
  * are currently present. The vector is immutable, but the scalar factor is mutable, allowing for optimizations and adjustments
  * during processing.
@@ -20,11 +121,11 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
  * @param vector The integer array representing the attribute values of the household encoding.
  * @param scalar The scaling factor applied to the vector, representing how many instances of the household are desired (default is 1.0).
  */
-class ScalableVector internal constructor(private val vector: Collection<Double>, var scalar: Double = 1.0) {
+class ScalableVectore internal constructor(vector: Collection<Double>, var scalar: Double = 1.0) {
 
     internal constructor(vararg numbers: Number) : this(numbers.map { it.toDouble() }, 1.0)
     private val array: DoubleArray = vector.toDoubleArray()
-    val signature: Signature = array.withIndex().filter { it.value != 0.0 }.associate { (i, value) -> i to value }
+    val signature: SignatureOld = array.withIndex().filter { it.value != 0.0 }.associate { (i, value) -> i to value }
     val size : Int get() = array.size
     /**
      * A read-only property that provides a list view of the [array] for external access.
@@ -62,12 +163,12 @@ class ScalableVector internal constructor(private val vector: Collection<Double>
         scalar *= times.toDouble()
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is ScalableVector) {
-            return false
-        }
-        return array.contentEquals(other.array)
-    }
+//    override fun equals(other: Any?): Boolean {
+//        if (other !is ScalableVector) {
+//            return false
+//        }
+//        return array.contentEquals(other.array)
+//    }
 
     override fun hashCode(): Int {
         return array.contentHashCode()
@@ -77,20 +178,20 @@ class ScalableVector internal constructor(private val vector: Collection<Double>
         return "ScalableVector(scalar=$scalar) $content"
     }
 
-    companion object {
-        /**
-         * creates a Scalable Vector for a target [element] based on the ruleset defined in [rules]
-         */
-        fun <T> createFromRules(element: T, rules: Collection<Rule<T>>): ScalableVector {
-            return createFromLogics(element, rules.map { it.logic })
-        }
-
-        fun <T> createFromLogics(element: T, logics: Collection<Measurement<T>>): ScalableVector {
-            return ScalableVector(logics.map { it.measure(element) })
-        }
-
-        fun <T> createFrom(element: T, measurements: Collection<Measurement<T>>): ScalableVector {
-            return ScalableVector(measurements.map { it.measure(element) })
-        }
-    }
+//    companion object {
+//        /**
+//         * creates a Scalable Vector for a target [element] based on the ruleset defined in [rules]
+//         */
+//        fun <T> createFromRules(element: T, rules: Collection<Rule<T>>): ScalableVector {
+//            return createFromLogics(element, rules.map { it.logic })
+//        }
+//
+//        fun <T> createFromLogics(element: T, logics: Collection<Measurement<T>>): ScalableVector {
+//            return ScalableVector(logics.map { it.measure(element) })
+//        }
+//
+//        fun <T> createFrom(element: T, measurements: Collection<Measurement<T>>): ScalableVector {
+//            return ScalableVector(measurements.map { it.measure(element) })
+//        }
+//    }
 }

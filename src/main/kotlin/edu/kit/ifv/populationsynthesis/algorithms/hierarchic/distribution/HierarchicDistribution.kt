@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
 import edu.kit.ifv.populationsynthesis.GenericCollector
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.IntegerIPUOutput
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
@@ -19,13 +20,14 @@ class HierarchicDistribution<AREA, T>(
     private val allRuleLogics = LogicIndexer.fromProvider(ruleProvider)
     private val householdMapping = initializeHouseholdMapping()
 
-    private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
+    private fun initializeHouseholdMapping(): Map<SignatureOld, List<T>> {
         return seedHouseholds.groupBy { element ->
             allRuleLogics.allMeasurements().withIndex().map { (index, logic) ->
                 index to logic.measure(element)
             }.filter { it.second != 0.0 }.toMap()
         }
     }
+
     /**
      * Generate a solution of the amount of households (read signatures for efficiency) which then can be distributed
      * According to whatever other strategy is present.
@@ -56,33 +58,12 @@ class HierarchicDistribution<AREA, T>(
     ): Map<AREA, List<T>> {
 
         val initialSolution = initialSolution(highestArea)
-        val distributor = OriginalDistributor(ruleProvider, seedHouseholds)
+        val logicIndexer = allRuleLogics.filter { it in targetAreas + highestArea }
+        val distributor = OriginalDistributor(ruleProvider,logicIndexer, seedHouseholds)
         return distributor.distribute(
             initialSolution,
             highestArea,
         )
-//        val output: MutableMap<AREA, List<T>> = mutableMapOf()
-//        val handledNonTargetNodes = mutableMapOf<AREA, List<SignatureAmount>>()
-//        if (highestArea !in targetAreas) {
-//            handledNonTargetNodes[highestArea] = initialSolution
-//        } else {
-//            output[highestArea] = finalize(initialSolution, householdMapping)
-//        }
-//        val rules = ruleProvider.getComposedRules(highestArea)
-//
-//        while (handledNonTargetNodes.isNotEmpty()) {
-//            val (area, signatureAmounts) = handledNonTargetNodes.entries.first()
-//            handledNonTargetNodes.remove(area)
-//            val distribution = distributeToChildren(rules, area, signatureAmounts)
-//            distribution.entries.forEach { (subArea, amounts) ->
-//                if (subArea !in targetAreas) {
-//                    handledNonTargetNodes[subArea] = amounts
-//                } else {
-//                    output[subArea] = finalize(amounts, householdMapping)
-//                }
-//            }
-//        }
-//        return output
     }
 
     private val collector = GenericCollector<SignatureAmount, T> {
@@ -108,7 +89,7 @@ class HierarchicDistribution<AREA, T>(
 
 }
 
-fun Collection<Rule<*>>.verify(target: Collection<IntegerIPUOutput<Signature>>) {
+fun Collection<Rule<*>>.verify(target: Collection<IntegerIPUOutput<SignatureOld>>) {
     withIndex().forEach { (index, rule) ->
         val amount = target.sumOf { it.amount * (it.element[index]?: 0.0) }
         val output = "${rule.description} target=${rule.target} amount=$amount"

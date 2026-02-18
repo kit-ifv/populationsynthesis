@@ -1,5 +1,7 @@
 package edu.kit.ifv.populationsynthesis
 
+import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+
 /**
  * A signature represents a household in regard to a set of rules. An entry in the signature (k, v) represents that this
  * particular signature will return the value v for the k-th rule.
@@ -17,4 +19,63 @@ package edu.kit.ifv.populationsynthesis
  *  -Djava.lang.Integer.IntegerCache.high=10000
  *  Or a manual cache of Values...
  */
-typealias Signature = Map<Int, Double>
+typealias SignatureOld = Map<Int, Double>
+//typealias Signature = Int2DoubleOpenHashMap
+fun SignatureOld.toScalableVector(): ScalableVector = TODO()
+
+class Signature(
+    val indices: IntArray,
+    val values: DoubleArray,
+) {
+    operator fun get(index: Int): Double {
+        val insertion = indices.binarySearch(index)
+        return if(insertion < 0) 0.0
+        else values[insertion]
+    }
+
+    fun hasKey(index: Int): Boolean {
+        return index in indices
+    }
+// TODO enable linear search for speed.
+//    operator fun get(index: Int): Double {
+//        val idx = indices
+//        val vals = values
+//        for (i in idx.indices) if (idx[i] == index) return vals[i]
+//        return 0.0
+//    }
+
+    fun filterKeys(predicate: (Int) -> Boolean): Signature{
+        val relevantIndices = indices.filter(predicate)
+
+        return Signature(relevantIndices.toIntArray(), relevantIndices.map { values[it] }.toDoubleArray())
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if(other !is Signature) return false
+        return indices.contentEquals(other.indices) && values.contentEquals(other.values)
+
+    }
+
+    override fun hashCode(): Int {
+        return indices.contentHashCode() + 31 * values.contentHashCode()
+    }
+    fun filter(predicate: (Pair<Int, Double>) -> Boolean): List<Pair<Int, Double>> = entries.filter(predicate)
+
+    constructor(map: Map<Int, Double>) : this(
+        map.keys.toIntArray(), map.values.toDoubleArray(),
+    )
+    val keys get() = indices
+    val entries get() = indices.zip(values.toList())
+    val maxKey get() = indices.last()
+    override fun toString(): String {
+        return entries.joinToString(", ", "{", "}")
+    }
+    fun isEmpty(): Boolean = indices.isEmpty()
+    companion object {
+        fun fromValues(values: Collection<Double>): Signature {
+            val targetValues  = values.withIndex().filter { it.value != 0.0 }
+
+            return Signature(targetValues.map { it.index }.toIntArray(), targetValues.map { it.value }.toDoubleArray())
+        }
+    }
+}

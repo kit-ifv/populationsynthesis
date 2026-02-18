@@ -29,7 +29,7 @@ abstract class RuleObserver(
             At least one ScalableVector does not contain an entry at `observedIndex`.
             Since this observer reads from that index for all vectors, every vector
             must have a length strictly greater than `observedIndex`.
-            The observed index is $observedIndex. 
+            The observed index is $observedIndex.
             There are the (${badVectors.size}) failing vectors out of (${vectors.size})
             firstFail = ${badVectors.firstOrNull()}
             """.trimIndent()
@@ -69,7 +69,7 @@ abstract class RuleObserver(
      * @return True if all vectors have a non-zero value at the [observedIndex], otherwise false.
      */
     fun sanityCheck(): Boolean {
-        return vectors.all { it.content[observedIndex] != 0.0 }
+        return vectors.all { it.attributeForIndex(observedIndex) != 0.0 }
     }
 
     /**

@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
 import edu.kit.ifv.populationsynthesis.GenericCollector
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyAmountDistro
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
@@ -24,11 +25,11 @@ fun interface Distributor<AREA, T> {
 
 class OriginalDistributor<AREA, T>(
     private val ruleProvider: HierarchicRuleProvider<AREA, T>,
+    private val logicIndexer: LogicIndexer<AREA, T>,
 
     private val seedElements: Collection<T>
 ) : Distributor<AREA, T> {
     private val hierarchy: HierarchicElement<AREA> = ruleProvider.hierarchy
-    private val logicIndexer = LogicIndexer.fromProvider(ruleProvider)
     private val measurements: Set<Measurement<T>> = logicIndexer.allMeasurements()
 
 
@@ -36,9 +37,10 @@ class OriginalDistributor<AREA, T>(
 
     private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
         return seedElements.groupBy { element ->
-            measurements.withIndex().map { (index, logic) ->
+            Signature(
+                measurements.withIndex().map { (index, logic) ->
                 index to logic.measure(element)
-            }.filter { it.second != 0.0 }.toMap()
+            }.filter { it.second != 0.0 }.toMap())
         }
     }
 
@@ -98,7 +100,7 @@ class OriginalDistributor<AREA, T>(
         if (childAreas.isEmpty()) throw IllegalStateException("We expect at least one child for distribution")
 
         val signatureTracker = SignatureTracker(signatures, signatures.maxOf {
-            it.keys.max()
+            it.maxKey
         } + 1)
 
         val partitions = childAreas.map { region ->
@@ -115,8 +117,8 @@ class OriginalDistributor<AREA, T>(
 
 }
 
-fun Signature.decipher(indexer: LogicIndexer<*, *>): String = indexer.decipher(this)
-fun LogicIndexer<*, *>.decipher(signature: Signature): String {
+fun SignatureOld.decipher(indexer: LogicIndexer<*, *>): String = indexer.decipher(this)
+fun LogicIndexer<*, *>.decipher(signature: SignatureOld): String {
     val logic = logics.toList()
     return signature.map { logic[it.key] }.joinToString("\n")
 }

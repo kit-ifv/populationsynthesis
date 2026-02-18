@@ -10,11 +10,11 @@ class TargetNumberObserverTest {
     @Test
     fun properBehaviour(){
         val logicIdentifier = "Fake Identifier"
-        val mutatingVector = ScalableVector(1, 2, 3)
+        val mutatingVector = ArrayScalableVector(1, 2, 3)
         val vectors = listOf(
-            ScalableVector(1, 2, 3),
+            ArrayScalableVector(1, 2, 3),
             mutatingVector,
-            ScalableVector(1, 2, 3),
+            ArrayScalableVector(1, 2, 3),
         )
         val obs = TargetNumberObserver(logicIdentifier, 1, vectors, 10.0)
         assertEquals(obs.absoluteDifference, 4.0)
@@ -27,7 +27,7 @@ class TargetNumberObserverTest {
     @Test
     fun targetIsZero(){
         val logicIdentifier = "Fake Identifier"
-        val mutatingVector = ScalableVector(1, 2, 3)
+        val mutatingVector = ArrayScalableVector(1, 2, 3)
         val vectors = listOf(
             mutatingVector,
         )
@@ -43,7 +43,7 @@ class TargetNumberObserverTest {
     @Test
     fun thouCannotCreateANonsenseObserver() {
         val logicIdentifier = "Fake Identifier"
-        val vectors = listOf(ScalableVector(1.0, 0.0, 0.0))
+        val vectors = listOf(ArrayScalableVector(1.0, 0.0, 0.0))
         assertThrows<IllegalArgumentException> {
             TargetNumberObserver(logicIdentifier, 4, vectors, 0.0)
         }

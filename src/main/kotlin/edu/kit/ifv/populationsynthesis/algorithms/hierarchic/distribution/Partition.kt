@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.PartitionMetric
 import org.jetbrains.annotations.TestOnly
@@ -42,14 +43,14 @@ class Partition(
     val error: Double = Double.MAX_VALUE
     fun isEmpty() = actual.all { it == 0.0 }
     fun isNotEmpty() = actual.any { it != 0.0 }
-    fun getExpecteds(signature: Signature) = signature.keys.map { getExpected(it) }
-    fun getActuals(signature: Signature) = signature.keys.map { getActual(it) }
+    fun getExpecteds(signature: SignatureOld) = signature.keys.map { getExpected(it) }
+    fun getActuals(signature: SignatureOld) = signature.keys.map { getActual(it) }
     fun verify() {
         val attributeCount = mutableMapOf<Int, Double>()
         _counts.zip(signatureTracker.signatures).map { (amount, signature) ->
-            signature.entries.forEach {
-                val currentValue = attributeCount.getOrPut(it.key) { 0.0 }
-                attributeCount[it.key] = currentValue + amount * it.value
+            signature.entries.forEach { (key, value) ->
+                val currentValue = attributeCount.getOrPut(key) { 0.0 }
+                attributeCount[key] = currentValue + amount * value
             }
         }
         val actualsMatch = _actual
@@ -64,14 +65,14 @@ class Partition(
             "The counts and actual things do not match"
         }
     }
-    fun calculateGain(signature: Signature): Double {
+    fun calculateGain(signature: SignatureOld): Double {
         return signature.entries.sumOf { (idx, factor) ->
             val delta = max(getDelta(idx), 0.0)
             -factor + min(factor, delta) * 2
         }
     }
 
-    fun calculateLoss(signature: Signature): Double {
+    fun calculateLoss(signature: SignatureOld): Double {
         return signature.entries.sumOf { (idx, factor) ->
             val delta = max(-getDelta(idx), 0.0)
             -factor + min(factor, delta) * 2
@@ -175,7 +176,7 @@ class Partition(
     private fun resolve(sigIdx: Int): Signature = _signatures[sigIdx]
     private fun updateActual(sigIndex: Int, delta: Int) {
         val signature = resolve(sigIndex)
-        signature.filter { mask[it.key] }.forEach { (k, v) ->
+        signature.filter { (key, _) -> mask[key] }.forEach { (k, v) ->
             _actual[k] += v * delta
         }
     }

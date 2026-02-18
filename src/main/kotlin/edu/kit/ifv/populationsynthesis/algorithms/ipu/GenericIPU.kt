@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.ipu
 
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.IPUOutput
 import edu.kit.ifv.populationsynthesis.algorithms.PerformanceLoggingIPU
@@ -8,6 +9,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import edu.kit.ifv.populationsynthesis.rules.IndexedRule
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
+import edu.kit.ifv.populationsynthesis.toScalableVector
 import edu.kit.ifv.populationsynthesis.utils.invertMap
 import java.nio.file.Path
 
@@ -22,37 +24,52 @@ fun interface GenericIPU {
     fun <I> calculateDirect(
         vectors: Collection<ScalableVector>,
         rules: Collection<Rule<I>>,
-    ): List<RuleObserver> {
+    ): DirectRunReport {
+        val (emptyVectors, nonEmptyVectors) =  vectors.partition { it.signature.isEmpty() }
         val observers = rules.withIndex().map {
-            RuleObserver.fromRule(it.value, it.index, vectors)
+            RuleObserver.fromRule(it.value, it.index, nonEmptyVectors)
         }
+        run(nonEmptyVectors, observers)
+        emptyVectors.forEach { vector ->
+            vector.scalar = 0.0
+        }
+        return DirectRunReport(observers, emptyVectors.size)
+    }
+    fun <X, I> sigCalcAct(
+        signatures: Map<SignatureOld, List<I>>,
+        rules: Collection<IndexedRule<I>>,
+    ): List<IPUOutput<Signature>>  {
+        val vectors = signatures.keys.map { it.toScalableVector() }
+        val observers = rules.map { (index, rule) ->
+            RuleObserver.fromRule(rule, index, vectors)
+        }
+
         run(vectors, observers)
-        return observers
+        return vectors.map { IPUOutput(it.signature, it.scalar) }
     }
+//    fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {
+//        val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
+//        calculateDirect(vectorMapping.values, rules)
+//        return vectorMapping.map { (k, v) ->
+//            IPUOutput(k, v.scalar)
+//        }
+//    }
 
-    fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {
-        val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
-        calculateDirect(vectorMapping.values, rules)
-        return vectorMapping.map { (k, v) ->
-            IPUOutput(k, v.scalar)
-        }
-    }
-
-    fun <I> calculate(
-        elements: Collection<I>,
-        rules: Collection<Rule<I>>,
-    ): List<IPUOutput<List<I>>> {
-        return internalGroupedCalculation(elements, rules) {
-            it.map { (k, v) ->
-                IPUOutput(v, k.scalar)
-            }
-        }
-    }
+//    fun <I> calculate(
+//        elements: Collection<I>,
+//        rules: Collection<Rule<I>>,
+//    ): List<IPUOutput<List<I>>> {
+//        return internalGroupedCalculation(elements, rules) {
+//            it.map { (k, v) ->
+//                IPUOutput(v, k.scalar)
+//            }
+//        }
+//    }
 
     fun <I> calculateSignature(
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
-        ipuCalculationCallback: (List<RuleObserver>) -> Unit = {},
+        ipuCalculationCallback: (DirectRunReport) -> Unit = {},
     ): List<IPUOutput<Signature>> {
         return internalGroupedCalculation(elements, rules, ipuCalculationCallback) {
 //            val expectedAmounts = it.keys.sumOf { it.scalar }
@@ -76,10 +93,12 @@ fun interface GenericIPU {
         }
     }
 
+
+
     private fun <X, I> internalGroupedCalculation(
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
-        ipuCalculationCallback: (List<RuleObserver>) -> Unit = {},
+        ipuCalculationCallback: (DirectRunReport) -> Unit = {},
         resultConverter: (Map<ScalableVector, List<I>>) -> X
     ): X {
         val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
