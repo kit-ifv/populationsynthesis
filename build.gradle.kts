@@ -60,7 +60,7 @@ java {
 publishing {
     publications {
         create<MavenPublication>("mavenKotlin") {
-            from(components["kotlin"])
+            from(components["java"])
             artifactId = "synthesisalgorithms"
         }
     }
