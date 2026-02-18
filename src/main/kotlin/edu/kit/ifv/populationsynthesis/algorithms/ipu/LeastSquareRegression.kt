@@ -25,7 +25,8 @@ object LeastSquareRegression: GenericIPU {
 }
 
 fun Collection<ScalableVector>.toMatrix(): DMatrixRMaj {
-    val maxSize = maxOf { it.size }
+    val maxSize = maxOf { it.highestIndex() }
+    TODO("Make sure that this construction works again, prefereably in a test")
     return DMatrixRMaj(maxSize, size, false, *flatMap { it.content(maxSize) }.toDoubleArray())
 }
 fun Collection<RuleObserver>.toVector(): DoubleArray {

@@ -27,22 +27,24 @@ class Signature(
     val indices: IntArray,
     val values: DoubleArray,
 ) {
-    operator fun get(index: Int): Double {
-        val insertion = indices.binarySearch(index)
-        return if(insertion < 0) 0.0
-        else values[insertion]
-    }
+
 
     fun hasKey(index: Int): Boolean {
         return index in indices
     }
-// TODO enable linear search for speed.
-//    operator fun get(index: Int): Double {
-//        val idx = indices
-//        val vals = values
-//        for (i in idx.indices) if (idx[i] == index) return vals[i]
-//        return 0.0
-//    }
+
+    operator fun get(index: Int): Double {
+        val idx = indices
+        val vals = values
+        for (i in idx.indices) if (idx[i] == index) return vals[i]
+        return 0.0
+    }
+
+
+    fun isRelevantFor(indices: Set<Int>): Boolean {
+        return this.indices.any{it in indices}
+    }
+
 
     fun filterKeys(predicate: (Int) -> Boolean): Signature{
         val relevantIndices = indices.filter(predicate)

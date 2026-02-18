@@ -1,15 +1,10 @@
 package edu.kit.ifv.populationsynthesis.algorithms.ipu
 
-import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
-import edu.kit.ifv.populationsynthesis.algorithms.IPUOutput
-import edu.kit.ifv.populationsynthesis.algorithms.PerformanceLoggingIPU
-import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
-import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.*
 import edu.kit.ifv.populationsynthesis.rules.IndexedRule
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
-import edu.kit.ifv.populationsynthesis.toScalableVector
 import edu.kit.ifv.populationsynthesis.utils.invertMap
 import java.nio.file.Path
 
@@ -35,16 +30,21 @@ fun interface GenericIPU {
         }
         return DirectRunReport(observers, emptyVectors.size)
     }
-    fun <X, I> sigCalcAct(
-        signatures: Map<SignatureOld, List<I>>,
+    fun <I> sigCalcAct(
+        signatures: Map<Signature, List<I>>,
         rules: Collection<IndexedRule<I>>,
     ): List<IPUOutput<Signature>>  {
-        val vectors = signatures.keys.map { it.toScalableVector() }
+        val vectors = signatures.keys.map { SignatureScalableVector(it) }
+        val relevantIndices = rules.map { it.index }.toSet()
+        val (relevantVectors, irrelevantVectors) = vectors.partition { it.signature.isRelevantFor(relevantIndices) }
         val observers = rules.map { (index, rule) ->
-            RuleObserver.fromRule(rule, index, vectors)
+            RuleObserver.fromRule(rule, index, relevantVectors)
         }
 
-        run(vectors, observers)
+        run(relevantVectors, observers)
+        irrelevantVectors.forEach { vector ->
+            vector.scalar = 0.0
+        }
         return vectors.map { IPUOutput(it.signature, it.scalar) }
     }
 //    fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {

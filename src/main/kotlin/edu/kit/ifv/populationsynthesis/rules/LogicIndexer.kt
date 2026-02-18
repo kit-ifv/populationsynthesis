@@ -72,6 +72,9 @@ class LogicIndexer<AREA, T> internal constructor(
         return identifier in (logicMap[area]?.map { it.logicIdentifier } ?: return false)
     }
 
+    fun <T> toIndexedRule(rule: Rule<T>): IndexedRule<T> {
+        return IndexedRule(rule = rule , index = getIndex(rule))
+    }
 
 }
 

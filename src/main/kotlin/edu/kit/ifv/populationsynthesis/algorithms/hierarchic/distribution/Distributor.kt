@@ -26,23 +26,22 @@ fun interface Distributor<AREA, T> {
 class OriginalDistributor<AREA, T>(
     private val ruleProvider: HierarchicRuleProvider<AREA, T>,
     private val logicIndexer: LogicIndexer<AREA, T>,
-
-    private val seedElements: Collection<T>
+    private val householdMapping: Map<Signature, List<T>>,
+//    private val seedElements: Collection<T>
 ) : Distributor<AREA, T> {
     private val hierarchy: HierarchicElement<AREA> = ruleProvider.hierarchy
-    private val measurements: Set<Measurement<T>> = logicIndexer.allMeasurements()
+//    private val measurements: Set<Measurement<T>> = logicIndexer.allMeasurements()
 
 
-    private val householdMapping = initializeHouseholdMapping()
 
-    private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
-        return seedElements.groupBy { element ->
-            Signature(
-                measurements.withIndex().map { (index, logic) ->
-                index to logic.measure(element)
-            }.filter { it.second != 0.0 }.toMap())
-        }
-    }
+//    private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
+//        return seedElements.groupBy { element ->
+//            Signature(
+//                measurements.withIndex().map { (index, logic) ->
+//                index to logic.measure(element)
+//            }.filter { it.second != 0.0 }.toMap())
+//        }
+//    }
 
     override fun distribute(
 

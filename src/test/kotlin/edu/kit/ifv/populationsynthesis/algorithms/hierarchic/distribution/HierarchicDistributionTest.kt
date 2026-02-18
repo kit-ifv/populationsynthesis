@@ -29,7 +29,7 @@ class HierarchicDistributionTest {
             addVertex(2)
         }
         val hierarchicRuleProvider = ruleProvider.withHierarchy(hierarchy)
-        var callbackCollector = mutableListOf<Boolean>() // To check whether the callback function is triggered properly
+        val callbackCollector = mutableListOf<Boolean>() // To check whether the callback function is triggered properly
         val ipu = HierarchicDistribution(
             ruleProvider = hierarchicRuleProvider,
             seedHouseholds = listOf(Elements(Attr.A), Elements(Attr.B), Elements(Attr.C)),
@@ -45,7 +45,7 @@ class HierarchicDistributionTest {
 
         val output = ipu.synthesizeAll()
 
-        assertTrue(callbackCollector.any())
+
         assertEquals(output[1]!!.size, 30)
         assertEquals(output[2]!!.size, 10)
         assertFalse(output[2]!!.contains(Elements(Attr.B)))

@@ -8,13 +8,15 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 interface ScalableVector {
     var scalar: Double
     val signature: Signature
-    @Deprecated("I would like to drop this field.")
-    val size: Int
+
     fun currentValueForIndex(index: Int): Double
     fun attributeForIndex(index: Int): Double
     fun appliesToRule(ruleIndex: Int): Boolean
     @Deprecated("I would like to drop this method.")
     fun content(maxSize: Int): List<Double>
+    fun highestIndex(): Int {
+        return signature.maxKey + 1
+    }
 
     companion object {
         /**
@@ -34,9 +36,7 @@ interface ScalableVector {
     }
 }
 
-class SignatureScalableVector(override val signature: Signature, override var scalar: Double) : ScalableVector {
-    override val size: Int
-        get() = signature.maxKey
+class SignatureScalableVector(override val signature: Signature, override var scalar: Double = 1.0) : ScalableVector {
 
     override fun currentValueForIndex(index: Int): Double {
         return signature[index] * scalar
@@ -59,24 +59,20 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
     internal constructor(vararg numbers: Number) : this(numbers.toList())
     internal constructor(numbers: Collection<Number>) : this(numbers.map { it.toDouble() }.toDoubleArray(), 1.0)
     override val signature: Signature = Signature.fromValues(array.toList())
-    override val size: Int = array.size
     override fun currentValueForIndex(index: Int): Double {
-        return array[index] * scalar
+        return this[index] * scalar
     }
 
     override fun attributeForIndex(index: Int): Double {
-        return array[index]
+        return this[index]
     }
-
+    operator fun get(index: Int) = runCatching { array[index] }.getOrNull() ?: 0.0
     override fun content(maxSize: Int): List<Double> {
-        require(maxSize == size) {
-            "This should not happen"
-        }
         return array.toList()
     }
     val content get() = array.toList()
     override fun appliesToRule(ruleIndex: Int): Boolean {
-        return array[ruleIndex] != 0.0
+        return this[ruleIndex] != 0.0
     }
 
     override fun equals(other: Any?): Boolean {

@@ -20,11 +20,14 @@ class HierarchicDistribution<AREA, T>(
     private val allRuleLogics = LogicIndexer.fromProvider(ruleProvider)
     private val householdMapping = initializeHouseholdMapping()
 
-    private fun initializeHouseholdMapping(): Map<SignatureOld, List<T>> {
+    private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
         return seedHouseholds.groupBy { element ->
-            allRuleLogics.allMeasurements().withIndex().map { (index, logic) ->
-                index to logic.measure(element)
-            }.filter { it.second != 0.0 }.toMap()
+            Signature(
+                allRuleLogics.allMeasurements().withIndex().map { (index, logic) ->
+                    index to logic.measure(element)
+                }.filter { it.second != 0.0 }.toMap()
+            )
+
         }
     }
 
@@ -35,7 +38,8 @@ class HierarchicDistribution<AREA, T>(
     fun initialSolution(target: AREA): List<SignatureAmount> {
         val rules = ruleProvider.getComposedRules(target)
         // TODO What if there are different rules provided at different root areas, they cannot be traced back to their original signture created from the logic indexer.
-        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
+//        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
+        val oIpu = config.ipu.sigCalcAct(householdMapping, rules.map { allRuleLogics.toIndexedRule(it) })
 
 
 
@@ -58,8 +62,7 @@ class HierarchicDistribution<AREA, T>(
     ): Map<AREA, List<T>> {
 
         val initialSolution = initialSolution(highestArea)
-        val logicIndexer = allRuleLogics.filter { it in targetAreas + highestArea }
-        val distributor = OriginalDistributor(ruleProvider,logicIndexer, seedHouseholds)
+        val distributor = OriginalDistributor(ruleProvider,allRuleLogics, householdMapping)
         return distributor.distribute(
             initialSolution,
             highestArea,

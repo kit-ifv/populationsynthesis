@@ -21,19 +21,6 @@ abstract class RuleObserver(
 ) {
 
     init {
-
-        require(vectors.all { it.size > observedIndex }) {
-            val badVectors = vectors.filter { it.size <= observedIndex }
-            """Behold! An observer hath been wrought in error: the given vector is too short to suffer the demanded index.
-
-            At least one ScalableVector does not contain an entry at `observedIndex`.
-            Since this observer reads from that index for all vectors, every vector
-            must have a length strictly greater than `observedIndex`.
-            The observed index is $observedIndex.
-            There are the (${badVectors.size}) failing vectors out of (${vectors.size})
-            firstFail = ${badVectors.firstOrNull()}
-            """.trimIndent()
-        }
         require(sanityCheck()) {
             val badVectors = vectors.filter { it.appliesToRule(observedIndex) }
             """Hearken! This observer is vain, for some among the vectors bears a zero mark at the ordained index.
