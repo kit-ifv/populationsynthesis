@@ -32,6 +32,7 @@ class HierarchicDistribution<AREA, T>(
      */
     fun initialSolution(target: AREA): List<SignatureAmount> {
         val rules = ruleProvider.getComposedRules(target)
+        // TODO What if there are different rules provided at different root areas, they cannot be traced back to their original signture created from the logic indexer.
         val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
 
 
@@ -55,7 +56,7 @@ class HierarchicDistribution<AREA, T>(
     ): Map<AREA, List<T>> {
 
         val initialSolution = initialSolution(highestArea)
-
+        val distributor = OriginalDistributor(ruleProvider, seedHouseholds)
         return distributor.distribute(
             initialSolution,
             highestArea,
@@ -101,7 +102,7 @@ class HierarchicDistribution<AREA, T>(
         return collector.extract(targetMap).map { it }
     }
 
-    private val distributor = OriginalDistributor(ruleProvider, seedHouseholds)
+
 
 
 

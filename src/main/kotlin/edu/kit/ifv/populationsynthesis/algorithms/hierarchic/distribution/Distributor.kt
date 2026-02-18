@@ -4,7 +4,9 @@ import edu.kit.ifv.populationsynthesis.GenericCollector
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyAmountDistro
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
+import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
+import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 
 /**
@@ -22,18 +24,19 @@ fun interface Distributor<AREA, T> {
 
 class OriginalDistributor<AREA, T>(
     private val ruleProvider: HierarchicRuleProvider<AREA, T>,
+
     private val seedElements: Collection<T>
-): Distributor<AREA, T> {
-
-    private val hierarchy = ruleProvider.hierarchy
-
+) : Distributor<AREA, T> {
+    private val hierarchy: HierarchicElement<AREA> = ruleProvider.hierarchy
     private val logicIndexer = LogicIndexer.fromProvider(ruleProvider)
+    private val measurements: Set<Measurement<T>> = logicIndexer.allMeasurements()
+
 
     private val householdMapping = initializeHouseholdMapping()
 
     private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
         return seedElements.groupBy { element ->
-            logicIndexer.allMeasurements().withIndex().map { (index, logic) ->
+            measurements.withIndex().map { (index, logic) ->
                 index to logic.measure(element)
             }.filter { it.second != 0.0 }.toMap()
         }
@@ -68,6 +71,7 @@ class OriginalDistributor<AREA, T>(
         }
         return output
     }
+
     private val collector = GenericCollector<SignatureAmount, T> {
         it.map { it.amount }
     }
@@ -84,10 +88,14 @@ class OriginalDistributor<AREA, T>(
         }
         return collector.extract(targetMap).map { it }
     }
-    private fun distributeToImmediateChildren(area: AREA, targetAmounts: List<SignatureAmount>): Map<AREA, List<SignatureAmount>> {
+
+    private fun distributeToImmediateChildren(
+        area: AREA,
+        targetAmounts: List<SignatureAmount>
+    ): Map<AREA, List<SignatureAmount>> {
         val childAreas = hierarchy.getImmediateChildren(area)
         val signatures = targetAmounts.map { it.signature }
-        if(childAreas.isEmpty()) throw IllegalStateException("We expect at least one child for distribution")
+        if (childAreas.isEmpty()) throw IllegalStateException("We expect at least one child for distribution")
 
         val signatureTracker = SignatureTracker(signatures, signatures.maxOf {
             it.keys.max()
@@ -106,20 +114,25 @@ class OriginalDistributor<AREA, T>(
 
 
 }
-fun Signature.decipher(indexer: LogicIndexer<*,*>): String = indexer.decipher(this)
+
+fun Signature.decipher(indexer: LogicIndexer<*, *>): String = indexer.decipher(this)
 fun LogicIndexer<*, *>.decipher(signature: Signature): String {
     val logic = logics.toList()
-    return signature.map { logic[it.key]}.joinToString("\n")
+    return signature.map { logic[it.key] }.joinToString("\n")
 }
 
-fun <AREA> LogicIndexer<AREA, *>.createPartition(target: AREA, signatureTracker: SignatureTracker,  ruleProvider: HierarchicRuleProvider<AREA, *>): Partition {
+fun <AREA> LogicIndexer<AREA, *>.createPartition(
+    target: AREA,
+    signatureTracker: SignatureTracker,
+    ruleProvider: HierarchicRuleProvider<AREA, *>
+): Partition {
     val rules = ruleProvider.getComposedRules(target)
     val expectedValues = rules.associate {
         getIndex(it) to it.target
     }
-    val targetArray = DoubleArray(size) {0.0}
-    val maskArray = BooleanArray(size) {false}
-    expectedValues.forEach {(index, target) ->
+    val targetArray = DoubleArray(size) { 0.0 }
+    val maskArray = BooleanArray(size) { false }
+    expectedValues.forEach { (index, target) ->
         targetArray[index] = target
         maskArray[index] = true
 

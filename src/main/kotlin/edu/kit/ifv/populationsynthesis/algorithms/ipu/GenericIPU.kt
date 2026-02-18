@@ -5,6 +5,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.IPUOutput
 import edu.kit.ifv.populationsynthesis.algorithms.PerformanceLoggingIPU
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.rules.IndexedRule
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
 import edu.kit.ifv.populationsynthesis.utils.invertMap
