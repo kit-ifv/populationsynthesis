@@ -1,5 +1,5 @@
 package population
 
-interface HasSex {
+interface HasBiologicalSex {
     val sex: Sex
 }

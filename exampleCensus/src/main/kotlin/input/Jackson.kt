@@ -23,7 +23,7 @@ import java.nio.file.Path
  * Jackson's default integer parsing is intentionally strict. That is great for clean datasets,
  * but it can make importing real-world CSV data fragile.
  *
- * This module wires in [LenientCensusIntDeserializer] for both Kotlin/Java `Int` variants:
+ * This module wires in [edu.kit.ifv.populationsynthesis.input.LenientCensusIntDeserializer] for both Kotlin/Java `Int` variants:
  *
  * - `Int::class.java` is the primitive `int` on the JVM (non-nullable `Int` in Kotlin).
  * - `Int::class.javaObjectType` is the boxed `java.lang.Integer` (nullable `Int?` in Kotlin).
@@ -43,10 +43,10 @@ val module = SimpleModule().apply {
 
 
 /**
- * Default [ObjectMapper] used for reading census CSV files into Kotlin data classes.
+ * Default [com.fasterxml.jackson.databind.ObjectMapper] used for reading census CSV files into Kotlin data classes.
  *
  * What it does
- * - Uses [CsvMapper] (Jackson's CSV-aware mapper).
+ * - Uses [com.fasterxml.jackson.dataformat.csv.CsvMapper] (Jackson's CSV-aware mapper).
  * - Registers the Jackson Kotlin module so constructor-based data classes work naturally
  *   (non-null vs null, default values, etc.).
  * - Registers our custom [module] to make int parsing resilient.
@@ -59,10 +59,10 @@ internal val standardMapper: ObjectMapper = CsvMapper().registerKotlinModule().r
  * Standard schema used for reading our census CSV files.
  *
  * What it does
- * - [CsvSchema.emptySchema] indicates we do not pre-declare columns programmatically.
- * - [CsvSchema.withHeader] tells Jackson to treat the first row as a header row and use it
+ * - [com.fasterxml.jackson.dataformat.csv.CsvSchema.emptySchema] indicates we do not pre-declare columns programmatically.
+ * - [com.fasterxml.jackson.dataformat.csv.CsvSchema.withHeader] tells Jackson to treat the first row as a header row and use it
  *   for column-to-property name matching.
- * - [CsvSchema.withColumnSeparator] sets `';'` as separator.
+ * - [com.fasterxml.jackson.dataformat.csv.CsvSchema.withColumnSeparator] sets `';'` as separator.
  *
  */
 internal val standardSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';')
@@ -101,9 +101,9 @@ internal inline fun <reified T> standardParse(input: InputStream): List<T> {
  * Write a list of Kotlin objects [rows] to a CSV file at [path] using Jackson CSV.
  *
  * ## What it does
- * - Builds a dedicated [CsvMapper] with the Kotlin module enabled.
- * - Generates a CSV schema from the runtime type [T] via [CsvMapper.schemaFor].
- * - Writes a header row (column names) via [CsvSchema.withHeader].
+ * - Builds a dedicated [com.fasterxml.jackson.dataformat.csv.CsvMapper] with the Kotlin module enabled.
+ * - Generates a CSV schema from the runtime type [T] via [com.fasterxml.jackson.dataformat.csv.CsvMapper.schemaFor].
+ * - Writes a header row (column names) via [com.fasterxml.jackson.dataformat.csv.CsvSchema.withHeader].
  * - Emits the CSV to [path].
  *
  * ## Why this exists
@@ -114,11 +114,11 @@ internal inline fun <reified T> standardParse(input: InputStream): List<T> {
  * ## Column ordering
  * CSV consumers (Excel, pandas, etc.) typically care about predictable column order.
  * Jackson may reorder columns depending on configuration and introspection rules.
- * We enable [CsvSchema.withColumnReordering] to keep ordering stable *when possible*.
+ * We enable [com.fasterxml.jackson.dataformat.csv.CsvSchema.withColumnReordering] to keep ordering stable *when possible*.
  *
  * If you need strict ordering, the most reliable approaches are:
  * - Add `@JsonPropertyOrder(...)` to your DTO used for export.
- * - Or build [CsvSchema] manually with columns in the exact order you want.
+ * - Or build [com.fasterxml.jackson.dataformat.csv.CsvSchema] manually with columns in the exact order you want.
  *
  * ## Nested data warning
  * CSV is flat. If [T] contains nested objects or lists, Jackson CSV cannot write them as-is.
@@ -128,7 +128,7 @@ internal inline fun <reified T> standardParse(input: InputStream): List<T> {
  * - Normalize into multiple CSVs (one-to-many relationship).
  *
  * ## Quoting behavior
- * We enable [CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS]. This makes exports robust when string
+ * We enable [com.fasterxml.jackson.dataformat.csv.CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS]. This makes exports robust when string
  * values may contain separators, newlines, or leading zeros.
  *
  * If you prefer smaller files, you can disable it and only quote when necessary.

@@ -1,13 +1,13 @@
 package population.householdtype
 
 import population.HasAge
-import population.HasSex
+import population.HasBiologicalSex
 import population.Household
 import population.age
 import population.sex
 
 object StandardHouseholdTypeDetector : HouseholdTypeDetector {
-    override fun <P> detectHouseholdType(household: Household<out P>): HouseholdType where P : HasAge, P : HasSex {
+    override fun <P> detectHouseholdType(household: Household<out P>): HouseholdType where P : HasAge, P : HasBiologicalSex {
         if(household.size == 1) return HouseholdType.SINGLE
 
         val (adults, children) = household.members.partition { it.age > 18 }

@@ -1,13 +1,12 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
 import edu.kit.ifv.populationsynthesis.GenericCollector
-import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyAmountDistro
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
-import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 
 /**
@@ -24,8 +23,8 @@ fun interface Distributor<AREA, T> {
 
 
 class OriginalDistributor<AREA, T>(
-    private val ruleProvider: HierarchicRuleProvider<AREA, T>,
-    private val logicIndexer: LogicIndexer<AREA, T>,
+    private val ruleProvider: HierarchicRuleProvider<AREA, in T>,
+    private val logicIndexer: LogicIndexer<AREA, in T>,
     private val householdMapping: Map<Signature, List<T>>,
 //    private val seedElements: Collection<T>
 ) : Distributor<AREA, T> {

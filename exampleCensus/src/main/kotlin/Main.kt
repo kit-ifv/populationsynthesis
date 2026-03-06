@@ -3,10 +3,6 @@ package edu.kit.ifv.populationsynthesis
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.LeastSquareRegression
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.MaximumAnnihilator
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.SparkNonnegativeLeastSquares
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.TabooListIPU
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
 import edu.kit.ifv.populationsynthesis.domain.population.Population
