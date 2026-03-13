@@ -17,7 +17,12 @@ class HistoricIPUTest {
             addRules(A.A3, HelpGenerator.A(1, 2))
             addRules(A.A4, HelpGenerator.A(4, 3))
         }
-        val hierachicProvider = ruleProvider.withHierarchy(ABCGraph)
-    }
+        val hierarchicProvider = ruleProvider.withHierarchy(ABCGraph)
+        val composedRules = hierarchicProvider.getComposedRules(B.B2)
 
+        val testElement = SeedElement(1)
+        composedRules.forEach { it.measure(testElement) }
+        composedRules.forEach { it.measure(Inheritor()) }
+    }
+    private class Inheritor(): SeedElement(2)
 }

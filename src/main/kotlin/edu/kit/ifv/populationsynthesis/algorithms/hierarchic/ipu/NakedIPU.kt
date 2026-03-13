@@ -10,7 +10,7 @@ import java.util.*
 class NakedIPU<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, T>,
     seedHouseholds: Collection<T>,
-    ipu: GenericIPU = GenericIPU.Companion.legacy,
+    ipu: GenericIPU = GenericIPU.legacy,
 ) : HistoricIPU<AREA, T>(
     ruleProvider,
     seedHouseholds,

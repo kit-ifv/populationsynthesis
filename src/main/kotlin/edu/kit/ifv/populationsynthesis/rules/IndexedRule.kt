@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 /**
  * Once the order of rules exist, then we can reference the index in the logic block.
  */
-data class IndexedRule<T>(
+data class IndexedRule<in T>(
     val index: Int,
     val rule: Rule<T>
 ) {

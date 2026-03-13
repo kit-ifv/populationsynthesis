@@ -2,16 +2,13 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
 import edu.kit.ifv.populationsynthesis.GenericCollector
 import edu.kit.ifv.populationsynthesis.Signature
-import edu.kit.ifv.populationsynthesis.SignatureOld
-import edu.kit.ifv.populationsynthesis.algorithms.IntegerIPUOutput
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
-import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.standardRoundingStrategy
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
 
 class HierarchicDistribution<AREA, T>(
-    ruleProvider: HierarchicRuleProvider<AREA, T>,
+    ruleProvider: HierarchicRuleProvider<AREA, in T>,
     val seedHouseholds: Collection<T>,
     val config: HierarchicDistributionConfig = HierarchicDistributionConfig()
 ) : HierarchicSynthesis<AREA, T>(ruleProvider) {
@@ -88,10 +85,3 @@ class HierarchicDistribution<AREA, T>(
 
 }
 
-fun Collection<Rule<*>>.verify(target: Collection<IntegerIPUOutput<SignatureOld>>) {
-    withIndex().forEach { (index, rule) ->
-        val amount = target.sumOf { it.amount * (it.element[index] ?: 0.0) }
-        val output = "${rule.description} target=${rule.target} amount=$amount"
-        println(output)
-    }
-}

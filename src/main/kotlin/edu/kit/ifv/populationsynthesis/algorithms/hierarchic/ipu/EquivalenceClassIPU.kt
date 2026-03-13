@@ -11,7 +11,7 @@ import edu.kit.ifv.populationsynthesis.utils.formEquivalenceClass
 class EquivalenceClassIPU<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, T>,
     seedHouseholds: Collection<T>,
-    ipu: GenericIPU = GenericIPU.Companion.legacy,
+    ipu: GenericIPU = GenericIPU.legacy,
 ) : HistoricIPU<AREA, T>(
     ruleProvider,
     seedHouseholds,

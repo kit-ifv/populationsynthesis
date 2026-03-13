@@ -12,7 +12,7 @@ import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
 abstract class HistoricIPU<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, T>,
     val seedHouseholds: Collection<T>,
-    val ipu: GenericIPU = GenericIPU.Companion.legacy,
+    val ipu: GenericIPU = GenericIPU.legacy,
 ) : HierarchicSynthesis<AREA, T>(ruleProvider) {
     val extractor = SampleAndCollect<T>()
     override fun synthesize(
