@@ -25,8 +25,10 @@ package edu.kit.ifv.populationsynthesis
  *  maintaining map
  */
 class Signature internal constructor(
-    private val indexArray: IntArray,
-    val valueArray: DoubleArray,
+    @PublishedApi
+    internal val indexArray: IntArray,
+    @PublishedApi
+    internal val valueArray: DoubleArray,
 ) {
 
     private constructor(map: Map<Int, Double>) : this(
@@ -36,7 +38,15 @@ class Signature internal constructor(
 
     val keys get() = indexArray.toList()
     val values get() = valueArray.toList()
+    @Deprecated("Use inline iteration instead")
     val entries: List<Pair<Int, Double>> get() = indexArray.zip(valueArray.toList())
+
+    inline fun forEachEntry(action: (Int, Double) -> Unit) {
+        for(i in indexArray.indices) {
+            action(indexArray[i], valueArray[i])
+        }
+    }
+
     val maxKey get() = indexArray.last()
 
 

@@ -10,6 +10,9 @@ import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 object RuleProviderFactory {
     private val demographyInfo: CensusDemographyRules = CensusDemographyRules.fromResource()
     private val householdInfo: CensusHouseholdRules = CensusHouseholdRules.fromResource()
+
+    val keys = demographyInfo.ageProvider.getAllRules().keys
+
     fun marneExample(): RuleProvider<ARSKey, CensusHousehold> {
         return createRuleProvider {
             // load age info, but only for municipalities that are in MARNE_NORDSEE
@@ -37,6 +40,22 @@ object RuleProviderFactory {
             }
             loadFromOtherRuleProvider(householdInfo.sizeProvider) {
                 it.key == ARSKey.MARNE_NORDSEE
+            }
+        }
+    }
+
+    fun bavaria(): RuleProvider<ARSKey, CensusHousehold> {
+        return createRuleProvider {
+            loadFromOtherRuleProvider(demographyInfo.ageProvider) {
+                it.key in ARSKey.OBERBAYERN && it.key.level == AreaLevel.GEMEINDE
+            }
+            // load sex info, but only for municipalities that are in MARNE_NORDSEE
+            loadFromOtherRuleProvider(demographyInfo.sexProvider) {
+                it.key in ARSKey.OBERBAYERN && it.key.level == AreaLevel.GEMEINDE
+            }
+            // load household info, but only for MARNE_NORDSEE
+            loadFromOtherRuleProvider(householdInfo.sizeProvider) {
+                it.key == ARSKey.OBERBAYERN
             }
         }
     }

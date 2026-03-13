@@ -32,4 +32,25 @@ object HierarchyFactory {
             addVertex(ARSKey.Companion.MARNE_NORDSEE)
         }
     }
+
+    fun fromARSKeyset(keys: Collection<ARSKey>): HierarchicElement<ARSKey> {
+        val leveledKeys = keys.groupBy { it.level }
+
+        val descendingOrder = leveledKeys.entries.sortedByDescending { it.key.digits }
+
+        return HierarchyGraphFactory.asForest {
+            descendingOrder.zipWithNext().forEach {(lowerLevel, _) ->
+                val betters = descendingOrder.dropWhile { it.key.digits >= lowerLevel.key.digits }.flatMap { it.value }
+                lowerLevel.value.forEach {
+                    val target = betters.firstOrNull {u -> it in u} ?: throw NoSuchElementException("ArsKey $it is lonely, there is no parent")
+                    addRelationship(it, target)
+                }
+            }
+        }
+
+
+
+    }
+
+
 }

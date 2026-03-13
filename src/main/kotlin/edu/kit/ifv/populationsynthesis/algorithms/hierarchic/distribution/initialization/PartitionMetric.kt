@@ -10,7 +10,7 @@ fun interface PartitionMetric {
 val SquaredDiff = PartitionMetric { expected, actual, signature ->
     var origDiff = .0
     var newDiff = .0
-    signature.entries.forEach { (k, v) ->
+    signature.forEachEntry { k, v ->
         val exp = expected[k]
         val act = actual[k]
         val denom = if (exp == 0.0) 1e-9 else exp // avoid div by 0
@@ -20,7 +20,19 @@ val SquaredDiff = PartitionMetric { expected, actual, signature ->
 
         origDiff += relErrorOrig * relErrorOrig
         newDiff += relErrorNew * relErrorNew
+
     }
+//    signature.entries.forEach { (k, v) ->
+//        val exp = expected[k]
+//        val act = actual[k]
+//        val denom = if (exp == 0.0) 1e-9 else exp // avoid div by 0
+//        val delta = v
+//        val relErrorOrig = (exp - act) / denom
+//        val relErrorNew = (exp - (act + delta)) / denom
+//
+//        origDiff += relErrorOrig * relErrorOrig
+//        newDiff += relErrorNew * relErrorNew
+//    }
 
     origDiff - newDiff
 }
