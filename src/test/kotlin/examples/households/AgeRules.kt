@@ -1,8 +1,8 @@
 package examples.households
 
-import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.covered.ExhaustiveMeasurementSetSupplier
 import edu.kit.ifv.populationsynthesis.rules.covered.FullDescriptorGroup
+import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 
 class AgeRules(private val ageThresholds: List<Int>) : ExhaustiveMeasurementSetSupplier<TestPerson> {
 

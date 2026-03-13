@@ -1,10 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import com.fasterxml.jackson.dataformat.csv.CsvSchema
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.nnlsSpark
 import org.ejml.data.DMatrixRMaj
-import java.util.Arrays.stream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

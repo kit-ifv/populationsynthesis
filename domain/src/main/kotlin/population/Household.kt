@@ -1,7 +1,7 @@
 package population
 
 
-interface Household<T> {
+interface Household<out T> {
     val members: List<Person<T>>
     val size get() = members.size
 }

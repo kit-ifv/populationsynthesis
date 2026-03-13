@@ -3,8 +3,8 @@ package edu.kit.ifv.populationsynthesis.rules.composer
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
 import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider

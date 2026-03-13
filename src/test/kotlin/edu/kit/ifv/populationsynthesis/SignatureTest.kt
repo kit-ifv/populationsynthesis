@@ -1,10 +1,6 @@
 package edu.kit.ifv.populationsynthesis
 
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class SignatureTest {
 

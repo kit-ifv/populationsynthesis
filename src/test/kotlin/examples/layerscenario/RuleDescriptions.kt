@@ -2,10 +2,10 @@ package examples.layerscenario
 
 import edu.kit.ifv.populationsynthesis.rules.ExhaustiveRuleGenerator
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
+import edu.kit.ifv.populationsynthesis.rules.covered.ExhaustiveMeasurementSetSupplier
 import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
 import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.measurement.NumericMeasurementDefinition
-import edu.kit.ifv.populationsynthesis.rules.covered.ExhaustiveMeasurementSetSupplier
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 

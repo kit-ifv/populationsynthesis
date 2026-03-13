@@ -1,12 +1,12 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
-import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
 class HierarchicDistributionTest {
