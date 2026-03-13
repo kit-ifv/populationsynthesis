@@ -19,7 +19,7 @@ class NakedIPU<AREA, T>(
     ) {
 
     private val vectorMapping: MutableMap<ScalableVector, T> = IdentityHashMap()
-    override fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<T>>): Collection<ScalableVector> {
+    override fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<in T>>): Collection<ScalableVector> {
         val vectors = seedHouseholds.map { seed ->
             indexedRules.toScalableVector(seed).also { vectorMapping[it] = seed }
 

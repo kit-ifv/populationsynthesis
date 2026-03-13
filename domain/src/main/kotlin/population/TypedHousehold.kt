@@ -1,7 +1,7 @@
 package population
 
-import population.householdtype.HouseholdType
+import population.householdtype.HouseholdTypeDomain
 
 interface TypedHousehold<T>: Household<T> {
-    val type: HouseholdType
+    val type: HouseholdTypeDomain
 }

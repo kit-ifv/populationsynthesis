@@ -26,6 +26,10 @@ class HierarchyComposerTest {
                 false
             }
         }
+
+        override fun generateDescription(): String {
+            return id
+        }
     }
 
     @Test

@@ -11,7 +11,7 @@ import edu.kit.ifv.populationsynthesis.standardRoundingStrategy
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
 
 class HierarchicDistribution<AREA, T>(
-    ruleProvider: HierarchicRuleProvider<AREA, T>,
+    ruleProvider: HierarchicRuleProvider<AREA, in T>,
     val seedHouseholds: Collection<T>,
     val config: HierarchicDistributionConfig = HierarchicDistributionConfig()) : HierarchicSynthesis<AREA, T>(ruleProvider) {
 
