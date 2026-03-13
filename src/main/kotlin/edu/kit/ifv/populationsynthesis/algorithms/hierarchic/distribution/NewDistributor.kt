@@ -1,11 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
-import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-
-class NewDistributor< AREA, T>()
+class NewDistributor<AREA, T>()
 
 //    val ruleProvider: HierarchicRuleProvider<AREA, T>,
 //    val config: HierarchicDistributionConfig,

@@ -4,7 +4,10 @@ import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 
 
 object Verification {
-    fun <AREA, T> verify(hierarchicRuleProvider: HierarchicRuleProvider<AREA, T>, output: Map<AREA, Collection<T>>): List<RuleOutput> {
+    fun <AREA, T> verify(
+        hierarchicRuleProvider: HierarchicRuleProvider<AREA, T>,
+        output: Map<AREA, Collection<T>>
+    ): List<RuleOutput> {
         val hierarchy = hierarchicRuleProvider.hierarchy
         return hierarchicRuleProvider.getAllRules().flatMap { (area, ruleSet) ->
             val allLeafsFrom = hierarchy.getAllLeafsFrom(area)

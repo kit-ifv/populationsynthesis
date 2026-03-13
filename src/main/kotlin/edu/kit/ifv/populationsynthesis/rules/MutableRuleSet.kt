@@ -97,6 +97,7 @@ class OverwritableRuleSet<T> : MutableRuleSet<T>() {
         rules[rule.logic.identifier] = rule
     }
 }
+
 /**
  * A mutable rule set that aggregates rules with identical logic identifiers.
  *

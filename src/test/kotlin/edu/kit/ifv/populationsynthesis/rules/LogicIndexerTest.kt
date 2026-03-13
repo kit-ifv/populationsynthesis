@@ -21,6 +21,6 @@ class LogicIndexerTest {
     private fun spawnRule(id: String): Rule<Any> {
         return Rule(42.0, logic = NamedMeasurement.numeric(id) {
             1.0
-        } )
+        })
     }
 }

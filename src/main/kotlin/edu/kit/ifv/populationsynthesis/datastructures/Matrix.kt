@@ -41,7 +41,7 @@ class Matrix private constructor(
     companion object {
         fun instantiate(elements: Collection<Collection<Double>>): Matrix {
             val expectedSize = elements.first().size
-            require(elements.all { it.size == expectedSize }) {" This not good"}
+            require(elements.all { it.size == expectedSize }) { " This not good" }
 
             return Matrix(elements.flatten().toDoubleArray(), expectedSize)
         }

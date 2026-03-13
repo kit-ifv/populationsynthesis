@@ -1,8 +1,8 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
 import edu.kit.ifv.populationsynthesis.GenericCollector
-import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.algorithms.IntegerIPUOutput
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.Rule
@@ -13,8 +13,8 @@ import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
 class HierarchicDistribution<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, T>,
     val seedHouseholds: Collection<T>,
-    val config: HierarchicDistributionConfig = HierarchicDistributionConfig()) : HierarchicSynthesis<AREA, T>(ruleProvider) {
-
+    val config: HierarchicDistributionConfig = HierarchicDistributionConfig()
+) : HierarchicSynthesis<AREA, T>(ruleProvider) {
 
 
     private val allRuleLogics = LogicIndexer.fromProvider(ruleProvider)
@@ -42,7 +42,6 @@ class HierarchicDistribution<AREA, T>(
         val oIpu = config.ipu.sigCalcAct(householdMapping, rules.map { allRuleLogics.toIndexedRule(it) })
 
 
-
         val integerIPUResult = standardRoundingStrategy.integerizeIPUOutput(oIpu)
 
 //        rules.verify(integerIPUResult)
@@ -62,7 +61,7 @@ class HierarchicDistribution<AREA, T>(
     ): Map<AREA, List<T>> {
 
         val initialSolution = initialSolution(highestArea)
-        val distributor = OriginalDistributor(ruleProvider,allRuleLogics, householdMapping)
+        val distributor = OriginalDistributor(ruleProvider, allRuleLogics, householdMapping)
         return distributor.distribute(
             initialSolution,
             highestArea,
@@ -87,14 +86,11 @@ class HierarchicDistribution<AREA, T>(
     }
 
 
-
-
-
 }
 
 fun Collection<Rule<*>>.verify(target: Collection<IntegerIPUOutput<SignatureOld>>) {
     withIndex().forEach { (index, rule) ->
-        val amount = target.sumOf { it.amount * (it.element[index]?: 0.0) }
+        val amount = target.sumOf { it.amount * (it.element[index] ?: 0.0) }
         val output = "${rule.description} target=${rule.target} amount=$amount"
         println(output)
     }

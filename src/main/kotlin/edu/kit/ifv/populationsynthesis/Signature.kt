@@ -1,7 +1,6 @@
 package edu.kit.ifv.populationsynthesis
 
 
-
 /**
  * A signature represents a household in regard to a set of rules. An entry in the signature (k, v) represents that this
  * particular signature will return the value v for the k-th rule.
@@ -39,7 +38,6 @@ class Signature internal constructor(
     val values get() = valueArray.toList()
     val entries: List<Pair<Int, Double>> get() = indexArray.zip(valueArray.toList())
     val maxKey get() = indexArray.last()
-
 
 
     fun hasKey(index: Int): Boolean {
@@ -82,8 +80,6 @@ class Signature internal constructor(
     fun filter(predicate: (Pair<Int, Double>) -> Boolean): List<Pair<Int, Double>> = entries.filter(predicate)
 
 
-
-
     override fun toString(): String {
         return entries.joinToString(", ", "{", "}")
     }
@@ -100,6 +96,7 @@ class Signature internal constructor(
 
             return Signature(targetValues.map { it.index }.toIntArray(), targetValues.map { it.value }.toDoubleArray())
         }
+
         fun fromValues(vararg values: Double): Signature = fromValues(values.toList())
     }
 }

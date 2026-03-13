@@ -1,7 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules.covered
 
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 /**
  * If you know that your rules cover all possible cases then the total target can be derived from the rules themselves

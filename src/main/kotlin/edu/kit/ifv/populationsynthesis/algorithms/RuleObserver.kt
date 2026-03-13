@@ -1,7 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
 /**
  * The RuleObserver class is responsible for monitoring a set of households encoded as vectors (represented by [ScalableVector])
@@ -35,6 +34,7 @@ abstract class RuleObserver(
 
         }
     }
+
     /**
      * Sums the current values for the given [observedIndex] across all the vectors.
      *
@@ -87,6 +87,7 @@ abstract class RuleObserver(
 
 
     open val delta: Double get() = expected - actual
+
     /**
      * Optimizes the vectors by scaling all of them proportionally, ensuring that the sum matches the expected value.
      */

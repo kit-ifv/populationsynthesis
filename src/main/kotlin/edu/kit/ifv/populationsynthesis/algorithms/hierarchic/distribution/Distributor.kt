@@ -32,7 +32,6 @@ class OriginalDistributor<AREA, T>(
 //    private val measurements: Set<Measurement<T>> = logicIndexer.allMeasurements()
 
 
-
 //    private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
 //        return seedElements.groupBy { element ->
 //            Signature(

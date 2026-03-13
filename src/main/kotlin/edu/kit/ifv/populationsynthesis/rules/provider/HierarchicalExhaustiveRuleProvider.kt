@@ -3,8 +3,8 @@ package edu.kit.ifv.populationsynthesis.rules.provider
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
-import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 
 class HierarchicalExhaustiveRuleProvider<AREA, T>(
     val ruleProvider: ExhaustiveRuleProvider<AREA, T>,

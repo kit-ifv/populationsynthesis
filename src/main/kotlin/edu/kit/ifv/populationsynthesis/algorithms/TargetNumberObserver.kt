@@ -1,6 +1,5 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
-import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import kotlin.math.abs
 import kotlin.math.max
 

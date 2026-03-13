@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 class TabooListIPU(
     private val blockAmount: Int,
     private val iterations: Int = 1000,
-): GenericIPU {
+) : GenericIPU {
     override fun run(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
@@ -17,7 +17,7 @@ class TabooListIPU(
                 it in tabooList
             }.first()
             targetObserver.optimize()
-            if(tabooList.size > blockAmount) {
+            if (tabooList.size > blockAmount) {
                 tabooList.removeFirst()
             }
             tabooList.add(targetObserver)

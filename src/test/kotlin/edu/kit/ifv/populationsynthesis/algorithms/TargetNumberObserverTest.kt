@@ -8,7 +8,7 @@ import kotlin.test.Test
 class TargetNumberObserverTest {
 
     @Test
-    fun properBehaviour(){
+    fun properBehaviour() {
         val logicIdentifier = "Fake Identifier"
         val mutatingVector = ArrayScalableVector(1, 2, 3)
         val vectors = listOf(
@@ -24,15 +24,16 @@ class TargetNumberObserverTest {
         mutatingVector.scalar = 2.0
         assertEquals(obs.actual, 8.0)
     }
+
     @Test
-    fun targetIsZero(){
+    fun targetIsZero() {
         val logicIdentifier = "Fake Identifier"
         val mutatingVector = ArrayScalableVector(1, 2, 3)
         val vectors = listOf(
             mutatingVector,
         )
         val obs = TargetNumberObserver(logicIdentifier, 1, vectors, 0.0)
-        assertEquals(obs.actual,2.0)
+        assertEquals(obs.actual, 2.0)
         assertEquals(obs.delta, -2.0)
         mutatingVector.scalar = 0.0
 
@@ -54,7 +55,7 @@ class TargetNumberObserverTest {
             TargetNumberObserver(logicIdentifier, 2, vectors, 0.0)
         }
         assertDoesNotThrow {
-            TargetNumberObserver(logicIdentifier, 0 , vectors, 0.0)
+            TargetNumberObserver(logicIdentifier, 0, vectors, 0.0)
         }
 
 

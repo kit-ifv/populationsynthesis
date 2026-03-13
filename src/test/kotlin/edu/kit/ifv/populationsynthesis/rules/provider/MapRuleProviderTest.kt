@@ -8,6 +8,7 @@ class MapRuleProviderTest {
     private interface A
     private class B : A
     private data class Reg(val id: Boolean) {}
+
     private val R = Reg(true)
 
     private val ARule = NamedMeasurement.numeric<A>("This is A") {
@@ -16,6 +17,7 @@ class MapRuleProviderTest {
     private val BRule = NamedMeasurement.boolean<B>("This is B") {
         true
     }.withTarget(10.0)
+
     @Test
     fun properLoadageOfOtherRuleProvider() {
         val initialRuleProvider = MapRuleProvider<Reg, B>()
@@ -28,6 +30,7 @@ class MapRuleProviderTest {
         assertEquals(1, rules.size)
         assertEquals(0, initialRuleProvider.getRules(Reg(false)).size)
     }
+
     @Test
     fun canSetWeakerSets() {
         val initialRuleProvider = MapRuleProvider<Reg, B>()

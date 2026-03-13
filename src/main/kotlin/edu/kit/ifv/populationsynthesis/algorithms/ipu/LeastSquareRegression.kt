@@ -9,15 +9,15 @@ import org.ejml.data.DMatrixRMaj
 import java.io.File
 import kotlin.io.path.Path
 
-object LeastSquareRegression: GenericIPU {
+object LeastSquareRegression : GenericIPU {
     override fun run(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
     ) {
-        val mtx= vectors.toMatrix()
+        val mtx = vectors.toMatrix()
         val b = observers.map { it.expected }.toDoubleArray()
         val solution = lsqr(mtx, b).x
-        vectors.zip(solution.toList()).forEach {(vector, calculatedScalar) ->
+        vectors.zip(solution.toList()).forEach { (vector, calculatedScalar) ->
             vector.scalar = calculatedScalar
         }
 
@@ -29,6 +29,7 @@ fun Collection<ScalableVector>.toMatrix(): DMatrixRMaj {
     TODO("Make sure that this construction works again, prefereably in a test")
     return DMatrixRMaj(maxSize, size, false, *flatMap { it.content(maxSize) }.toDoubleArray())
 }
+
 fun Collection<RuleObserver>.toVector(): DoubleArray {
     return map { it.expected }.toDoubleArray()
 }

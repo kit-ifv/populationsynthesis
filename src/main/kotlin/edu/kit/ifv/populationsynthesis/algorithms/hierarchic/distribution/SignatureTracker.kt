@@ -32,6 +32,7 @@ class SignatureTracker(
     val largestDifference = 2 * largestDelta
 
     val largestDeltaPartition = signatures.maxBy { it.values.sumOf { abs(it) } }
+
     init {
         require(amountOfAttributes == signatures.maxOf { it.maxKey } + 1) {
             "The highest key is the last attribute that is referenced by the signatures."
@@ -42,6 +43,7 @@ class SignatureTracker(
             }
         }
     }
+
     fun highestAttributeForIndex(attrIdx: Int) = signatures.maxOf {
         it[attrIdx]
     }
@@ -62,7 +64,9 @@ class SignatureTracker(
     }
 
     fun findSignatureIndex(signature: Signature): SignatureIndex {
-        return signatureIndexMapper[signature] ?: throw NoSuchElementException("There is no signature $signature" +
-                " in $signatureIndexMapper")
+        return signatureIndexMapper[signature] ?: throw NoSuchElementException(
+            "There is no signature $signature" +
+                    " in $signatureIndexMapper"
+        )
     }
 }

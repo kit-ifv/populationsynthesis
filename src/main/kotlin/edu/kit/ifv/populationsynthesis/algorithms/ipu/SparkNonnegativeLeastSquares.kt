@@ -6,15 +6,15 @@ import org.apache.spark.mllib.optimization.NNLS
 import org.ejml.data.DMatrixRMaj
 import org.ejml.dense.row.CommonOps_DDRM
 
-object SparkNonnegativeLeastSquares: GenericIPU {
+object SparkNonnegativeLeastSquares : GenericIPU {
     override fun run(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
     ) {
-        val mtx= vectors.toMatrix()
+        val mtx = vectors.toMatrix()
         val b = observers.map { it.expected }.toDoubleArray()
         val solution = nnlsSpark(mtx, b)
-        vectors.zip(solution.toList()).forEach {(vector, calculatedScalar) ->
+        vectors.zip(solution.toList()).forEach { (vector, calculatedScalar) ->
             vector.scalar = calculatedScalar
         }
     }

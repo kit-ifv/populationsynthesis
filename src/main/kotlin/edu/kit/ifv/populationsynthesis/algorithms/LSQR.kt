@@ -133,8 +133,6 @@ fun lsqr(
     var alfa: Double
 
 
-
-
     val v = DMatrixRMaj(n, 1, true, *DoubleArray(n))
     val w = DMatrixRMaj(n, 1, true, *DoubleArray(n))
     if (beta > 0) {
@@ -160,9 +158,6 @@ fun lsqr(
 //        CommonOps_DDRM.subtractEquals(u, tmpM)          // u = u - tmpM
 //        beta = NormOps_DDRM.normF(u)                    // ||u||
 //    }
-
-
-
 
 
     val tmpM = DMatrixRMaj(m, 1)

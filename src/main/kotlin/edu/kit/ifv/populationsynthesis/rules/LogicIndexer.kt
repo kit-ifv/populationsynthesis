@@ -13,7 +13,7 @@ class LogicIndexer<AREA, T> internal constructor(
     logicMape: Map<LogicIdentifier, Measurement<T>>,
     private val logicMap: Map<AREA, Set<IndexedLogic<T>>>,
 
-) {
+    ) {
 
     companion object {
         fun <AREA, T> fromProvider(ruleProvider: RuleProvider<AREA, T>): LogicIndexer<AREA, T> {
@@ -35,6 +35,7 @@ class LogicIndexer<AREA, T> internal constructor(
             )
         }
     }
+
     val logics = logicMape.keys
     val size get() = logics.size
     private val measurementFunctions: Set<Measurement<T>> = logicMape.values.toSet()
@@ -73,7 +74,7 @@ class LogicIndexer<AREA, T> internal constructor(
     }
 
     fun <T> toIndexedRule(rule: Rule<T>): IndexedRule<T> {
-        return IndexedRule(rule = rule , index = getIndex(rule))
+        return IndexedRule(rule = rule, index = getIndex(rule))
     }
 
 }

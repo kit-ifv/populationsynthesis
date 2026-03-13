@@ -3,6 +3,7 @@ package edu.kit.ifv.populationsynthesis.datastructures
 import kotlin.random.Random
 
 typealias Bucket<T> = MutableSet<T>
+
 class BucketList<T>(
     private val maxGain: Int
 ) {
@@ -42,6 +43,7 @@ class BucketList<T>(
     operator fun contains(element: T): Boolean {
         return buckets.any { element in it }
     }
+
     private fun updateBestBucketIndex() {
         var idx = bestBucketIndex
         while (idx >= 0 && buckets[idx].isEmpty()) {
@@ -54,6 +56,7 @@ class BucketList<T>(
         remove(element)
         insert(element, newGain)
     }
+
     fun pollBest(): T {
         return buckets[bestBucketIndex].first()
     }
@@ -87,9 +90,11 @@ class BucketList<T>(
     fun validateElements(predicate: (T) -> Boolean): Boolean {
         return elements().all(predicate)
     }
+
     fun isBest(element: T): Boolean {
         return element in buckets[bestBucketIndex]
     }
+
     fun clear() {
         buckets.forEach { it.clear() }
     }

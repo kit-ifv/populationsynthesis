@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
-import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
@@ -12,6 +12,7 @@ interface ScalableVector {
     fun currentValueForIndex(index: Int): Double
     fun attributeForIndex(index: Int): Double
     fun appliesToRule(ruleIndex: Int): Boolean
+
     @Deprecated("I would like to drop this method.")
     fun content(maxSize: Int): List<Double>
     fun highestIndex(): Int {
@@ -51,13 +52,15 @@ class SignatureScalableVector(override val signature: Signature, override var sc
     }
 
     override fun content(maxSize: Int): List<Double> {
-        return (0 until  signature.maxKey).map { signature[it] }
+        return (0 until signature.maxKey).map { signature[it] }
     }
 }
 
-class ArrayScalableVector internal constructor(private val array: DoubleArray, override var scalar: Double) : ScalableVector {
+class ArrayScalableVector internal constructor(private val array: DoubleArray, override var scalar: Double) :
+    ScalableVector {
     internal constructor(vararg numbers: Number) : this(numbers.toList())
     internal constructor(numbers: Collection<Number>) : this(numbers.map { it.toDouble() }.toDoubleArray(), 1.0)
+
     override val signature: Signature = Signature.fromValues(array.toList())
     override fun currentValueForIndex(index: Int): Double {
         return this[index] * scalar
@@ -66,17 +69,19 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
     override fun attributeForIndex(index: Int): Double {
         return this[index]
     }
+
     operator fun get(index: Int) = runCatching { array[index] }.getOrNull() ?: 0.0
     override fun content(maxSize: Int): List<Double> {
         return array.toList()
     }
+
     val content get() = array.toList()
     override fun appliesToRule(ruleIndex: Int): Boolean {
         return this[ruleIndex] != 0.0
     }
 
     override fun equals(other: Any?): Boolean {
-        return if(other !is ArrayScalableVector) false
+        return if (other !is ArrayScalableVector) false
         else array.contentEquals(other.array)
     }
 
@@ -84,7 +89,6 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
         return array.contentHashCode()
     }
 }
-
 
 
 //class MapScalableVector(private val , override var scalar: Double = 1.0): ScalableElement {
@@ -120,9 +124,11 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
 class ScalableVectore internal constructor(vector: Collection<Double>, var scalar: Double = 1.0) {
 
     internal constructor(vararg numbers: Number) : this(numbers.map { it.toDouble() }, 1.0)
+
     private val array: DoubleArray = vector.toDoubleArray()
     val signature: SignatureOld = array.withIndex().filter { it.value != 0.0 }.associate { (i, value) -> i to value }
-    val size : Int get() = array.size
+    val size: Int get() = array.size
+
     /**
      * A read-only property that provides a list view of the [array] for external access.
      * The underlying array is unfortunately mutable, but the list provides an immutable view to prevent external modification.

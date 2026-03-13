@@ -3,7 +3,6 @@ package edu.kit.ifv.populationsynthesis.rules.covered
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
 import edu.kit.ifv.populationsynthesis.rules.delta
-import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 /**
  * A coverage group captures a collection of rules that are associated to a specific observed attribute over

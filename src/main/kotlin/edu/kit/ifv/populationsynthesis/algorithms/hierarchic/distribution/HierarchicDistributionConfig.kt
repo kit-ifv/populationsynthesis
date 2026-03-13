@@ -20,6 +20,6 @@ data class HierarchicDistributionConfig(
 //    val refinement: Refinement = Refinement { },
 //    val signatureDistributor: InitialSignatureDistributor = GreedyAmountDistro(),
     val ipuCalculationCallback: IPUCallback = {
-        if(it.amountOfZeroVectors > 0) println("There are degenerate vectors in the IPU. This happens when a seed element matches no rule, the vectors will be set to 0")
+        if (it.amountOfZeroVectors > 0) println("There are degenerate vectors in the IPU. This happens when a seed element matches no rule, the vectors will be set to 0")
     },
 )

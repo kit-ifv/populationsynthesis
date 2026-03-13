@@ -20,7 +20,7 @@ fun interface GenericIPU {
         vectors: Collection<ScalableVector>,
         rules: Collection<Rule<I>>,
     ): DirectRunReport {
-        val (emptyVectors, nonEmptyVectors) =  vectors.partition { it.signature.isEmpty() }
+        val (emptyVectors, nonEmptyVectors) = vectors.partition { it.signature.isEmpty() }
         val observers = rules.withIndex().map {
             RuleObserver.fromRule(it.value, it.index, nonEmptyVectors)
         }
@@ -30,10 +30,11 @@ fun interface GenericIPU {
         }
         return DirectRunReport(observers, emptyVectors.size)
     }
+
     fun <I> sigCalcAct(
         signatures: Map<Signature, List<I>>,
         rules: Collection<IndexedRule<I>>,
-    ): List<IPUOutput<Signature>>  {
+    ): List<IPUOutput<Signature>> {
         val vectors = signatures.keys.map { SignatureScalableVector(it) }
         val relevantIndices = rules.map { it.index }.toSet()
         val (relevantVectors, irrelevantVectors) = vectors.partition { it.signature.isRelevantFor(relevantIndices) }
@@ -94,7 +95,6 @@ fun interface GenericIPU {
     }
 
 
-
     private fun <X, I> internalGroupedCalculation(
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
@@ -111,7 +111,7 @@ fun interface GenericIPU {
         return resultConverter(inverseMap)
     }
 
-    private fun <I> Map<ScalableVector, List<I>>.toVectors() : List<ScalableVector> {
+    private fun <I> Map<ScalableVector, List<I>>.toVectors(): List<ScalableVector> {
         return entries.map { (scalableVector, associatedElements) ->
             scalableVector.apply {
 //                scalar = associatedElements.size.toDouble()

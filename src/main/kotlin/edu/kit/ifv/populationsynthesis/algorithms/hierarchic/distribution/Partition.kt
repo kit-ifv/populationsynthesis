@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.PartitionMetric
 import org.jetbrains.annotations.TestOnly
 import kotlin.concurrent.atomics.AtomicInt
@@ -65,6 +65,7 @@ class Partition(
             "The counts and actual things do not match"
         }
     }
+
     fun calculateGain(signature: SignatureOld): Double {
         return signature.entries.sumOf { (idx, factor) ->
             val delta = max(getDelta(idx), 0.0)
@@ -78,6 +79,7 @@ class Partition(
             -factor + min(factor, delta) * 2
         }
     }
+
     fun count(signature: Signature): Int {
         return _counts[signatureTracker.findSignatureIndex(signature).index]
     }
@@ -173,6 +175,7 @@ class Partition(
     private val _signatures = signatureTracker.signatures.map { signature ->
         signature.filterKeys { mask[it] }
     }.toTypedArray()
+
     private fun resolve(sigIdx: Int): Signature = _signatures[sigIdx]
     private fun updateActual(sigIndex: Int, delta: Int) {
         val signature = resolve(sigIndex)
@@ -183,6 +186,7 @@ class Partition(
 
     fun amount(signatureIndex: SignatureIndex): Int = _counts[signatureIndex.index]
     val id = counter
+
     companion object {
         @OptIn(ExperimentalAtomicApi::class)
         private var _counter: AtomicInt = AtomicInt(0)

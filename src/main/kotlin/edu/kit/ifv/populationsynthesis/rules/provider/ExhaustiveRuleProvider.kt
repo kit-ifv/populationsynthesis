@@ -2,8 +2,8 @@ package edu.kit.ifv.populationsynthesis.rules.provider
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.RuleSet
-import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
+import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
 
 /**
@@ -15,7 +15,7 @@ abstract class ExhaustiveRuleProvider<AREA, T> : RuleProvider<AREA, T> {
     abstract fun getRuleGroups(target: AREA): Collection<CoverageGroup<T>>
 }
 
-class MutableExhaustiveRuleProvider<AREA, T>: ExhaustiveRuleProvider<AREA, T>() {
+class MutableExhaustiveRuleProvider<AREA, T> : ExhaustiveRuleProvider<AREA, T>() {
     private val ruleMap: MutableMap<AREA, MutableList<CoverageGroup<T>>> = mutableMapOf()
     override fun getRuleGroups(target: AREA): Collection<CoverageGroup<T>> {
         return ruleMap[target] ?: emptyList()

@@ -12,17 +12,18 @@ import org.junit.jupiter.api.Test
 class HierarchicDistributionTest {
 
     private data class Elements(val attr: Attr)
-    private enum class Attr{
+    private enum class Attr {
         A, B, C
     }
+
     @Test
     fun differentRegisteredRulesWork() {
         val ruleProvider = MapRuleProvider<Int, Elements>().apply {
 
-            addRule(1, Rule(target = 10.0, logic = NamedMeasurement.boolean("ATest", logic = {it.attr == Attr.A})))
-            addRule(1, Rule(target = 10.0, logic = NamedMeasurement.boolean("BTest", logic = {it.attr == Attr.B})))
-            addRule(1, Rule(target = 10.0, logic = NamedMeasurement.boolean("CTest", logic = {it.attr == Attr.C})))
-            addRule(2, Rule(target = 10.0, logic = NamedMeasurement.boolean("ATest", logic = {it.attr == Attr.A})))
+            addRule(1, Rule(target = 10.0, logic = NamedMeasurement.boolean("ATest", logic = { it.attr == Attr.A })))
+            addRule(1, Rule(target = 10.0, logic = NamedMeasurement.boolean("BTest", logic = { it.attr == Attr.B })))
+            addRule(1, Rule(target = 10.0, logic = NamedMeasurement.boolean("CTest", logic = { it.attr == Attr.C })))
+            addRule(2, Rule(target = 10.0, logic = NamedMeasurement.boolean("ATest", logic = { it.attr == Attr.A })))
         }
         val hierarchy = HierarchyGraphFactory.asForest<Int> {
             addVertex(1)

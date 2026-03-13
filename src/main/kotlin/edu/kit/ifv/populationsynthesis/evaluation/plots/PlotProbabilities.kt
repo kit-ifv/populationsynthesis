@@ -13,8 +13,6 @@ import org.jetbrains.kotlinx.kandy.letsplot.layers.bars
 import org.jetbrains.kotlinx.kandy.letsplot.layers.line
 import org.jetbrains.kotlinx.kandy.letsplot.layers.points
 import org.jetbrains.kotlinx.kandy.letsplot.scales.Transformation
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.math.E
 import kotlin.math.pow
 import kotlin.random.Random
@@ -86,15 +84,16 @@ fun Collection<Double>.toCumulativeDF(name: String): DataFrame<*> {
         "y" to y,
     )
 
-    return dataFrameOf.add("name") {name}
+    return dataFrameOf.add("name") { name }
 
 }
 
 fun Collection<Double>.plotBin() {
-    plot{
+    plot {
 
     }
 }
+
 fun plotEDCF(map: Map<String, Collection<Double>>) {
 
     val dfs = map.entries.map { (name, v) ->
@@ -106,7 +105,7 @@ fun plotEDCF(map: Map<String, Collection<Double>>) {
 
         line {
             x("x") {
-                scale = continuous( max = maxVal, transform = Transformation.LOG10)
+                scale = continuous(max = maxVal, transform = Transformation.LOG10)
             }
             y("y") {
                 scale = continuous(max = maxVal, transform = Transformation.LOG10)
@@ -147,10 +146,10 @@ fun plotLogHistograms(map: Map<String, Collection<Double>>) {
 
 }
 
-fun Collection<Double>.toBins(name: String, configuration: LogBinConfiguration  =LogBinConfiguration()): DataFrame<*> {
+fun Collection<Double>.toBins(name: String, configuration: LogBinConfiguration = LogBinConfiguration()): DataFrame<*> {
     val firstRange = 0.1..0.2
     val maxValue = max()
-    val groupings = (0..configuration.numberOfBins).reversed().map{
+    val groupings = (0..configuration.numberOfBins).reversed().map {
         E.pow(-it.toDouble() / configuration.scaling)
     }
     val group = groupBy {
@@ -163,7 +162,7 @@ fun Collection<Double>.toBins(name: String, configuration: LogBinConfiguration  
         "x" to group.keys.toList(),
         "y" to group.values.toList(),
 
-    ).add("name") {name}
+        ).add("name") { name }
 
 }
 

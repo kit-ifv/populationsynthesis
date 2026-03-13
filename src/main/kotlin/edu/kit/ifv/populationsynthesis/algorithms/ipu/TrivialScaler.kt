@@ -3,7 +3,7 @@ package edu.kit.ifv.populationsynthesis.algorithms.ipu
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 
-class TrivialScaler: GenericIPU {
+class TrivialScaler : GenericIPU {
     override fun run(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
