@@ -33,7 +33,7 @@ class SignatureTracker(
 
     val largestDeltaPartition = signatures.maxBy { it.values.sumOf { abs(it) } }
     init {
-        require(amountOfAttributes == signatures.maxOf { it.keys.max() } + 1) {
+        require(amountOfAttributes == signatures.maxOf { it.maxKey } + 1) {
             "The highest key is the last attribute that is referenced by the signatures."
         }
         signatures.withIndex().forEach { (i, sig) ->
@@ -43,7 +43,7 @@ class SignatureTracker(
         }
     }
     fun highestAttributeForIndex(attrIdx: Int) = signatures.maxOf {
-        it[attrIdx] ?: 0.0
+        it[attrIdx]
     }
 
     operator fun get(index: Int): Signature {

@@ -22,10 +22,10 @@ class HierarchicDistribution<AREA, T>(
 
     private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
         return seedHouseholds.groupBy { element ->
-            Signature(
-                allRuleLogics.allMeasurements().withIndex().map { (index, logic) ->
+            Signature.fromMap(
+                allRuleLogics.allMeasurements().withIndex().associate { (index, logic) ->
                     index to logic.measure(element)
-                }.filter { it.second != 0.0 }.toMap()
+                }
             )
 
         }
