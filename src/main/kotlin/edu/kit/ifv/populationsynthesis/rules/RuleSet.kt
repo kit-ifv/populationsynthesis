@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
+import edu.kit.ifv.populationsynthesis.rules.measurement.MeasurementDefinition
 
 /**
  * A rule set guarantees no duplicate logic: There can be only one named contribution per rule.
@@ -21,11 +22,14 @@ interface RuleSet<in T> : Set<Rule<T>> {
 
     fun getValue(key: String): Rule<T> = get(key) ?: throw NoSuchElementException(key)
 
+    operator fun contains(key: MeasurementDefinition<*>) = contains(key.generateDescription())
     operator fun contains(key: String) = contains(LogicIdentifier(key))
     operator fun contains(key: LogicIdentifier): Boolean
 
+    fun getTarget(key: MeasurementDefinition<*>) = getTarget(key.generateDescription())
     fun getTarget(key: String) = getTarget(LogicIdentifier(key))
     fun getTarget(key: LogicIdentifier): Double? = get(key)?.target
+
 }
 
 

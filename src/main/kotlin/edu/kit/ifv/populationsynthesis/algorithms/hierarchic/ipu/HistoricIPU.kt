@@ -29,7 +29,7 @@ abstract class HistoricIPU<AREA, T>(
         }
     }
 
-    abstract fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<T>>): Collection<ScalableVector>
+    abstract fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<in T>>): Collection<ScalableVector>
     abstract fun toElementRepresentations(vectors: ScalableVector): List<T>
     open fun generateIPUComponents(area: AREA): Pair<Collection<ScalableVector>, Collection<RuleObserver>> {
         val parents = hierarchy.getAllAncestors(area)

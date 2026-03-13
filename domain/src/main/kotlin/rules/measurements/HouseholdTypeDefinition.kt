@@ -2,9 +2,9 @@ package rules.measurements
 
 import edu.kit.ifv.populationsynthesis.rules.measurement.BooleanMeasurementDefinition
 import population.*
-import population.householdtype.HouseholdType
+import population.householdtype.HouseholdTypeDomain
 
-class HouseholdTypeDefinition(val targetType: HouseholdType): BooleanMeasurementDefinition<TypedHousehold<*>>() {
+class HouseholdTypeDefinition(val targetType: HouseholdTypeDomain): BooleanMeasurementDefinition<TypedHousehold<*>>() {
     override fun generateDescription(): String {
         return "Household Type == $targetType"
     }

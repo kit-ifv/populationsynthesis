@@ -7,7 +7,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 
 abstract class HierarchicSynthesis<AREA, T>(
-    override val ruleProvider: HierarchicRuleProvider<AREA, T>
+    override val ruleProvider: HierarchicRuleProvider<AREA, in T>
 ) : RuleBasedPopulationSynthesis<AREA, T> {
     val hierarchy = ruleProvider.hierarchy
     final override fun synthesize(targetAreas: List<AREA>): Map<AREA, List<T>> {

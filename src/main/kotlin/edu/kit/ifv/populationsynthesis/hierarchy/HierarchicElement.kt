@@ -33,3 +33,9 @@ interface HierarchicElement<T> {
         }
     }
 }
+
+
+interface HierarchicElementWithLeafType<NODE, LEAF: NODE>: HierarchicElement<NODE> {
+    override fun getAllLeafs(): List<LEAF>
+    override fun getAllLeafsFrom(element: NODE): Collection<LEAF>
+}

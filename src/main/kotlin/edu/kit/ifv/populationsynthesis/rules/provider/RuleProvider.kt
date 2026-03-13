@@ -12,7 +12,7 @@ import edu.kit.ifv.populationsynthesis.rules.sumRule
 /**
  * Return the rules for a given area
  */
-interface RuleProvider<AREA, T> {
+interface RuleProvider<AREA,  T> {
     fun getRules(target: AREA): RuleSet<T>
     operator fun get(target: AREA) = getRules(target)
     fun getAllRules(): Map<AREA, RuleSet<T>>

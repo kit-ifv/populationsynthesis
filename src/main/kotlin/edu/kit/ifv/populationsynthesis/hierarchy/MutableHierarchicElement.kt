@@ -6,3 +6,7 @@ interface MutableHierarchicElement<T> : HierarchicElement<T> {
     fun removeVertex(target: T)
     fun removeVertices(targets: Collection<T>)
 }
+
+interface MutableHierarchicElementWithLeafType<T> : MutableHierarchicElement<T> {
+
+}

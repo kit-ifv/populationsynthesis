@@ -49,7 +49,7 @@ class MapRuleProvider<AREA, T>(
 
     fun loadFromOtherRuleProvider(
         ruleProvider: RuleProvider<AREA, in T>,
-        predicate: (Map.Entry<AREA, RuleSet<in T>>) -> Boolean = { true },
+        predicate: (Map.Entry<AREA, RuleSet<T>>) -> Boolean = { true },
     ) {
         val rules = ruleProvider.getAllRules().filter(predicate)
         rules.forEach { area, rules ->

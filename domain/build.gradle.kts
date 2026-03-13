@@ -15,6 +15,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(project(":"))
     api("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {

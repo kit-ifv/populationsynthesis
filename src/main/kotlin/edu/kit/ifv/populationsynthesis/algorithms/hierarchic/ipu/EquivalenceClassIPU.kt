@@ -19,7 +19,7 @@ class EquivalenceClassIPU<AREA, T>(
 ) {
 
     private lateinit var equivalenceClasses: EquivalenceClass<ScalableVector, T>
-    override fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<T>>): Collection<ScalableVector> {
+    override fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<in T>>): Collection<ScalableVector> {
 
 
         equivalenceClasses = seedHouseholds.associateWith { indexedRules.sortedBy { it.index }.toScalableVector(it) }
