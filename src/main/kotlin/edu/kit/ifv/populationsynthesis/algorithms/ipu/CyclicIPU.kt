@@ -8,10 +8,12 @@ class CyclicIPU(private val maxIterations: Int = 1000) : GenericIPU {
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
     ) {
+
         repeat(maxIterations) {
             observers.forEach {
                 it.optimize()
             }
         }
     }
+
 }

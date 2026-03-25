@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules
 
+import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
@@ -24,7 +25,14 @@ class LogicIndexer<AREA, T> internal constructor(
 
     fun allMeasurements() = measurementFunctions
 
-
+    fun createSignature(element: T): Signature? {
+        val indexedMeasures: Map<Int, Double> = measurementFunctions.withIndex().associate { (index, logic) ->
+            index to logic.measure(element)
+        }
+        if (indexedMeasures.isEmpty() || indexedMeasures.values.all { it == 0.0 })
+            return null
+        return Signature.fromMap(indexedMeasures)
+    }
 
     fun getIndex(rule: Rule<*>): Int {
         return logicIndices[rule.identifier]

@@ -47,7 +47,9 @@ class Signature internal constructor(
         }
     }
 
-    val maxKey get() = indexArray.last()
+    val maxKey get() = indexArray.lastOrNull() ?: run {
+        throw NoSuchElementException("No keys found")
+    }
 
 
     fun hasKey(index: Int): Boolean {
@@ -71,6 +73,7 @@ class Signature internal constructor(
         val relevantIndices = indexArray.withIndex().filter {
             predicate(it.value)
         }
+        if(relevantIndices.isEmpty()) return Signature.EMPTY
         return Signature(
             relevantIndices.map { it.value }.toIntArray(),
             relevantIndices.map { valueArray[it.index] }.toDoubleArray()
@@ -97,7 +100,12 @@ class Signature internal constructor(
     fun isEmpty(): Boolean = indexArray.isEmpty()
 
     companion object {
+
+        val EMPTY = Signature(intArrayOf(), doubleArrayOf())
         fun fromMap(map: Map<Int, Double>): Signature {
+            require(map.isNotEmpty() && map.values.any { it  != 0.0 }) {
+                "That is an empty signature, that cannot reasonably be used for synthesis."
+            }
             return Signature(map.filterValues { it != 0.0 })
         }
 

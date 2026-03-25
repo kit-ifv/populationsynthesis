@@ -129,6 +129,7 @@ fun interface GenericIPU {
         @Suppress("MagicNumber")
         val legacy = CyclicIPU(1000)
 
+
         @Suppress("MagicNumber")
         val newAlgorithm = GenericIPU { vectors, observers ->
             var counter = 0

@@ -83,7 +83,9 @@ class OriginalDistributor<AREA, T>(
         val childAreas = hierarchy.getImmediateChildren(area)
         val signatures = targetAmounts.map { it.signature }
         if (childAreas.isEmpty()) throw IllegalStateException("We expect at least one child for distribution")
-
+        require(signatures.none{it.isEmpty()}) {
+            "That is an invalid signature, how did that get created"
+        }
         val signatureTracker = SignatureTracker(signatures, signatures.maxOf {
             it.maxKey
         } + 1)

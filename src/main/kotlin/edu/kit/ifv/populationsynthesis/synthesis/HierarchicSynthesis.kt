@@ -30,6 +30,9 @@ abstract class HierarchicSynthesis<AREA, T>(
         return out.filterKeys { it in targetAreas }
     }
 
+    final override fun synthesize(target: AREA): Map<AREA, List<T>> {
+        return synthesize(hierarchy.getAllChildren(target).toList())
+    }
     override fun synthesizeAll(): Map<AREA, List<T>> {
         return synthesize(hierarchy.getAllLeafs())
     }
