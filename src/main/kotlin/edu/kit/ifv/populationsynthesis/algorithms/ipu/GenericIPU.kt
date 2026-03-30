@@ -35,17 +35,23 @@ fun interface GenericIPU {
         signatures: Map<Signature, List<I>>,
         rules: Collection<IndexedRule<I>>,
     ): List<IPUOutput<Signature>> {
-        val vectors = signatures.keys.map { SignatureScalableVector(it) }
+
+
+
+        val vectors = signatures.entries.map { (k, v) ->
+            val totalSize = signatures.values.sumOf { it.size }
+            SignatureScalableVector(k, v.size.toDouble() / totalSize)
+        }
         val relevantIndices = rules.map { it.index }.toSet()
         val (relevantVectors, irrelevantVectors) = vectors.partition { it.signature.isRelevantFor(relevantIndices) }
         val observers = rules.map { (index, rule) ->
             RuleObserver.fromRule(rule, index, relevantVectors)
         }
-
         run(relevantVectors, observers)
         irrelevantVectors.forEach { vector ->
             vector.scalar = 0.0
         }
+
         return vectors.map { IPUOutput(it.signature, it.scalar) }
     }
 //    fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {
@@ -99,7 +105,7 @@ fun interface GenericIPU {
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
         ipuCalculationCallback: (DirectRunReport) -> Unit = {},
-        resultConverter: (Map<ScalableVector, List<I>>) -> X
+        resultConverter: (Map<ScalableVector, List<I>>) -> X,
     ): X {
         val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
         val inverseMap = vectorMapping.invertMap()

@@ -6,6 +6,8 @@ import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import edu.kit.ifv.populationsynthesis.algorithms.lsqr
 import org.ejml.data.DMatrixRMaj
+import org.ejml.data.DMatrixSparseCSC
+import org.ejml.ops.DConvertMatrixStruct
 import java.io.File
 import kotlin.io.path.Path
 
@@ -24,10 +26,32 @@ object LeastSquareRegression : GenericIPU {
     }
 }
 
+fun Collection<ScalableVector>.toSparseMatrix(): DMatrixSparseCSC {
+    val maxSize = maxOf { it.highestIndex() }
+
+    val mtx = DMatrixSparseCSC(maxSize, size)
+
+    forEachIndexed { i, vector ->
+        vector.signature.forEachEntry { j, value ->
+            mtx[j, i] = value
+        }
+    }
+    return mtx
+}
+
 fun Collection<ScalableVector>.toMatrix(): DMatrixRMaj {
     val maxSize = maxOf { it.highestIndex() }
-    TODO("Make sure that this construction works again, prefereably in a test")
-    return DMatrixRMaj(maxSize, size, false, *flatMap { it.content(maxSize) }.toDoubleArray())
+
+    val mtx = DMatrixSparseCSC(maxSize, size)
+
+    forEachIndexed { i, vector ->
+        vector.signature.forEachEntry { j, value ->
+            mtx[j, i] = value
+        }
+    }
+    val dense = DMatrixRMaj(maxSize, size)
+    val out = DConvertMatrixStruct.convert(mtx, dense)
+    return out
 }
 
 fun Collection<RuleObserver>.toVector(): DoubleArray {
