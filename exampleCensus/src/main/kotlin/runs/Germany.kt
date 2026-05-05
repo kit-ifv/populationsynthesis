@@ -2,7 +2,6 @@ package edu.kit.ifv.populationsynthesis.runs
 
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
-import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.ParallelPrecomputationDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.domain.population.Population
@@ -14,7 +13,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 
 fun main() {
-    val rules = RuleProviderFactory.bavaria()
+    val rules = RuleProviderFactory.germany()
     val hierarchy = HierarchyFactory.fromARSKeyset(rules.getAllRules().keys)
     val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
     val population = Population.fromPersonInfo()
@@ -29,8 +28,7 @@ fun main() {
 //            ipu = SparkNonnegativeLeastSquares,
 //            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
 //            ipu = MaximumAnnihilator(),
-            ipu = GenericIPU.legacy,
-//            initialSignatureDistributor = ParallelPrecomputationDistribution()
+            ipu = GenericIPU.legacy
         )
     )
     // You can also use the traditional hierarchic IPU of Konduri instead of the Distribution Algorithm.
@@ -41,8 +39,8 @@ fun main() {
 
     val output = ipu.synthesizeAll()
     val verificationOutput = Verification.verify(hierarchicRuleProvider, output)
-    writeCsv(Path("output/ExampleBavaria.csv").createParentDirectories(), verificationOutput)
-    writeCsv(Path("output/PopulationBavaria.csv").createParentDirectories(), CensusHouseholdConverter.convert(output))
+    writeCsv(Path("output/ExampleGermany.csv").createParentDirectories(), verificationOutput)
+    writeCsv(Path("output/PopulationGermany.csv").createParentDirectories(), CensusHouseholdConverter.convert(output))
     println("DONE")
 
 }

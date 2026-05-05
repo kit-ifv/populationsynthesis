@@ -30,7 +30,7 @@ fun main() {
 //            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
 //            ipu = MaximumAnnihilator(),
             ipu = GenericIPU.legacy,
-//            initialSignatureDistributor = ParallelPrecomputationDistribution()
+            initialSignatureDistributor = ParallelPrecomputationDistribution()
         )
     )
     // You can also use the traditional hierarchic IPU of Konduri instead of the Distribution Algorithm.
@@ -41,8 +41,8 @@ fun main() {
 
     val output = ipu.synthesizeAll()
     val verificationOutput = Verification.verify(hierarchicRuleProvider, output)
-    writeCsv(Path("output/ExampleBavaria.csv").createParentDirectories(), verificationOutput)
-    writeCsv(Path("output/PopulationBavaria.csv").createParentDirectories(), CensusHouseholdConverter.convert(output))
+    writeCsv(Path("output/ExampleBavariaParallel.csv").createParentDirectories(), verificationOutput)
+    writeCsv(Path("output/PopulationBavariaParallel.csv").createParentDirectories(), CensusHouseholdConverter.convert(output))
     println("DONE")
 
 }

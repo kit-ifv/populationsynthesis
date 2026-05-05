@@ -51,11 +51,13 @@ data class ARSKey(
             arsKey = "091",
             description = "Oberbayern Regierungsbezirk",
         )
+        val GERMANY get() = DEUTSCHLAND
         val DEUTSCHLAND = ARSKey(
             arsKey = "00",
             "DEUTSCHLAND",
             level = AreaLevel.DEUTSCHLAND
         )
+
         val MARNE_NORDSEE = ARSKey(
             arsKey = "010515166",
             "MARNE_NORDSEE",

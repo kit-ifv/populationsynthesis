@@ -52,5 +52,7 @@ interface RuleProvider<AREA,  T> {
         }.map { it.toObserver(vectors) }
 
     }
+
+    val keys get() = getAllRules().keys
 }
 

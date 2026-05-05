@@ -3,13 +3,14 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initi
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.MutableSignatureAmount
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.Partition
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.SignatureAmount
+import java.io.File
 
 class GreedyDistribution(
     val insertionMetric: PartitionMetric = SquaredDiff,
 ) : InitialSignatureDistributor {
     override fun distribute(partitions: List<Partition>, signatureAmounts: Collection<SignatureAmount>) {
         val elements = signatureAmounts.withIndex().map { it.value.toMutable(it.index) }.toMutableList()
-        elements.removeAll { it.amount == 0 } // Don't need to bother evaluating signatures that should not be placed
+        elements.removeAll { it.atomicAmount.get() == 0 } // Don't need to bother evaluating signatures that should not be placed
         elements.assignGreedy(partitions)
         elements.assignEmergency(partitions)
     }
@@ -28,7 +29,9 @@ class GreedyDistribution(
                 // If one cycle of assignments has found no change, then no partition wants to take in the remaining elements
                 // In this instance, the assignment strategy should also be terminated, and the remaining elements be assigned
                 // via whatever strategy is used for that.
-                if (!improvementFound) return
+                if (!improvementFound) {
+                    return
+                }
                 improvementFound = false
             }
             val currentPartition = removeablePartitions[loopedIndex]
@@ -39,7 +42,7 @@ class GreedyDistribution(
                 currentPartition.takeOne(it)
                 i++
                 improvementFound = true
-                if (it.amount <= 0) {
+                if (it.atomicAmount.get() <= 0) {
                     remove(it)
                 }
             } ?: run {
@@ -57,7 +60,7 @@ class GreedyDistribution(
             val current = first()
             val bestRegion = regions.maxBy { it.evaluateMetric(current.index.index, insertionMetric) }
             bestRegion.takeOne(current)
-            if (current.amount <= 0) {
+            if (current.atomicAmount.get() <= 0) {
                 remove(current)
             }
             i++
@@ -68,5 +71,14 @@ class GreedyDistribution(
 
 fun Partition.takeOne(signatureAmount: MutableSignatureAmount) {
     delta(signatureAmount.index, 1)
-    signatureAmount.amount--
+    signatureAmount.atomicAmount.andDecrement
+    val msg = "Partition ${id} Taking ${signatureAmount}"
+    println(msg)
+//    log(msg)
+
 }
+private val logFile = File("sequentialpartitionmarne.log")
+private fun log(message: String) {
+    logFile.appendText(message + System.lineSeparator())
+}
+private var counter = 0

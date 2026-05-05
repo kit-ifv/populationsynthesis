@@ -11,25 +11,25 @@ object HierarchyFactory {
          */
         return HierarchyGraphFactory.asForest {
 
-            addRelationship(ARSKey.Companion.DIEKHUSEN_FAHRSTEDT, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.FRIEDRICHSKOOG, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.HELSE, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.KAISER_WILHELM_KOOG, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.KRONPRINZENKOOG, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.MARNE_STADT, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.MARNERDEICH, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.NEUFELD, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.NEUFELDERKOOG, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.RAMHUSEN, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.SCHMEDESWURTH, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.TRENNEWURTH, ARSKey.Companion.MARNE_NORDSEE)
-            addRelationship(ARSKey.Companion.VOLSEMENHUSEN, ARSKey.Companion.MARNE_NORDSEE)
+            addRelationship(ARSKey.DIEKHUSEN_FAHRSTEDT, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.FRIEDRICHSKOOG, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.HELSE, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.KAISER_WILHELM_KOOG, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.KRONPRINZENKOOG, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.MARNE_STADT, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.MARNERDEICH, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.NEUFELD, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.NEUFELDERKOOG, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.RAMHUSEN, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.SCHMEDESWURTH, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.TRENNEWURTH, ARSKey.MARNE_NORDSEE)
+            addRelationship(ARSKey.VOLSEMENHUSEN, ARSKey.MARNE_NORDSEE)
         }
     }
 
     fun marneOnly(): HierarchicElement<ARSKey> {
         return HierarchyGraphFactory.asForest {
-            addVertex(ARSKey.Companion.MARNE_NORDSEE)
+            addVertex(ARSKey.MARNE_NORDSEE)
         }
     }
 

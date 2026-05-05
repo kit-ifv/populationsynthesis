@@ -22,17 +22,19 @@ val SquaredDiff = PartitionMetric { expected, actual, signature ->
         newDiff += relErrorNew * relErrorNew
 
     }
-//    signature.entries.forEach { (k, v) ->
-//        val exp = expected[k]
-//        val act = actual[k]
-//        val denom = if (exp == 0.0) 1e-9 else exp // avoid div by 0
-//        val delta = v
-//        val relErrorOrig = (exp - act) / denom
-//        val relErrorNew = (exp - (act + delta)) / denom
-//
-//        origDiff += relErrorOrig * relErrorOrig
-//        newDiff += relErrorNew * relErrorNew
-//    }
-
     origDiff - newDiff
+}
+
+val OptimizedSquaredDiff = PartitionMetric { expected, actual, signature ->
+    var improvement = 0.0
+    signature.forEachEntry { k, v ->
+        val exp = expected[k]
+        val invDenom = if (exp == 0.0) 1e9 else 1.0 / exp
+        val relErrorOrig = (exp - actual[k]) * invDenom
+        val relDelta = v * invDenom
+
+        improvement += 2.0 * relErrorOrig * relDelta - relDelta * relDelta
+
+    }
+    improvement
 }

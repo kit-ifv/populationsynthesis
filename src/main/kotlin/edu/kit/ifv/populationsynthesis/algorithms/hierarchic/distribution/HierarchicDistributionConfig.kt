@@ -1,5 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyDistribution
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.DirectRunReport
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
 
@@ -22,4 +24,5 @@ data class HierarchicDistributionConfig(
     val ipuCalculationCallback: IPUCallback = {
         if (it.amountOfZeroVectors > 0) println("There are degenerate vectors in the IPU. This happens when a seed element matches no rule, the vectors will be set to 0")
     },
+    val initialSignatureDistributor: InitialSignatureDistributor = GreedyDistribution(),
 )

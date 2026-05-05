@@ -14,8 +14,8 @@ import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 
 fun main() {
-    val rules = RuleProviderFactory.bavaria()
-    val hierarchy = HierarchyFactory.fromARSKeyset(rules.getAllRules().keys)
+    val hierarchy = HierarchyFactory.marneExample()
+    val rules = RuleProviderFactory.marneExample()
     val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
     val population = Population.fromPersonInfo()
 
@@ -30,7 +30,7 @@ fun main() {
 //            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
 //            ipu = MaximumAnnihilator(),
             ipu = GenericIPU.legacy,
-//            initialSignatureDistributor = ParallelPrecomputationDistribution()
+            initialSignatureDistributor = ParallelPrecomputationDistribution()
         )
     )
     // You can also use the traditional hierarchic IPU of Konduri instead of the Distribution Algorithm.
@@ -41,8 +41,8 @@ fun main() {
 
     val output = ipu.synthesizeAll()
     val verificationOutput = Verification.verify(hierarchicRuleProvider, output)
-    writeCsv(Path("output/ExampleBavaria.csv").createParentDirectories(), verificationOutput)
-    writeCsv(Path("output/PopulationBavaria.csv").createParentDirectories(), CensusHouseholdConverter.convert(output))
+    writeCsv(Path("output/ExampleMarneParallel.csv").createParentDirectories(), verificationOutput)
+    writeCsv(Path("output/PopulationParallel.csv").createParentDirectories(), CensusHouseholdConverter.convert(output))
     println("DONE")
 
 }

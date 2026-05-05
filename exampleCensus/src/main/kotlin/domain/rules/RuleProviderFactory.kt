@@ -60,6 +60,22 @@ object RuleProviderFactory {
         }
     }
 
+    fun germany(): RuleProvider<ARSKey, CensusHousehold> {
+        return createRuleProvider {
+            loadFromOtherRuleProvider(demographyInfo.ageProvider) {
+                 it.key.level == AreaLevel.GEMEINDE
+            }
+            // load sex info, but only for municipalities that are in MARNE_NORDSEE
+            loadFromOtherRuleProvider(demographyInfo.sexProvider) {
+                 it.key.level == AreaLevel.GEMEINDE
+            }
+            // load household info, but only for MARNE_NORDSEE
+            loadFromOtherRuleProvider(householdInfo.sizeProvider) {
+                it.key == ARSKey.GERMANY
+            }
+        }
+    }
+
     fun createRuleProvider(constructor: () -> MutableRuleSet<CensusHousehold> = ::MutableRuleSet, lambda: MapRuleProvider<ARSKey, CensusHousehold>.() -> Unit): RuleProvider<ARSKey, CensusHousehold> {
         val ruleProvider = MapRuleProvider<ARSKey, CensusHousehold>(construction = constructor)
         ruleProvider.lambda()
