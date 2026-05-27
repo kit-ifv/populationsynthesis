@@ -26,6 +26,9 @@
 variables:
   BUILD_VERSION: "$MAJOR.$MINOR.$BUILD_NUMBER"
 
+default:
+  image: amazoncorretto:25
+
 cache:
   key: "gradle-$CI_PROJECT_ID"
   paths:
@@ -41,7 +44,6 @@ stages: # List of stages for jobs, and their order of execution
 
 build-job:
   stage: build
-  image: amazoncorretto:21
   script:
     - ./gradlew compileJava
   artifacts:
@@ -51,7 +53,6 @@ build-job:
 
 unit-test-job:
   stage: test
-  image: amazoncorretto:21
   needs: ["build-job"]
   script:
     - ./gradlew test
@@ -69,7 +70,6 @@ deploy-job:
   only:
     - master
   needs: [ "unit-test-job" ]
-  image: amazoncorretto:21
   resource_group: production #only one deploy job at a time
   script:
     - echo "Publish local release $BUILD_VERSION"
