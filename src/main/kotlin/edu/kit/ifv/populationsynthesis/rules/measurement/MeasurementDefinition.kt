@@ -4,7 +4,6 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
 
 interface MeasurementDefinition<in T> {
     fun createNamedMeasurement(): NamedMeasurement<T>
-
     /**
      * Important: The string returned by this method is used for equality checks for the [NamedMeasurement].
      * Please make sure that objects return the same description if and only if their evaluation behaviour is
