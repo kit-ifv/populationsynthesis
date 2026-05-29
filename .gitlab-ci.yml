@@ -44,7 +44,7 @@ deploy-job:
   stage: publish
   only:
     - master
-  needs: [ "unit-test-job" ]
+  needs: [ "test-job" ]
   resource_group: production #only one deploy job at a time
   script:
     - echo "Publish local release $BUILD_VERSION"
