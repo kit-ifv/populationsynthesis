@@ -1,10 +1,11 @@
 plugins {
     kotlin("jvm") version "2.3.0"
     id("maven-publish")
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
+    id("signing")
 }
 
 group = "edu.kit.ifv.mobitopp"
-version = project.findProperty("buildVersion") as String? ?: "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -51,46 +52,116 @@ kotlin {
 
 java {
     withSourcesJar()
-    // optional but nice:
-    // withJavadocJar()
-}
-publishing {
-    publications {
-        create<MavenPublication>("mavenKotlin") {
-            from(components["java"])
-            artifactId = "synthesisalgorithms"
-        }
-    }
+    withJavadocJar()
 }
 
-allprojects  {
-    plugins.withId("maven-publish") {
-        publishing {
-            publications.withType<MavenPublication>().configureEach {
-                // usually redundant if you set project.version above, but harmless
-                version = (findProperty("buildVersion") as String?) ?: project.version.toString()
+
+if (checkProperty("doPublish")) {
+    /* mobiTopp publishing process (see .gitlab-ci.yml)
+        * Parameters such as "doPublish" must be passed in gradle command:
+        *  - ./gradlew <TASKS> -PdoPublish=true -Pparam=value...
+        * Lookup of parameters doPublish and isRelease returns true if they are specified and their value reads "true".
+        * Other required parameters must be specified, otherwise an error is thrown.
+        *
+        * The pipeline build version is used as the published artifacts version string.
+        *  - uses parameter: "buildVersion"
+        *
+        * Every merge on main is published to local repo: see deploy-job
+        *  - checks: doPublish=true, isRelease=false
+        *  - gradle task: publish
+        *  - requires parameters: "localUrl", "localRepoUser" and "localRepoPassword"
+        *
+        * Public releases must be published manually:
+        *  - checks: doPublish=true, isRelease=true
+        *  - gradle tasks: publishToSonatype closeSonatypeStagingRepository
+        *  - requires parameters: sonatypeUsername, sonatypePassword signing.keyId signing.password signing.secretKeyRingFile
+        */
+
+    project.version = requireProperty("buildVersion")
+    println("Setup publishing configuration for ${group}:${project.name}:${version}.")
+
+    publishing {
+
+        val githubURL: String = "github.com/kit-ifv/populationsynthesis"
+        val projectDescription: String = "A collection of pipulation synthesis algorithms for travel demand modeling."
+        publications {
+
+            create<MavenPublication>("mavenData") {
+                from(components["java"])
+                groupId = group.toString()
+                artifactId = project.name
+                version = project.version.toString()
+
+                pom {
+                    name.set(project.name)
+                    description.set(projectDescription)
+                    url.set("https://$githubURL")
+
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://mit-license.org")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set("id")
+                            name.set("name")
+                            email.set("mail")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git:git:https://$githubURL.git")
+                        developerConnection.set("scm:git:ssh://git@$githubURL.git")
+                        url.set("https://$githubURL")
+                    }
+                }
             }
 
-            repositories {
+        }
+
+        repositories {
+            if (checkProperty("isRelease")) {
+                println("Activate: publish public release!")
+
+                signing {
+                    sign(publishing.publications)
+                }
+
+                nexusPublishing {
+                    repositories {
+                        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
+                        sonatype {
+                            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+                            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+                        }
+                    }
+                }
+
+            } else {
+                println("Activate: publish local build!")
                 maven {
-                    name = "nexus"
-                    val repoUrl =
-                        (findProperty("localUrl") as String?)
-                            ?: System.getenv("NEXUS_URL")
-                            ?: "https://nexus.ifv.kit.edu/repository/maven-snapshots/"
-
-                    url = uri(repoUrl)
-
+                    name = "LocalRepo"
+                    url = uri(requireProperty("localUrl"))
                     credentials {
-                        username =
-                            (findProperty("localRepoUser") as String?)
-                                ?: System.getenv("NEXUS_USER")
-                        password =
-                            (findProperty("localRepoPassword") as String?)
-                                ?: System.getenv("NEXUS_PASSWORD")
+                        username = requireProperty("localRepoUser")
+                        password = requireProperty("localRepoPassword")
                     }
                 }
             }
         }
+
     }
+
 }
+
+
+fun requireProperty(property: String, orElse: String? = null): String =
+    requireNotNull(project.findProperty(property) as? String ?: orElse) {
+        "Could not find property '$property'. Please check the gradle command args. It should contain:\n" +
+                "    ./gradlew ... -P$property=<VALUE> ..."
+    }
+
+fun checkProperty(property: String): Boolean = project.hasProperty(property) && project.property(property) == "true"
