@@ -49,17 +49,24 @@ deploy-job:
   script:
     - echo "Publish local release $BUILD_VERSION"
     - |
-      ./gradlew publish \
+     curl --fail-with-body \
+      --request GET \
+      --header "PRIVATE-TOKEN:$API_TOKEN" \
+       "$GITLAB_API_URL/BUILD_NUMBER"
+    - |
+      ./gradlew publish -PbuildVersion=$BUILD_VERSION \
       -PdoPublish=true \
-      -PbuildVersion="$BUILD_VERSION" \
-      -PlocalUrl="$LOCAL_REPO_URL" \
-      -PlocalRepoUser="$LOCAL_REPO_USERNAME" \
-      -PlocalRepoPassword="$LOCAL_REPO_PASSWORD"
+      -PlocalUrl=$LOCAL_REPO_URL \
+      -PlocalRepoUser=$LOCAL_REPO_USERNAME \
       -PlocalRepoPassword=$LOCAL_REPO_PASSWORD
     - export NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
-    - echo "Update BUILD_NUMBER to $NEW_BUILD_NUMBER"
-    - curl --request PUT --header "PRIVATE-TOKEN:$API_TOKEN" --form "value=$NEW_BUILD_NUMBER" "$GITLAB_API_URL/BUILD_NUMBER"
 
+    - |
+      curl --fail-with-body \
+        --request PUT \
+        --header "PRIVATE-TOKEN:$API_TOKEN" \
+        --form "value=$NEW_BUILD_NUMBER" \
+        "$GITLAB_API_URL/BUILD_NUMBER"
 publish-job:
   allow_failure: false
   when: manual
