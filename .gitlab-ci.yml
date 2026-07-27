@@ -49,10 +49,10 @@ deploy-job:
   script:
     - echo "Publish local release $BUILD_VERSION"
     - |
-     curl --fail-with-body \
-      --request GET \
-      --header "PRIVATE-TOKEN:$API_TOKEN" \
-       "$GITLAB_API_URL/BUILD_NUMBER"
+      curl --fail-with-body \
+       --request GET \
+       --header "PRIVATE-TOKEN:$API_TOKEN" \
+        "$GITLAB_API_URL/BUILD_NUMBER"
     - |
       ./gradlew publish -PbuildVersion=$BUILD_VERSION \
       -PdoPublish=true \
