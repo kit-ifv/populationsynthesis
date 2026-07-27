@@ -49,9 +49,12 @@ deploy-job:
   script:
     - echo "Publish local release $BUILD_VERSION"
     - |
-      ./gradlew publish -PbuildVersion=$BUILD_VERSION \
-      -PlocalUrl=$LOCAL_REPO_URL \
-      -PlocalRepoUser=$LOCAL_REPO_USERNAME \
+      ./gradlew publish \
+      -PdoPublish=true \
+      -PbuildVersion="$BUILD_VERSION" \
+      -PlocalUrl="$LOCAL_REPO_URL" \
+      -PlocalRepoUser="$LOCAL_REPO_USERNAME" \
+      -PlocalRepoPassword="$LOCAL_REPO_PASSWORD"
       -PlocalRepoPassword=$LOCAL_REPO_PASSWORD
     - export NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
     - echo "Update BUILD_NUMBER to $NEW_BUILD_NUMBER"

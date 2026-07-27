@@ -106,9 +106,9 @@ if (checkProperty("doPublish")) {
 
                     developers {
                         developer {
-                            id.set("id")
-                            name.set("name")
-                            email.set("mail")
+                            id.set("Robin Andre")
+                            name.set("Robin Andre")
+                            email.set("robin.andre@kit.edu")
                         }
                     }
 
