@@ -22,10 +22,10 @@ build-job:
   stage: build
   script:
     - ./gradlew classes
-  artifacts:
-    when: always
-    paths:
-      - build/
+#  artifacts:
+#    when: always
+#    paths:
+#      - build/
 
 test-job:
   stage: test
