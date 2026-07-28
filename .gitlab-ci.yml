@@ -68,6 +68,19 @@ deploy-job:
         --header "PRIVATE-TOKEN:$API_TOKEN" \
         --form "value=$NEW_BUILD_NUMBER" \
         "$GITLAB_API_URL/BUILD_NUMBER"
+
+rc-publish-job:
+  stage: publish
+  when: manual
+  script:
+    - export RELEASE_VERSION="$MAJOR.$MINOR.0"
+    - |
+      ./gradlew publish \
+        -PdoPublish=true \
+        -PbuildVersion="$RELEASE_VERSION" \
+        -PlocalUrl="$RC_REPO_URL" \
+        -PlocalRepoUser="$RC_REPO_USERNAME" \
+        -PlocalRepoPassword="$RC_REPO_PASSWORD"
 publish-job:
   allow_failure: false
   when: manual
