@@ -63,14 +63,54 @@ rc-publish-job:
     - when: never
   script:
     - |
-      if [ -n "$CI_COMMIT_TAG" ]; then
-        RELEASE_VERSION="${CI_COMMIT_TAG#v}"
+      set -eu
+  
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then
+        MANUAL_RELEASE=false
+        TAG_VERSION="${CI_COMMIT_TAG#v}"
+  
+        case "$TAG_VERSION" in
+          *[!0-9.]* | *.*.*.* | .* | *.)
+            echo "Invalid release tag: $CI_COMMIT_TAG"
+            echo "Expected format: v1.2.3 or 1.2.3"
+            exit 1
+            ;;
+        esac
+  
+        RELEASE_MAJOR="${TAG_VERSION%%.*}"
+        VERSION_REMAINDER="${TAG_VERSION#*.}"
+        RELEASE_MINOR="${VERSION_REMAINDER%%.*}"
+        RELEASE_PATCH="${VERSION_REMAINDER#*.}"
+  
+        case "$RELEASE_MAJOR:$RELEASE_MINOR:$RELEASE_PATCH" in
+          *[!0-9:]* | :* | *::* | *:)
+            echo "Invalid release tag: $CI_COMMIT_TAG"
+            exit 1
+            ;;
+        esac
+  
+        RELEASE_VERSION="$TAG_VERSION"
+        NEXT_MAJOR="$RELEASE_MAJOR"
+        NEXT_MINOR="$((RELEASE_MINOR + 1))"
       else
-        RELEASE_VERSION="${RC_VERSION:-${MAJOR}.${MINOR}.0}"
+        MANUAL_RELEASE=true
+        RELEASE_VERSION="${MAJOR}.${MINOR}.0"
+        NEXT_MAJOR="$MAJOR"
+        NEXT_MINOR="$((MINOR + 1))"
+  
+        if git ls-remote --exit-code \
+          --tags origin "refs/tags/v$RELEASE_VERSION" >/dev/null 2>&1; then
+          echo "Tag v$RELEASE_VERSION already exists"
+          exit 1
+        fi
       fi
-
-      echo "Publishing RC version ${RELEASE_VERSION}"
-
+  
+      echo "Release version: $RELEASE_VERSION"
+      echo "Next MAJOR:      $NEXT_MAJOR"
+      echo "Next MINOR:      $NEXT_MINOR"
+  
+      echo "Publishing $RELEASE_VERSION to the RC repository"
+  
       ./gradlew publish \
         --no-configuration-cache \
         -PdoPublish=true \
@@ -78,3 +118,40 @@ rc-publish-job:
         -PlocalUrl="$RC_REPO_URL" \
         -PlocalRepoUser="$RC_REPO_USERNAME" \
         -PlocalRepoPassword="$RC_REPO_PASSWORD"
+  
+      echo "Publishing $RELEASE_VERSION to the local release repository"
+  
+      ./gradlew publish \
+        --no-configuration-cache \
+        -PdoPublish=true \
+        -PbuildVersion="$RELEASE_VERSION" \
+        -PlocalUrl="$LOCAL_REPO_URL" \
+        -PlocalRepoUser="$LOCAL_REPO_USERNAME" \
+        -PlocalRepoPassword="$LOCAL_REPO_PASSWORD"
+  
+      if [ "$MANUAL_RELEASE" = "true" ]; then
+        git config user.name "mobiTopp Release Pipeline"
+        git config user.email "mobitopp@ifv.kit.edu"
+  
+        git tag -a "v$RELEASE_VERSION" "$CI_COMMIT_SHA" \
+          -m "Release $RELEASE_VERSION"
+  
+        git push -o ci.skip origin "v$RELEASE_VERSION"
+      fi
+  
+      echo "Updating project version variables"
+  
+      curl --fail-with-body \
+        --request PUT \
+        --header "PRIVATE-TOKEN:$API_TOKEN" \
+        --form "value=$NEXT_MAJOR" \
+        "$GITLAB_API_URL/MAJOR"
+  
+      curl --fail-with-body \
+        --request PUT \
+        --header "PRIVATE-TOKEN:$API_TOKEN" \
+        --form "value=$NEXT_MINOR" \
+        "$GITLAB_API_URL/MINOR"
+  
+      echo "Published $RELEASE_VERSION successfully"
+      echo "Future snapshots will use ${NEXT_MAJOR}.${NEXT_MINOR}-SNAPSHOT"
