@@ -1,6 +1,5 @@
 variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
-  BUILD_VERSION: "$MAJOR.$MINOR.$BUILD_NUMBER"
 
 default:
   image: amazoncorretto:25
@@ -12,111 +11,70 @@ cache:
     - .gradle/caches
     - .kotlin
 
-stages: # List of stages for jobs, and their order of execution
+stages:
   - build
   - test
   - publish
 
-
 build-job:
   stage: build
   script:
-    - ./gradlew classes
-#  artifacts:
-#    when: always
-#    paths:
-#      - build/
+    - ./gradlew classes --build-cache
 
 test-job:
   stage: test
-  needs: ["build-job"]
+  needs:
+    - build-job
   script:
     - ./gradlew test --build-cache
 
-#code-style:
-#  stage: test
-#  needs: ["build-job"]
-#  image: amazoncorretto:21
-#  script:
-#    - ./gradlew detektGenerateConfig
-#    - ./gradlew detekt
-
-deploy-job:
+snapshot-publish-job:
   stage: publish
-  only:
-    - master
-  needs: [ "test-job" ]
-  resource_group: production #only one deploy job at a time
+  needs:
+    - test-job
+  resource_group: nexus-publish
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: on_success
+    - when: never
   script:
-    - echo "Publish local release $BUILD_VERSION"
+    - SNAPSHOT_VERSION="${MAJOR}.${MINOR}-SNAPSHOT"
+    - echo "Publishing snapshot ${SNAPSHOT_VERSION}"
     - |
-      curl --fail-with-body \
-       --request GET \
-       --header "PRIVATE-TOKEN:$API_TOKEN" \
-        "$GITLAB_API_URL/BUILD_NUMBER"
-    - |
-      ./gradlew publish --build-cache -PbuildVersion=$BUILD_VERSION \
-      -PdoPublish=true \
-      -PlocalUrl=$LOCAL_REPO_URL \
-      -PlocalRepoUser=$LOCAL_REPO_USERNAME \
-      -PlocalRepoPassword=$LOCAL_REPO_PASSWORD
-    - export NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
-
-    - |
-      curl --fail-with-body \
-        --request PUT \
-        --header "PRIVATE-TOKEN:$API_TOKEN" \
-        --form "value=$NEW_BUILD_NUMBER" \
-        "$GITLAB_API_URL/BUILD_NUMBER"
+      ./gradlew publish \
+        --build-cache \
+        -PdoPublish=true \
+        -PbuildVersion="$SNAPSHOT_VERSION" \
+        -PlocalUrl="$LOCAL_REPO_URL" \
+        -PlocalRepoUser="$LOCAL_REPO_USERNAME" \
+        -PlocalRepoPassword="$LOCAL_REPO_PASSWORD"
 
 rc-publish-job:
   stage: publish
-  when: manual
+  needs:
+    - test-job
+  resource_group: nexus-publish
+  allow_failure: false
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v?[0-9]+\.[0-9]+\.[0-9]+$/'
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: manual
+    - when: never
   script:
-    - export RELEASE_VERSION="$MAJOR.$MINOR.0"
     - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        RELEASE_VERSION="${CI_COMMIT_TAG#v}"
+      else
+        RELEASE_VERSION="${RC_VERSION:-${MAJOR}.${MINOR}.0}"
+      fi
+
+      echo "Publishing RC version ${RELEASE_VERSION}"
+
       ./gradlew publish \
+        --no-configuration-cache \
         -PdoPublish=true \
         -PbuildVersion="$RELEASE_VERSION" \
         -PlocalUrl="$RC_REPO_URL" \
         -PlocalRepoUser="$RC_REPO_USERNAME" \
         -PlocalRepoPassword="$RC_REPO_PASSWORD"
-publish-job:
-  allow_failure: false
-  when: manual
-  stage: publish
-  only:
-    - main
-    - master
-  needs: [ "test-job" ]
-  resource_group: production #only one deploy job at a time
-  script:
-    - export NEW_BUILD_VERSION=$MAJOR.$MINOR.0
-    - echo "Publish public release $NEW_BUILD_VERSION"
-    - mkdir -p "$CI_PROJECT_DIR/.ci-secrets"
-    - printf '%s' "$GPG_SECRING" | base64 -d > "$CI_PROJECT_DIR/.ci-secrets/secring.gpg"
-    - echo "New Build Version $NEW_BUILD_VERSION"
-    - chmod 600 "$CI_PROJECT_DIR/.ci-secrets/secring.gpg"
-    - |
-      ./gradlew publishToSonatype closeSonatypeStagingRepository -PbuildVersion=$NEW_BUILD_VERSION \
-      -PdoPublish=true \
-      -PisRelease=true \
-      -PsonatypeUsername=$PUBLIC_REPO_USERNAME \
-      -PsonatypePassword=$PUBLIC_REPO_PASSWORD \
-      -Psigning.keyId=$GPG_ID \
-      -Psigning.password=$GPG_PASSWORD \
-      -Psigning.secretKeyRingFile="$CI_PROJECT_DIR/.ci-secrets/secring.gpg"
-    - export NEW_MINOR=$((MINOR + 1))
-    - echo "Update MINOR to $NEW_MINOR, set BUILD_NUMBER to 0"
-    - |
-      curl --fail-with-body \
-        --request PUT \
-        --header "PRIVATE-TOKEN:$API_TOKEN" \
-        --form "value=$NEW_MINOR" \
-        "$GITLAB_API_URL/MINOR"
-    - |
-      curl --fail-with-body \
-        --request PUT \
-        --header "PRIVATE-TOKEN:$API_TOKEN" \
-        --form "value=0" \
-        "$GITLAB_API_URL/BUILD_NUMBER"
