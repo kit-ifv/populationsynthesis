@@ -45,7 +45,7 @@ snapshot-publish-job:
         --build-cache \
         -PdoPublish=true \
         -PbuildVersion="$SNAPSHOT_VERSION" \
-        -PlocalUrl="$LOCAL_REPO_URL" \
+        -PlocalUrl="$LOCAL_REPO_SNAPSHOT_URL" \
         -PlocalRepoUser="$LOCAL_REPO_USERNAME" \
         -PlocalRepoPassword="$LOCAL_REPO_PASSWORD"
 
