@@ -3,6 +3,37 @@ variables:
 
 default:
   image: amazoncorretto:25
+  before_script:
+    - |
+      cat > "$CI_PROJECT_DIR/internal-repositories.init.gradle.kts" <<'EOF'
+      allprojects {
+          repositories {
+              val rcUrl = System.getenv("RC_REPO_URL")
+              if (!rcUrl.isNullOrBlank()) {
+                  maven {
+                      url = uri(rcUrl)
+                      credentials {
+                          username = System.getenv("RC_REPO_USERNAME")
+                          password = System.getenv("RC_REPO_PASSWORD")
+                      }
+                  }
+              }
+
+              val snapshotUrl = System.getenv("LOCAL_SNAPSHOT_REPO_URL")
+              if (!snapshotUrl.isNullOrBlank()) {
+                  maven {
+                      url = uri(snapshotUrl)
+                      credentials {
+                          username = System.getenv("LOCAL_REPO_USERNAME")
+                          password = System.getenv("LOCAL_REPO_PASSWORD")
+                      }
+                  }
+              }
+
+              mavenCentral()
+          }
+      }
+      EOF
 
 cache:
   key: "gradle-$CI_PROJECT_ID"
@@ -19,14 +50,14 @@ stages:
 build-job:
   stage: build
   script:
-    - ./gradlew classes --build-cache
+    - ./gradlew classes --build-cache --init-script "$CI_PROJECT_DIR/internal-repositories.init.gradle.kts"
 
 test-job:
   stage: test
   needs:
     - build-job
   script:
-    - ./gradlew test --build-cache
+    - ./gradlew test --build-cache --init-script "$CI_PROJECT_DIR/internal-repositories.init.gradle.kts"
 
 snapshot-publish-job:
   stage: publish
@@ -43,6 +74,7 @@ snapshot-publish-job:
     - |
       ./gradlew publish \
         --build-cache \
+        --init-script "$CI_PROJECT_DIR/internal-repositories.init.gradle.kts" \
         -PdoPublish=true \
         -PbuildVersion="$SNAPSHOT_VERSION" \
         -PlocalUrl="$LOCAL_SNAPSHOT_REPO_URL" \
@@ -113,6 +145,7 @@ rc-publish-job:
   
       ./gradlew publish \
         --no-configuration-cache \
+        --init-script "$CI_PROJECT_DIR/internal-repositories.init.gradle.kts" \
         -PdoPublish=true \
         -PbuildVersion="$RELEASE_VERSION" \
         -PlocalUrl="$RC_REPO_URL" \
@@ -123,6 +156,7 @@ rc-publish-job:
   
       ./gradlew publish \
         --no-configuration-cache \
+        --init-script "$CI_PROJECT_DIR/internal-repositories.init.gradle.kts" \
         -PdoPublish=true \
         -PbuildVersion="$RELEASE_VERSION" \
         -PlocalUrl="$LOCAL_REPO_URL" \
