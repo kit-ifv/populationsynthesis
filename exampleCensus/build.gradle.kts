@@ -12,17 +12,15 @@ repositories {
 
 dependencies {
     implementation(project(":"))
-    implementation(project(":domain"))
     testImplementation(kotlin("test"))
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.20.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.0")
-    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
 }
 

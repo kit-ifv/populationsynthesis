@@ -16,16 +16,21 @@ class HierarchicDistribution<AREA, T>(
 
     private val allRuleLogics = LogicIndexer.fromProvider(ruleProvider)
     private val householdMapping = initializeHouseholdMapping()
-
+    init {
+        require(householdMapping.keys.none { it.isEmpty() }) {
+            "This is not a valid signature state"
+        }
+    }
     private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
-        return seedHouseholds.groupBy { element ->
-            Signature.fromMap(
-                allRuleLogics.allMeasurements().withIndex().associate { (index, logic) ->
-                    index to logic.measure(element)
-                }
-            )
+        val groupBy: Map<Signature?, List<T>> = seedHouseholds.groupBy { element ->
+            allRuleLogics.createSignature(element)
+
 
         }
+        if(null in groupBy) {
+            println("There are ${groupBy[null]!!.size} households that do not match to a signature. Be advised that these households are not used. ")
+        }
+        return groupBy.filterKeys { it != null } as Map<Signature, List<T>>
     }
 
     /**

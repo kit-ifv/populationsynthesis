@@ -15,7 +15,7 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
  */
 abstract class RuleObserver(
     val name: String,
-    private val observedIndex: Int,
+    val observedIndex: Int,
     val vectors: List<ScalableVector>,
 ) {
 
@@ -38,6 +38,7 @@ abstract class RuleObserver(
     /**
      * Sums the current values for the given [observedIndex] across all the vectors.
      *
+     * This is mathematically identical to a * x where a is the attribute vector and x the current scalar vector.
      * @return The sum of the values for the [observedIndex] across all vectors.
      */
     fun sum(): Double {
@@ -119,5 +120,4 @@ abstract class RuleObserver(
         }
     }
 }
-
 
