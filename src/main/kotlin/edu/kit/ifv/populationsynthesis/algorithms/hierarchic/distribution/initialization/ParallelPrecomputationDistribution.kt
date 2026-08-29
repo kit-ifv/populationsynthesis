@@ -14,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class ParallelPrecomputationDistribution(
-    val insertionMetric: PartitionMetric = OptimizedSquaredDiff,
+    val insertionMetric: PartitionMetric = PartitionMetric.squaredDifference,
 ) : InitialSignatureDistributor {
     override fun distribute(partitions: List<Partition>, signatureAmounts: Collection<SignatureAmount>) {
 

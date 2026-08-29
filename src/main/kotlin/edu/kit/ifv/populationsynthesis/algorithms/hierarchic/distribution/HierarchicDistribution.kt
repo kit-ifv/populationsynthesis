@@ -63,7 +63,7 @@ class HierarchicDistribution<AREA, T>(
     ): Map<AREA, List<T>> {
 
         val initialSolution = initialSolution(highestArea)
-        val distributor = OriginalDistributor(ruleProvider, allRuleLogics, householdMapping, config.initialSignatureDistributor)
+        val distributor = OriginalDistributor(ruleProvider, allRuleLogics, householdMapping)
         return distributor.distribute(
             initialSolution,
             highestArea,

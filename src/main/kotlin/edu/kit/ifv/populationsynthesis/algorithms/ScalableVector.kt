@@ -8,16 +8,31 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 interface ScalableVector : Vector {
     var scalar: Double
     val signature: Signature
-
+    override operator fun get(index: Int): Double = currentValueForIndex(index)
     fun currentValueForIndex(index: Int): Double
     fun attributeForIndex(index: Int): Double
     fun appliesToRule(ruleIndex: Int): Boolean
 
-    @Deprecated("I would like to drop this method.")
-    fun content(): List<Double>
+
+    fun content() = map { it }
+
     fun highestIndex(): Int {
         return signature.maxKey + 1
     }
+    override fun iterator(): DoubleIterator {
+        return object : DoubleIterator() {
+            private var index = 0
+
+            override fun hasNext(): Boolean {
+                return index <= signature.maxKey
+            }
+
+            override fun nextDouble(): Double {
+                return currentValueForIndex(index++)
+            }
+        }
+    }
+    override val size get() = signature.maxKey
 
     companion object {
         /**
@@ -51,23 +66,7 @@ class SignatureScalableVector(override val signature: Signature, override var sc
         return signature.hasKey(ruleIndex)
     }
 
-    override fun content(): List<Double> {
-        return (0 .. signature.maxKey).map { signature[it] }
-    }
 
-    override fun iterator(): DoubleIterator {
-        return object : DoubleIterator() {
-            private var index = 0
-
-            override fun hasNext(): Boolean {
-                return index < signature.maxKey
-            }
-
-            override fun nextDouble(): Double {
-                return currentValueForIndex(index++)
-            }
-        }
-    }
 }
 
 class ArrayScalableVector internal constructor(private val array: DoubleArray, override var scalar: Double) :
@@ -77,25 +76,18 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
 
     override val signature: Signature = Signature.fromValues(array.toList())
     override fun currentValueForIndex(index: Int): Double {
-        return this[index] * scalar
+        return this.getAttribute(index) * scalar
     }
 
     override fun attributeForIndex(index: Int): Double {
-        return this[index]
+        return this.getAttribute(index)
     }
 
-    override fun iterator(): DoubleIterator {
-        return array.iterator()
-    }
-
-    operator fun get(index: Int) = runCatching { array[index] }.getOrNull() ?: 0.0
-    override fun content(): List<Double> {
-        return array.toList()
-    }
+    private fun getAttribute(index: Int) = runCatching { array[index] }.getOrNull() ?: 0.0
 
     val content get() = array.toList()
     override fun appliesToRule(ruleIndex: Int): Boolean {
-        return this[ruleIndex] != 0.0
+        return this.getAttribute(ruleIndex) != 0.0
     }
 
     override fun equals(other: Any?): Boolean {
