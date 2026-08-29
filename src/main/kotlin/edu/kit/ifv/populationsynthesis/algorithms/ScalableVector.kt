@@ -5,7 +5,7 @@ import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
-interface ScalableVector {
+interface ScalableVector : Vector {
     var scalar: Double
     val signature: Signature
 
@@ -14,7 +14,7 @@ interface ScalableVector {
     fun appliesToRule(ruleIndex: Int): Boolean
 
     @Deprecated("I would like to drop this method.")
-    fun content(maxSize: Int): List<Double>
+    fun content(): List<Double>
     fun highestIndex(): Int {
         return signature.maxKey + 1
     }
@@ -51,8 +51,22 @@ class SignatureScalableVector(override val signature: Signature, override var sc
         return signature.hasKey(ruleIndex)
     }
 
-    override fun content(maxSize: Int): List<Double> {
-        return (0 until signature.maxKey).map { signature[it] }
+    override fun content(): List<Double> {
+        return (0 .. signature.maxKey).map { signature[it] }
+    }
+
+    override fun iterator(): DoubleIterator {
+        return object : DoubleIterator() {
+            private var index = 0
+
+            override fun hasNext(): Boolean {
+                return index < signature.maxKey
+            }
+
+            override fun nextDouble(): Double {
+                return currentValueForIndex(index++)
+            }
+        }
     }
 }
 
@@ -70,8 +84,12 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
         return this[index]
     }
 
+    override fun iterator(): DoubleIterator {
+        return array.iterator()
+    }
+
     operator fun get(index: Int) = runCatching { array[index] }.getOrNull() ?: 0.0
-    override fun content(maxSize: Int): List<Double> {
+    override fun content(): List<Double> {
         return array.toList()
     }
 
