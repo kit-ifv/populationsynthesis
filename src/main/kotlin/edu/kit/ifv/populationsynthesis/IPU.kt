@@ -1,7 +1,5 @@
 package edu.kit.ifv.populationsynthesis
 
-import edu.kit.ifv.populationsynthesis.algorithms.IPUOutput
-import edu.kit.ifv.populationsynthesis.algorithms.IntegerIPUOutput
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import kotlin.random.Random
 
@@ -85,15 +83,6 @@ class SampleAndCollect<H>(
     roundingStrategy: RoundingStrategy = standardRoundingStrategy,
 ) : GenericCollector<ScalableVector, H>(random, { roundingStrategy.convertToInts(it.map { it.scalar }) }),
     GenerateHouseholdsFromVector<H>
-
-fun interface RoundingStrategy {
-    fun convertToInts(values: Collection<Double>): List<Int>
-
-    fun <I> integerizeIPUOutput(elements: Collection<IPUOutput<I>>): List<IntegerIPUOutput<I>> {
-        val newValues = convertToInts(elements.map { it.amount })
-        return elements.zip(newValues).map { (e, num) -> e.discretize(num) }
-    }
-}
 
 fun Collection<Double>.roundVia(strategy: RoundingStrategy): List<Int> = strategy.convertToInts(this)
 

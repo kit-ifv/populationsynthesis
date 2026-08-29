@@ -37,7 +37,7 @@ class OriginalDistributor<AREA, T>(
 
         val output: MutableMap<AREA, List<T>> = mutableMapOf()
         val handledNonTargetNodes = mutableMapOf<AREA, List<SignatureAmount>>()
-        val targetAreas = hierarchy.getAllChildren(rootArea)
+        val targetAreas = hierarchy.getAllLeafsFrom(rootArea)
         if (targetAreas.isNotEmpty()) {
             handledNonTargetNodes[rootArea] = initialSolution
         } else {

@@ -4,25 +4,22 @@ import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import java.io.BufferedOutputStream
-import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
-import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.deleteRecursively
-import kotlin.math.max
 
-object PythonScipyNNLS: GenericIPU {
+object PythonScipyNNLS: MatrixSolver {
 
 
 
 
     @OptIn(ExperimentalPathApi::class)
-    override fun run(
+    override fun solve(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>,
     ) {

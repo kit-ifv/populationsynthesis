@@ -4,35 +4,25 @@ import edu.kit.ifv.populationsynthesis.Signature
 
 fun interface PartitionMetric {
     fun calculate(expected: DoubleArray, actual: DoubleArray, signature: Signature): Double
-}
 
-@Suppress("MagicNumber")
-val SquaredDiff = PartitionMetric { expected, actual, signature ->
-    var origDiff = .0
-    var newDiff = .0
-    signature.forEachEntry { k, v ->
-        val exp = expected[k]
-        val act = actual[k]
-        val denom = if (exp == 0.0) 1e-9 else exp // avoid div by 0
-        val delta = v
-        val relErrorOrig = (exp - act) / denom
-        val relErrorNew = (exp - (act + delta)) / denom
+    companion object {
+        @Suppress("MagicNumber")
+        val squaredDifference = PartitionMetric { expected, actual, signature ->
+            var origDiff = .0
+            var newDiff = .0
+            signature.forEachEntry { k, v ->
+                val exp = expected[k]
+                val act = actual[k]
+                val denom = if (exp == 0.0) 1e-9 else exp // avoid div by 0
+                val delta = v
+                val relErrorOrig = (exp - act) / denom
+                val relErrorNew = (exp - (act + delta)) / denom
 
-        origDiff += relErrorOrig * relErrorOrig
-        newDiff += relErrorNew * relErrorNew
+                origDiff += relErrorOrig * relErrorOrig
+                newDiff += relErrorNew * relErrorNew
 
+            }
+            origDiff - newDiff
+        }
     }
-//    signature.entries.forEach { (k, v) ->
-//        val exp = expected[k]
-//        val act = actual[k]
-//        val denom = if (exp == 0.0) 1e-9 else exp // avoid div by 0
-//        val delta = v
-//        val relErrorOrig = (exp - act) / denom
-//        val relErrorNew = (exp - (act + delta)) / denom
-//
-//        origDiff += relErrorOrig * relErrorOrig
-//        newDiff += relErrorNew * relErrorNew
-//    }
-
-    origDiff - newDiff
 }

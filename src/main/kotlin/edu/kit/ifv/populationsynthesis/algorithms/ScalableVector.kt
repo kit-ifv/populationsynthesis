@@ -106,13 +106,13 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
 //}
 
 /**
- * A [ScalableVectore] represents a vectorized encoding of household attributes, where each element of the vector
- * corresponds to a specific attribute, and the `scalar` factor indicates how many instances of the household encoding
+ * A [ScalableVectore] represents a vectorized encoding of element attributes, where each number of the vector
+ * corresponds to a specific attribute, and the `scalar` factor indicates how many instances of the element encoding
  * are currently present. The vector is immutable, but the scalar factor is mutable, allowing for optimizations and adjustments
  * during processing.
  *
- * The vector itself is represented as an integer array, where each element typically represents an integer encoding of a
- * household's attribute (e.g., [0, 1, 2] could represent a household with the ruleset
+ * The vector itself is represented as an integer array, where each number typically represents an integer encoding of a
+ * element's attribute (e.g., [0, 1, 2] could represent a household with the ruleset
  * ["Household Size == 1", "Household Size == 2", "Number of LicenceHolders"])
  *
  * This class provides a read-only view of the vector's content and exposes operations to manipulate its scalar,

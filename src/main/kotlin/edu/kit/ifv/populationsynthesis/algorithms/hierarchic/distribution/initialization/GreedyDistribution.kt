@@ -5,7 +5,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.Partit
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.SignatureAmount
 
 class GreedyDistribution(
-    val insertionMetric: PartitionMetric = SquaredDiff,
+    val insertionMetric: PartitionMetric = PartitionMetric.squaredDifference,
 ) : InitialSignatureDistributor {
     override fun distribute(partitions: List<Partition>, signatureAmounts: Collection<SignatureAmount>) {
         val elements = signatureAmounts.withIndex().map { it.value.toMutable(it.index) }.toMutableList()

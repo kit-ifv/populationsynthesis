@@ -4,8 +4,8 @@ import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import kotlin.math.abs
 
-class MaximumAnnihilator : GenericIPU {
-    override fun run(
+class MaximumAnnihilator : MatrixSolver {
+    override fun solve(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
     ) {

@@ -3,8 +3,8 @@ package edu.kit.ifv.populationsynthesis.algorithms.ipu
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 
-class NickRowellImplementation : GenericIPU {
-    override fun run(
+class NickRowellImplementation : MatrixSolver {
+    override fun solve(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
     ) {

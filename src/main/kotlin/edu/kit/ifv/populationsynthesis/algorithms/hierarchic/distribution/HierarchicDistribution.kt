@@ -41,10 +41,10 @@ class HierarchicDistribution<AREA, T>(
         val rules = ruleProvider.getComposedRules(target)
         // TODO What if there are different rules provided at different root areas, they cannot be traced back to their original signture created from the logic indexer.
 //        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
-        val oIpu = config.ipu.sigCalcAct(householdMapping, rules.map { allRuleLogics.toIndexedRule(it) })
+        val matrixSolution = config.matrixSolver.sigCalcAct(householdMapping, rules.map { allRuleLogics.toIndexedRule(it) })
 
 
-        val integerIPUResult = standardRoundingStrategy.integerizeIPUOutput(oIpu)
+        val integerIPUResult = standardRoundingStrategy.integerizeMatrixOutput(matrixSolution)
 
 //        rules.verify(integerIPUResult)
         // TODO would be nice to see how much the integerization causes the initial solution quality to drop.
@@ -73,7 +73,7 @@ class HierarchicDistribution<AREA, T>(
     private val collector = GenericCollector<SignatureAmount, T> {
         it.map { it.amount }
     }
-
+    @Deprecated("The distributor object is tasked with finalization")
     fun finalize(
         amounts: Collection<SignatureAmount>,
         signatures: Map<Signature, List<T>>,
