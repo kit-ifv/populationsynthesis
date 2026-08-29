@@ -14,6 +14,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 
 fun main() {
+    TODO("RESTORE Whatever was lost here")
     val hierarchy = HierarchyFactory.marneExample()
     val rules = RuleProviderFactory.marneExample()
     val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
@@ -29,8 +30,8 @@ fun main() {
 //            ipu = SparkNonnegativeLeastSquares,
 //            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
 //            ipu = MaximumAnnihilator(),
-            ipu = GenericIPU.legacy,
-            initialSignatureDistributor = ParallelPrecomputationDistribution()
+//            ipu = GenericIPU.legacy,
+//            initialSignatureDistributor = ParallelPrecomputationDistribution()
         )
     )
     // You can also use the traditional hierarchic IPU of Konduri instead of the Distribution Algorithm.

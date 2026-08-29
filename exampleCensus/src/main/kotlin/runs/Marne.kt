@@ -2,6 +2,7 @@ package edu.kit.ifv.populationsynthesis.runs
 
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.JosephineStepper
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.domain.population.Population
 import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
@@ -22,7 +23,7 @@ fun main() {
         ruleProvider = hierarchicRuleProvider,
         seedHouseholds = population.households,
         config = HierarchicDistributionConfig(
-
+            matrixSolver = JosephineStepper()
             // You can use different algorithms for the initial solution of the distribution algorithm.
 //            ipu = LeastSquareRegression,
 //            ipu = SparkNonnegativeLeastSquares,

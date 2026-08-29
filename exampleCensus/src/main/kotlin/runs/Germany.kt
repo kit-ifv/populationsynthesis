@@ -28,7 +28,7 @@ fun main() {
 //            ipu = SparkNonnegativeLeastSquares,
 //            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
 //            ipu = MaximumAnnihilator(),
-            ipu = GenericIPU.legacy
+//            ipu = GenericIPU.legacy
         )
     )
     // You can also use the traditional hierarchic IPU of Konduri instead of the Distribution Algorithm.

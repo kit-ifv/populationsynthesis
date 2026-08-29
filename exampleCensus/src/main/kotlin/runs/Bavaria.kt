@@ -29,7 +29,7 @@ fun main() {
 //            ipu = SparkNonnegativeLeastSquares,
 //            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
 //            ipu = MaximumAnnihilator(),
-            ipu = GenericIPU.legacy,
+//            ipu = GenericIPU.legacy,
 //            initialSignatureDistributor = ParallelPrecomputationDistribution()
         )
     )

@@ -15,16 +15,41 @@ fun interface JStep {
         val original: JStep = JStep { target, vectors ->
             val difference = target - vectors.sum()
             val dLength = difference.length()
+            println("Taking Step: $dLength")
             vectors.forEach { vector ->
-                vector.scalar *= 1 + (vector.cosineSimilarity(difference) * dLength)
+                val tempScale = (vector.cosineSimilarity(difference) * dLength / vectors.size * 2)
+                val scaling = 1 + tempScale
+                vector.scalar *= scaling
             }
 
             val scalingFactor = target.length() / vectors.sum().length()
             vectors.forEach { vector ->
                 vector.scalar *= scalingFactor
             }
-        }
+            println("Point is ${vectors.sum().map { it }.toString()}")
+            println("Targe is ${target}")
 
+            println("Took a Step: ${(target - vectors.sum()).length()}")
+        }
+        // We have the sphere, the length of v (invariant) etc. each
+        val otherIdea: JStep = JStep { target, vectors ->
+            val difference = target - vectors.sum()
+            val dLength = difference.length()
+            println("Taking Step: $dLength")
+            vectors.forEach { vector ->
+                val tempScale = (vector.cosineSimilarity(difference) * dLength / vector.length() / 2 / vectors.size)
+                vector.scalar *= tempScale
+            }
+
+//            val scalingFactor = target.length() / vectors.sum().length()
+//            vectors.forEach { vector ->
+//                vector.scalar *= scalingFactor
+//            }
+            println("Point is ${vectors.sum().map { it }.toString()}")
+            println("Targe is ${target}")
+
+            println("Took a Step: ${(target - vectors.sum()).length()}")
+        }
         val gradientDescent: JStep = JStep { target, vectors ->
 
         }
@@ -32,7 +57,7 @@ fun interface JStep {
 }
 
 class JosephineStepper(
-    private val maxIter: Int = 20,
+    private val maxIter: Int = 10000,
 
     private val exitCriterion: () -> Boolean = { false },
     private val stepper: JStep = JStep.original,

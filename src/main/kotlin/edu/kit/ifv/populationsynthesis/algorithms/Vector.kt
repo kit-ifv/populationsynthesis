@@ -72,10 +72,10 @@ fun Collection<Vector>.sum(): Vector {
     }
 
     val maxSize = maxOf { it.size }
-    val result = DoubleArray(maxSize)
+    val result = DoubleArray(maxSize + 1)
 
     for (vector in this) {
-        for (i in 0 until vector.size) {
+        for (i in 0 .. vector.size) {
             result[i] += vector[i]
         }
     }
@@ -96,4 +96,7 @@ class ConstantVector(private val content: DoubleArray) : Vector {
         return runCatching { content[index] }.getOrNull() ?: 0.0
     }
 
+    override fun toString(): String {
+        return content.contentToString()
+    }
 }
