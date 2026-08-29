@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
@@ -36,7 +36,7 @@ class HierarchicDistributionTest {
             seedHouseholds = listOf(Elements(Attr.A), Elements(Attr.B), Elements(Attr.C)),
             config = HierarchicDistributionConfig(
 
-                ipu = GenericIPU.legacy,
+                matrixSolver = MatrixSolver.legacy,
                 ipuCalculationCallback = {
                     callbackCollector.add(it.amountOfZeroVectors > 0)
                 }

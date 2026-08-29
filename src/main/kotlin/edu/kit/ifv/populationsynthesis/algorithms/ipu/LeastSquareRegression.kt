@@ -11,8 +11,8 @@ import org.ejml.ops.DConvertMatrixStruct
 import java.io.File
 import kotlin.io.path.Path
 
-object LeastSquareRegression : GenericIPU {
-    override fun run(
+object LeastSquareRegression : MatrixSolver {
+    override fun solve(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
     ) {

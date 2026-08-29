@@ -3,10 +3,10 @@ package edu.kit.ifv.populationsynthesis.algorithms
 import edu.kit.ifv.populationsynthesis.rules.Rule
 
 /**
- * The RuleObserver class is responsible for monitoring a set of households encoded as vectors (represented by [ScalableVector])
- * and tracking the deviation from an expected value based on the application of rules. After the vectorization of households,
- * the encoded information is stored in a matrix where each column represents a household, and each row corresponds to a rule
- * or target condition. The observer tracks which households, encoded as vectors, need to be monitored to ensure that the rules
+ * The RuleObserver class is responsible for monitoring a set of elements encoded as vectors (represented by [ScalableVector])
+ * and tracking the deviation from an expected value based on the application of rules. After the vectorization of elements,
+ * the encoded information is stored in a matrix where each column represents a elements, and each row corresponds to a rule
+ * or target condition. The observer tracks which elements, encoded as vectors, need to be monitored to ensure that the rules
  * are matched and updated accordingly.
  *
  * @param name The name of the rule or observer, typically the description of the rule.
@@ -91,8 +91,9 @@ abstract class RuleObserver(
 
     /**
      * Optimizes the vectors by scaling all of them proportionally, ensuring that the sum matches the expected value.
+     * @return the scaling factor applied
      */
-    abstract fun optimize()
+    abstract fun optimize(): Double
 
     override fun toString() = "[$name] difference = $relativeDifference"
 

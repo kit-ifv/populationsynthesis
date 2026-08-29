@@ -11,7 +11,7 @@ class MapRuleProvider<AREA, T>(
     private val construction: () -> MutableRuleSet<T> = ::MutableRuleSet
 ) :
     RuleProvider<AREA, T> {
-
+    override val keys get() = ruleMap.keys
     override fun getRules(target: AREA): RuleSet<T> {
         return ruleMap[target] ?: MutableRuleSet()
     }

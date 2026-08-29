@@ -6,8 +6,8 @@ import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 class TabooListIPU(
     private val blockAmount: Int,
     private val iterations: Int = 1000,
-) : GenericIPU {
-    override fun run(
+) : MatrixSolver {
+    override fun solve(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>
     ) {

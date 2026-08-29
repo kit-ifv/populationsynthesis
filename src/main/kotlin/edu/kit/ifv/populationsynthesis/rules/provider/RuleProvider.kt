@@ -18,7 +18,7 @@ interface RuleProvider<AREA,  T> {
     fun getAllRules(): Map<AREA, RuleSet<T>>
 
     operator fun get(target: AREA, logicIdentifier: LogicIdentifier): Rule<T>?
-
+    val keys: Set<AREA>
     /**
      * Link this rule provider with a [HierarchicElement] to generate a [HierarchicRuleProvider].
      * Will construct a fresh rule provider from scratch and copy rules from this into the new provider
@@ -31,7 +31,7 @@ interface RuleProvider<AREA,  T> {
             ruleProvider.addRules(area, rules)
         }
 
-        val missingNodes = hierarchy.getAllVertices() - getAllRules().keys
+        val missingNodes = hierarchy.getAllVertices() - keys
         missingNodes.forEach {
             ruleProvider.addRules(it, emptyList())
         }

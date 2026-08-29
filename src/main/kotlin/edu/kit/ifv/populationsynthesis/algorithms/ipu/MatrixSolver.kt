@@ -7,10 +7,17 @@ import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
 import edu.kit.ifv.populationsynthesis.utils.invertMap
 import java.nio.file.Path
-
-fun interface GenericIPU {
-
+@Deprecated("Imprecise naming, use MatrixSolver instead")
+fun interface GenericIPU: MatrixSolver {
     fun run(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>)
+    override fun solve(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>) {
+        run(vectors, observers)
+    }
+}
+
+fun interface MatrixSolver {
+
+    fun solve(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>)
 
     /**
      * THe most generic version of IPU does not care about unifying vectors. If you put in multiple identical vecotrs
@@ -24,7 +31,7 @@ fun interface GenericIPU {
         val observers = rules.withIndex().map {
             RuleObserver.fromRule(it.value, it.index, nonEmptyVectors)
         }
-        run(nonEmptyVectors, observers)
+        solve(nonEmptyVectors, observers)
         emptyVectors.forEach { vector ->
             vector.scalar = 0.0
         }
@@ -34,7 +41,7 @@ fun interface GenericIPU {
     fun <I> sigCalcAct(
         signatures: Map<Signature, List<I>>,
         rules: Collection<IndexedRule<I>>,
-    ): List<IPUOutput<Signature>> {
+    ): List<WeightedElement<Signature>> {
 
 
 
@@ -47,12 +54,12 @@ fun interface GenericIPU {
         val observers = rules.map { (index, rule) ->
             RuleObserver.fromRule(rule, index, relevantVectors)
         }
-        run(relevantVectors, observers)
+        solve(relevantVectors, observers)
         irrelevantVectors.forEach { vector ->
             vector.scalar = 0.0
         }
 
-        return vectors.map { IPUOutput(it.signature, it.scalar) }
+        return vectors.map { WeightedElement(it.signature, it.scalar) }
     }
 //    fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {
 //        val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
@@ -77,7 +84,7 @@ fun interface GenericIPU {
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
         ipuCalculationCallback: (DirectRunReport) -> Unit = {},
-    ): List<IPUOutput<Signature>> {
+    ): List<WeightedElement<Signature>> {
         return internalGroupedCalculation(elements, rules, ipuCalculationCallback) {
 //            val expectedAmounts = it.keys.sumOf { it.scalar }
 //            val collectedAmounts = it.values.sumOf { it.size }
@@ -95,7 +102,7 @@ fun interface GenericIPU {
 //            plotLogHistograms(df)
 
             it.keys.map {
-                IPUOutput(it.signature, it.scalar)
+                WeightedElement(it.signature, it.scalar)
             }
         }
     }
@@ -126,7 +133,7 @@ fun interface GenericIPU {
         }
     }
 
-    fun withLogging(path: Path) = PerformanceLoggingIPU(this, path)
+    fun withLogging(path: Path) = PerformanceLoggingMatrixSolver(this, path)
 
     companion object {
         /**
@@ -137,7 +144,7 @@ fun interface GenericIPU {
 
 
         @Suppress("MagicNumber")
-        val newAlgorithm = GenericIPU { vectors, observers ->
+        val newAlgorithm = MatrixSolver { vectors, observers ->
             var counter = 0
 
             while (observers.maxOf { it.quotientDifference } >= 1.001 && counter < 1000) {
@@ -149,7 +156,7 @@ fun interface GenericIPU {
             }
         }
 
-        val tabooList = GenericIPU { vectors, observers ->
+        val tabooList = MatrixSolver { vectors, observers ->
 
             var counter = 0
             while (counter < 1000) {
@@ -164,7 +171,7 @@ fun interface GenericIPU {
 
             }
         }
-        val limitOptimization = GenericIPU { vectors, observers ->
+        val limitOptimization = MatrixSolver { vectors, observers ->
             val indexedObservers = observers.withIndex().toMutableList()
             val counters = indexedObservers.map { 100 }.toIntArray()
             while (indexedObservers.size >= 2) {
@@ -181,7 +188,7 @@ fun interface GenericIPU {
             worst.optimize()
         }
 
-        val functionalTabooList = GenericIPU { vectors, observers ->
+        val functionalTabooList = MatrixSolver { vectors, observers ->
 
             var counter = 0
             while (counter < 1000) {
@@ -197,7 +204,7 @@ fun interface GenericIPU {
             }
         }
 
-        val aggressiveStomping = GenericIPU { vectors, observers ->
+        val aggressiveStomping = MatrixSolver { vectors, observers ->
 
             var counter = 0
             while (counter < 1000 * observers.size) {

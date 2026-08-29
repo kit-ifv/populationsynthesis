@@ -32,6 +32,8 @@ interface HierarchicElement<T> {
             it.isNotEmpty()
         }
     }
+
+    val nodes get() = getAllVertices()
 }
 
 

@@ -17,6 +17,7 @@ abstract class ExhaustiveRuleProvider<AREA, T> : RuleProvider<AREA, T> {
 
 class MutableExhaustiveRuleProvider<AREA, T> : ExhaustiveRuleProvider<AREA, T>() {
     private val ruleMap: MutableMap<AREA, MutableList<CoverageGroup<T>>> = mutableMapOf()
+    override val keys get() = ruleMap.keys
     override fun getRuleGroups(target: AREA): Collection<CoverageGroup<T>> {
         return ruleMap[target] ?: emptyList()
     }

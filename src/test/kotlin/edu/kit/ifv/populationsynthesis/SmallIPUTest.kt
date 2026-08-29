@@ -2,7 +2,7 @@ package edu.kit.ifv.populationsynthesis
 
 import edu.kit.ifv.populationsynthesis.algorithms.ArrayScalableVector
 import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.Kaczmarz
 import kotlin.test.Test
 
@@ -10,7 +10,7 @@ class SmallIPUTest {
     // Surprisingly, IPF works even when expanded to an IPU form
     @Test
     fun testSmallExperiment() {
-        val ipu = GenericIPU.legacy
+        val ipu = MatrixSolver.legacy
 
         val a = ArrayScalableVector(1, 0, 1, 0)
         val b = ArrayScalableVector(1, 0, 0, 1)
@@ -22,7 +22,7 @@ class SmallIPUTest {
         val observerC = TargetNumberObserver("First Row", 2, listOf(a, c), 80.0)
         val observerD = TargetNumberObserver("Second Row", 3, listOf(b, d), 40.0)
 
-        ipu.run(listOf(a, b, c, d,), listOf(observerA, observerB, observerC, observerD))
+        ipu.solve(listOf(a, b, c, d,), listOf(observerA, observerB, observerC, observerD))
 
     }
 
@@ -34,7 +34,7 @@ class SmallIPUTest {
     @Test
     fun testDivergenceExample() {
 
-            val ipu = GenericIPU.legacy
+            val ipu = MatrixSolver.legacy
 
 
             val a = ArrayScalableVector(1, 0, 1, 0)
@@ -52,7 +52,7 @@ class SmallIPUTest {
             c.scalar = 0.0
             d.scalar = 20.0
 
-            ipu.run(listOf(a, b, c, d,), listOf(observerA, observerB, observerC, observerD))
+            ipu.solve(listOf(a, b, c, d,), listOf(observerA, observerB, observerC, observerD))
 
     }
 
@@ -71,7 +71,7 @@ class SmallIPUTest {
         val observerC = TargetNumberObserver("First Row", 2, listOf(a, c), 80.0)
         val observerD = TargetNumberObserver("Second Row", 3, listOf(b, d), 40.0)
 
-        ipu.run(listOf(a, b, c, d,), listOf(observerA, observerB, observerC, observerD))
+        ipu.solve(listOf(a, b, c, d,), listOf(observerA, observerB, observerC, observerD))
         println("Done")
     }
 }

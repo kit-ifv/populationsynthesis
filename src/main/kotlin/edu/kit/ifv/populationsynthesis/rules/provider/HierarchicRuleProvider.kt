@@ -9,4 +9,8 @@ import edu.kit.ifv.populationsynthesis.rules.composer.HierarchyRuleComposer
 interface HierarchicRuleProvider<AREA, T> : ComposingRuleProvider<AREA, T> {
     override val composer: HierarchyRuleComposer<AREA, T>
     val hierarchy: HierarchicElement<AREA> get() = composer.hierarchy
+
+    fun hasValidStructure() = keys.all { it in hierarchy.nodes }
+
 }
+

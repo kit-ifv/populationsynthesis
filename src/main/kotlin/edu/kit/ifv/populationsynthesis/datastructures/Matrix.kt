@@ -49,18 +49,3 @@ class Matrix private constructor(
 }
 
 
-fun main() {
-
-    val A = DMatrixRMaj(
-        arrayOf(
-            doubleArrayOf(1.0, 2.0),
-            doubleArrayOf(3.0, 4.0)
-        )
-    )
-
-    val x = DMatrixRMaj(doubleArrayOf(5.0, 6.0))
-
-    val y = DMatrixRMaj(A.numRows, 1)
-    CommonOps_DDRM.mult(A, x, y)
-    println("Done")
-}

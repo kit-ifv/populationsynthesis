@@ -3,7 +3,7 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 import edu.kit.ifv.populationsynthesis.SampleAndCollect
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
 import edu.kit.ifv.populationsynthesis.rules.IndexedLogic
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
@@ -12,7 +12,7 @@ import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
 abstract class HistoricIPU<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, T>,
     val seedHouseholds: Collection<T>,
-    val ipu: GenericIPU = GenericIPU.legacy,
+    val ipu: MatrixSolver = MatrixSolver.legacy,
 ) : HierarchicSynthesis<AREA, T>(ruleProvider) {
     val extractor = SampleAndCollect<T>()
     override fun synthesize(
@@ -71,7 +71,7 @@ abstract class HistoricIPU<AREA, T>(
         val otherVectors = ltSc.values.flatten()
 
 
-        ipu.run(otherVectors, parentObservers.flatten() + ltObs.values.flatten())
+        ipu.solve(otherVectors, parentObservers.flatten() + ltObs.values.flatten())
 
         return ltSc
     }

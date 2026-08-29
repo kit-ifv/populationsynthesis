@@ -4,7 +4,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.EquivalenceClassIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.HistoricIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.NakedIPU
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 
-private typealias IPUSpawner = (KonduriRuleProvider, GenericIPU) -> HistoricIPU<KonduriArea, KonduriHousehold>
+private typealias IPUSpawner = (KonduriRuleProvider, MatrixSolver) -> HistoricIPU<KonduriArea, KonduriHousehold>
 
 class KonduriTests {
 
@@ -25,11 +25,11 @@ class KonduriTests {
         @JvmStatic
         fun ipuFactories(): List<Arguments> = listOf(
             Arguments.of(
-                "NakedIPU", { rp: KonduriRuleProvider, iters: GenericIPU -> NakedIPU(rp, KonduriHousehold.all, iters) }
+                "NakedIPU", { rp: KonduriRuleProvider, iters: MatrixSolver -> NakedIPU(rp, KonduriHousehold.all, iters) }
             ),
             Arguments.of(
                 "EquivalenceIPU",
-                { rp: KonduriRuleProvider, iters: GenericIPU -> EquivalenceClassIPU(rp, KonduriHousehold.all, iters) }
+                { rp: KonduriRuleProvider, iters: MatrixSolver -> EquivalenceClassIPU(rp, KonduriHousehold.all, iters) }
             )
 
         )
@@ -64,7 +64,7 @@ class KonduriTests {
         spawner: IPUSpawner
     ) {
         val ruleProvider = KonduriRuleProvider()
-        val iterationAtRegionLevel = GenericIPU { _, observers ->
+        val iterationAtRegionLevel = MatrixSolver { _, observers ->
             observers.take(3).forEach { it.optimize() }
 
         }
@@ -91,7 +91,7 @@ class KonduriTests {
     @MethodSource("ipuFactories")
     fun afterControllingGeoIteration1(name: String, spawner: IPUSpawner) {
         val ruleProvider = KonduriRuleProvider()
-        val iterationAtRegionLevel = GenericIPU { _, observers ->
+        val iterationAtRegionLevel = MatrixSolver { _, observers ->
             observers.take(4).forEach { it.optimize() }
 
         }
@@ -118,7 +118,7 @@ class KonduriTests {
     @MethodSource("ipuFactories")
     fun afterFull1000Iterations(name: String, spawner: IPUSpawner) {
         val ruleProvider = KonduriRuleProvider()
-        val iterationAtRegionLevel = GenericIPU { _, observers ->
+        val iterationAtRegionLevel = MatrixSolver { _, observers ->
             repeat(1000) {
 
                 observers.forEach { it.optimize() }

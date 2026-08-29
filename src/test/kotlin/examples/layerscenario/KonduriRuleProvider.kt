@@ -11,6 +11,8 @@ import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
 class KonduriRuleProvider(val ruleProvider: RuleProvider<KonduriArea, KonduriHousehold> = KonduriRules) :
     HierarchicRuleProvider<KonduriArea, KonduriHousehold> {
+
+    override val keys get() = ruleProvider.keys
     override val composer: HierarchyRuleComposer<KonduriArea, KonduriHousehold> = HierarchyComposer(KonduriGraph)
 
     override fun getRules(target: KonduriArea): RuleSet<KonduriHousehold> {

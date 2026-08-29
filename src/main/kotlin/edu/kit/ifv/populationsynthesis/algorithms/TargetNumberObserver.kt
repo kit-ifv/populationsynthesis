@@ -26,12 +26,19 @@ class TargetNumberObserver constructor(
             return max(exp / act, act / exp)
         }
 
-    override fun optimize() {
+    override fun optimize(): Double {
         val sum = sum()
 //        if(sum == 0.0) return // There is no remaining vector with a scalar > 0.0. This observer can no longer be optimized.
-        val currentSum = if (sum == 0.0) fallbackSize() else sum
+        val currentSum = if (sum == 0.0) {
+            if(expected == 0.0) {
+                return 1.0
+            }
+            fallbackSize()
+        } else sum
 
         // TODO fallback calculation if expected != 0.0 and sum is 0.0
-        this.timesAssign((expected / currentSum))
+        val scalingFactor: Double = expected / currentSum
+        this.timesAssign(scalingFactor)
+        return scalingFactor
     }
 }

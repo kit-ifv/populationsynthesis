@@ -67,6 +67,8 @@ class HierarchyComposerTest {
                 return mapOf(A.A1 to getRules(A.A1), A.A2 to getRules(A.A2), B.B1 to getRules(B.B1))
             }
 
+            override val keys: Set<Area>
+                get() = getAllRules().keys
             override fun get(
                 target: Area,
                 logicIdentifier: LogicIdentifier

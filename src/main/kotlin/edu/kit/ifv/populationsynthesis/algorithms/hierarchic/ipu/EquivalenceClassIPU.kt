@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
 import edu.kit.ifv.populationsynthesis.rules.IndexedLogic
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toScalableVector
@@ -11,7 +11,7 @@ import edu.kit.ifv.populationsynthesis.utils.formEquivalenceClass
 class EquivalenceClassIPU<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, T>,
     seedHouseholds: Collection<T>,
-    ipu: GenericIPU = GenericIPU.legacy,
+    ipu: MatrixSolver = MatrixSolver.legacy,
 ) : HistoricIPU<AREA, T>(
     ruleProvider,
     seedHouseholds,

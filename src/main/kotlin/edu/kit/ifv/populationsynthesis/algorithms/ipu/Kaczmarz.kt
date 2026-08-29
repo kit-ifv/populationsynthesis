@@ -5,8 +5,8 @@ import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
 import kotlin.math.pow
 
 
-object Kaczmarz: GenericIPU {
-    override fun run(
+object Kaczmarz: MatrixSolver {
+    override fun solve(
         vectors: Collection<ScalableVector>,
         observers: Collection<RuleObserver>,
     ) {

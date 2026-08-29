@@ -13,7 +13,7 @@ class HierarchicRuleProviderImpl<AREA, T>(
     override val hierarchy: HierarchicElement<AREA>
 ) : HierarchicRuleProvider<AREA, T> {
     override val composer: HierarchyRuleComposer<AREA, T> = HierarchyComposer(hierarchy)
-
+    override val keys get() = ruleProvider.keys
     override fun getRules(target: AREA): RuleSet<T> {
         return ruleProvider.getRules(target)
     }
