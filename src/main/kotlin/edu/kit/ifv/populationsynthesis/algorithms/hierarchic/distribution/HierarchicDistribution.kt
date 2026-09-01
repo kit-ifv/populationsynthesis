@@ -41,8 +41,11 @@ class HierarchicDistribution<AREA, T>(
         val rules = ruleProvider.getComposedRules(target)
         // TODO What if there are different rules provided at different root areas, they cannot be traced back to their original signture created from the logic indexer.
 //        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
-        val matrixSolution = config.matrixSolver.sigCalcAct(householdMapping, rules.map { allRuleLogics.toIndexedRule(it) })
-
+        val matrixSolution = config.matrixSolver.sigCalcAct(
+            householdMapping,
+            rules.map { allRuleLogics.toIndexedRule(it) },
+            config.matrixSolutionCallback
+        )
 
         val integerIPUResult = standardRoundingStrategy.integerizeMatrixOutput(matrixSolution)
 

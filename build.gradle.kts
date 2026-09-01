@@ -24,6 +24,8 @@ dependencies {
 //    api("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
     implementation("it.unimi.dsi:fastutil:8.5.16")
     implementation("org.ejml:ejml-all:0.43")
+    implementation("com.google.ortools:ortools-java:9.15.6755")
+    implementation("org.ojalgo:ojalgo:57.1.0")
 //    implementation("org.apache.spark:spark-mllib_2.13:3.5.4")
 //    api("org.jetbrains.kotlin:kotlin-gradle-statistics:2.3.10")
 //    api("org.jetbrains.kotlinx:kandy-lets-plot:0.8.3")

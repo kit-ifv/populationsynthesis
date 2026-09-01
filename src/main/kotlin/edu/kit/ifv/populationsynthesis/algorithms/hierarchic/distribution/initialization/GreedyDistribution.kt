@@ -72,8 +72,8 @@ class GreedyDistribution(
 fun Partition.takeOne(signatureAmount: MutableSignatureAmount) {
     delta(signatureAmount.index, 1)
     signatureAmount.atomicAmount.andDecrement
-    val msg = "Partition ${id} Taking ${signatureAmount}"
-    println(msg)
+//    val msg = "Partition ${id} Taking ${signatureAmount}"
+//    println(msg)
 //    log(msg)
 
 }

@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
 import edu.kit.ifv.populationsynthesis.rules.Rule
+import kotlin.math.max
 
 /**
  * The RuleObserver class is responsible for monitoring a set of elements encoded as vectors (represented by [ScalableVector])
@@ -121,4 +122,7 @@ abstract class RuleObserver(
         }
     }
 }
+
+
+val RuleObserver.percentError get() = absoluteDifference / max(expected, 1.0)
 

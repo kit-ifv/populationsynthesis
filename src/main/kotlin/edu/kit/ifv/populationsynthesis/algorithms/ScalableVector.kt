@@ -51,7 +51,10 @@ interface ScalableVector : Vector {
         }
     }
 }
-
+fun ScalableVector.multiplyComponent(other: Vector): ScalableVector {
+    val scaled = zip(other) { a, b -> a / scalar * b }
+    return SignatureScalableVector(Signature.Companion.fromValues(scaled), scalar)
+}
 class SignatureScalableVector(override val signature: Signature, override var scalar: Double = 1.0) : ScalableVector {
 
     override fun currentValueForIndex(index: Int): Double {
@@ -104,6 +107,7 @@ class ArrayScalableVector internal constructor(private val array: DoubleArray, o
     override fun hashCode(): Int {
         return array.contentHashCode()
     }
+
 }
 
 

@@ -2,8 +2,10 @@ package edu.kit.ifv.populationsynthesis.algorithms.ipu
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import edu.kit.ifv.populationsynthesis.algorithms.ConstantVector
 import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.Vector
 import edu.kit.ifv.populationsynthesis.algorithms.lsqr
 import org.ejml.data.DMatrixRMaj
 import org.ejml.data.DMatrixSparseCSC
@@ -54,8 +56,8 @@ fun Collection<ScalableVector>.toMatrix(): DMatrixRMaj {
     return out
 }
 
-fun Collection<RuleObserver>.toVector(): DoubleArray {
-    return map { it.expected }.toDoubleArray()
+fun Collection<RuleObserver>.toVector(): Vector {
+    return ConstantVector(map { it.expected }.toDoubleArray())
 }
 
 fun dumpToCSV(A: DMatrixRMaj, file: File = Path("dump.csv").toFile()) {

@@ -1,5 +1,9 @@
 package edu.kit.ifv.populationsynthesis
 
+import kotlin.collections.get
+import kotlin.math.pow
+import kotlin.math.sqrt
+
 
 /**
  * A signature represents a household in regard to a set of rules. An entry in the signature (k, v) represents that this
@@ -117,4 +121,27 @@ class Signature internal constructor(
 
         fun fromValues(vararg values: Double): Signature = fromValues(values.toList())
     }
+}
+
+fun Signature.euclidianLength() = sqrt(valueArray.sumOf{it.pow(2)})
+
+fun Signature.normalize(): Signature {
+    val length = euclidianLength()
+    return Signature(indexArray, valueArray.map { it/ length  }.toDoubleArray())
+}
+fun Signature.dot(other: Signature): Double {
+    var i = 0
+    var j = 0
+    var sum = .0
+    while(i < maxKey && j < other.maxKey) {
+        sum += when{
+            indexArray[i] < other.indexArray[j] -> .0.also{i++}
+            indexArray[i] > other.indexArray[j] -> .0.also{j++}
+            else -> values[i] * other.values[j].also{
+                i++
+                j++
+            }
+        }
+    }
+    return sum
 }

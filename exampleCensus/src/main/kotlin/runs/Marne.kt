@@ -2,46 +2,80 @@ package edu.kit.ifv.populationsynthesis.runs
 
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.CyclicIPU
 import edu.kit.ifv.populationsynthesis.algorithms.ipu.JosephineStepper
+import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
+import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
+import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.domain.population.Population
 import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
 import edu.kit.ifv.populationsynthesis.evaluation.Verification
+import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.input.writeCsv
 import edu.kit.ifv.populationsynthesis.output.CensusHouseholdConverter
+import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 
 fun main() {
-    val hierarchy = HierarchyFactory.marneExample()
-    val rules = RuleProviderFactory.marneExample()
-    val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
-    val population = Population.fromPersonInfo()
+    val runConfig = RunConfig(
+        scenario = Scenario.MARNE,
+        matrixSolver = CyclicIPU(),
+        outputPath = Path("output/PopulationMarne.csv"),
+        verificationPath = Path("output/ExampleMarne.csv")
 
-
-    val ipu = HierarchicDistribution(
-        ruleProvider = hierarchicRuleProvider,
-        seedHouseholds = population.households,
-        config = HierarchicDistributionConfig(
-            matrixSolver = JosephineStepper()
-            // You can use different algorithms for the initial solution of the distribution algorithm.
-//            ipu = LeastSquareRegression,
-//            ipu = SparkNonnegativeLeastSquares,
-//            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
-//            ipu = MaximumAnnihilator(),
-//            ipu = PythonScipyNNLS.withLogger()
-        )
     )
-    // You can also use the traditional hierarchic IPU of Konduri instead of the Distribution Algorithm.
-//    val ipu = EquivalenceClassIPU(
-//        ruleProvider = hierarchicRuleProvider,
-//        seedHouseholds = population.households,
-//    )
 
-    val output = ipu.synthesizeAll()
-    val verificationOutput = Verification.verify(hierarchicRuleProvider, output)
-    writeCsv(Path("output/ExampleMarne.csv").createParentDirectories(), verificationOutput)
-    writeCsv(Path("output/PopulationMarne.csv").createParentDirectories(), CensusHouseholdConverter.convert(output))
-    println("DONE")
+    runConfig.execute()
+
+
+}
+
+data class RunConfig(
+    var scenario: Scenario = Scenario.MARNE,
+    var matrixSolver: MatrixSolver = CyclicIPU(),
+    var population: Population = Population.fromPersonInfo(),
+    var verificationPath: Path? = null,
+    var outputPath: Path? = null,
+) {
+    fun execute(lambda: RunConfig.() -> Unit) {
+        apply(lambda)
+        execute()
+    }
+    fun execute() {
+        val hierarchy = scenario.spawnHierarchy()
+        val rules = scenario.spawnRuleProvider()
+        val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
+
+        val algorithm = HierarchicDistribution(
+            ruleProvider = hierarchicRuleProvider,
+            seedHouseholds = population.households,
+            config = HierarchicDistributionConfig(
+                matrixSolver = matrixSolver,
+            )
+        )
+
+        val output = algorithm.synthesizeAll()
+        verificationPath?.let {
+            val verificationOutput = Verification.verify(hierarchicRuleProvider, output)
+            writeCsv(it.createParentDirectories(), verificationOutput)
+        }
+        outputPath?.let {
+            writeCsv(it.createParentDirectories(), CensusHouseholdConverter.convert(output))
+        }
+    }
+}
+
+
+enum class Scenario {
+    MARNE() {
+        override fun spawnHierarchy(): HierarchicElement<ARSKey> = HierarchyFactory.marneExample()
+        override fun spawnRuleProvider(): RuleProvider<ARSKey, CensusHousehold> = RuleProviderFactory.marneExample()
+    };
+
+    abstract fun spawnHierarchy(): HierarchicElement<ARSKey>
+    abstract fun spawnRuleProvider(): RuleProvider<ARSKey, CensusHousehold>
 
 }

@@ -23,7 +23,10 @@ interface Vector : Iterable<Double> {
     fun cosineSimilarity(other: Vector): Double {
         return this.dot(other) / (this.length() * other.length())
     }
-
+    fun safeCosineSimilarity(other: Vector): Double {
+        val cosine = cosineSimilarity(other)
+        return if(cosine.isNaN()) 0.0 else cosine
+    }
     operator fun plus(other: Vector): ConstantVector {
         val result = DoubleArray(maxOf(size, other.size))
 
@@ -62,6 +65,21 @@ interface Vector : Iterable<Double> {
         }
     }
 }
+fun Vector.safeComponentInverse(replaceZerosWith: Double = 1.0): Vector = ConstantVector(map {
+    if (it == .0) replaceZerosWith else 1.0 / it
+})
+
+fun Vector.normalize(): NormalizedVector {
+    val length = this.length()
+    return ConstantNormalizedVector(map { it / length })
+}
+/**
+ * Guarantees that the entries of the vector are equal to 1 under euclidian norm, making it significantly easier to calculate
+ * certain operations
+ */
+interface NormalizedVector: Vector
+
+
 fun Collection<Number>.asVector(): ConstantVector {
     return ConstantVector(map { it.toDouble() })
 }
@@ -83,6 +101,11 @@ fun Collection<Vector>.sum(): Vector {
     return ConstantVector(result)
 }
 
+class ConstantNormalizedVector(private val original: ConstantVector): NormalizedVector, Vector by original {
+    constructor(elements: Collection<Double>): this(ConstantVector(elements))
+    override fun length() = 1.0
+}
+
 class ConstantVector(private val content: DoubleArray) : Vector {
     override val size = content.size
 
@@ -98,5 +121,10 @@ class ConstantVector(private val content: DoubleArray) : Vector {
 
     override fun toString(): String {
         return content.contentToString()
+    }
+    companion object {
+        fun uniform(value: Double = 1.0, size: Int): ConstantVector {
+            return ConstantVector(DoubleArray(size) {value})
+        }
     }
 }

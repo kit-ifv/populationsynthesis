@@ -41,6 +41,9 @@ fun interface MatrixSolver {
     fun <I> sigCalcAct(
         signatures: Map<Signature, List<I>>,
         rules: Collection<IndexedRule<I>>,
+        solutionCallback: (List<ScalableVector>, List<RuleObserver>) -> Unit = {_, _ ->
+
+        }
     ): List<WeightedElement<Signature>> {
 
 
@@ -48,6 +51,7 @@ fun interface MatrixSolver {
         val vectors = signatures.entries.map { (k, v) ->
             val totalSize = signatures.values.sumOf { it.size }
             SignatureScalableVector(k, v.size.toDouble() / totalSize)
+//            ArrayScalableVector(k, v.size.toDouble() / totalSize)
         }
         val relevantIndices = rules.map { it.index }.toSet()
         val (relevantVectors, irrelevantVectors) = vectors.partition { it.signature.isRelevantFor(relevantIndices) }
@@ -58,7 +62,7 @@ fun interface MatrixSolver {
         irrelevantVectors.forEach { vector ->
             vector.scalar = 0.0
         }
-
+        solutionCallback(vectors, observers)
         return vectors.map { WeightedElement(it.signature, it.scalar) }
     }
 //    fun <I> calculateUnfiltered(elements: Collection<I>, rules: Collection<Rule<I>>): List<IPUOutput<I>> {

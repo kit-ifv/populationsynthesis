@@ -37,9 +37,6 @@ class HierarchicDistributionTest {
             config = HierarchicDistributionConfig(
 
                 matrixSolver = MatrixSolver.legacy,
-                ipuCalculationCallback = {
-                    callbackCollector.add(it.amountOfZeroVectors > 0)
-                }
             )
         )
 
