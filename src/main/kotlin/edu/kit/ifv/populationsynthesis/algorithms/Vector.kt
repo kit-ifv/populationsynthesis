@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
+import edu.kit.ifv.populationsynthesis.Signature
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -68,7 +69,8 @@ interface Vector : Iterable<Double> {
 fun Vector.safeComponentInverse(replaceZerosWith: Double = 1.0): Vector = ConstantVector(map {
     if (it == .0) replaceZerosWith else 1.0 / it
 })
-
+fun Vector.toSignature() = Signature.fromMap(map { it }.withIndex().associate { (i, v) -> i to v })
+fun Vector.toSignatureVector(): ScalableVector = SignatureScalableVector(toSignature(), 1.0)
 fun Vector.normalize(): NormalizedVector {
     val length = this.length()
     return ConstantNormalizedVector(map { it / length })

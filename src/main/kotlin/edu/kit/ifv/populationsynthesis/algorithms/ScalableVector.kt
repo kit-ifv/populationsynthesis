@@ -2,6 +2,8 @@ package edu.kit.ifv.populationsynthesis.algorithms
 
 import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.SignatureOld
+import edu.kit.ifv.populationsynthesis.dot
+import edu.kit.ifv.populationsynthesis.euclidianLength
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
@@ -13,6 +15,14 @@ interface ScalableVector : Vector {
     fun attributeForIndex(index: Int): Double
     fun appliesToRule(ruleIndex: Int): Boolean
 
+    fun attributeLength() = signature.euclidianLength()
+    override fun length() = attributeLength() * scalar
+    override fun cosineSimilarity(other: Vector): Double {
+        if(other is ScalableVector) {
+            return signature.dot(other.signature)
+        }
+        return super.cosineSimilarity(other)
+    }
 
     fun content() = map { it }
 

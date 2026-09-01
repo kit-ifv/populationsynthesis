@@ -4,6 +4,7 @@ import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.dot
 import edu.kit.ifv.populationsynthesis.euclidianLength
 import edu.kit.ifv.populationsynthesis.normalize
+import kotlin.math.abs
 import kotlin.math.sign
 
 class NormalizedSignatureVector internal constructor(
@@ -11,10 +12,10 @@ class NormalizedSignatureVector internal constructor(
     override var scalar: Double = 1.0
 ) : NormalizedVector, ScalableVector {
 
-
+    override operator fun get(index: Int): Double = currentValueForIndex(index)
 
     init {
-        require(signature.euclidianLength() == 1.0) {
+        require(abs(signature.euclidianLength() - 1.0) <= 1e-9) {
             "This vector is not normalized"
         }
     }
@@ -67,7 +68,7 @@ class NormalizedSignatureVector internal constructor(
         private var sparseIndex = 0
 
         override fun hasNext(): Boolean =
-            denseIndex < size
+            denseIndex <= size
 
         override fun nextDouble(): Double {
             if (!hasNext()) throw NoSuchElementException()
@@ -77,7 +78,7 @@ class NormalizedSignatureVector internal constructor(
                     sparseIndex < signature.indexArray.size &&
                     signature.indexArray[sparseIndex] == denseIndex
                 ) {
-                    signature.valueArray[sparseIndex++]
+                    signature.valueArray[sparseIndex++] * scalar
                 } else {
                     0.0
                 }

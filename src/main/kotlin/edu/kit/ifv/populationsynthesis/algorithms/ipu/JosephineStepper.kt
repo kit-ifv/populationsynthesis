@@ -9,6 +9,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.multiplyComponent
 import edu.kit.ifv.populationsynthesis.algorithms.normalize
 import edu.kit.ifv.populationsynthesis.algorithms.safeComponentInverse
 import edu.kit.ifv.populationsynthesis.algorithms.sum
+import edu.kit.ifv.populationsynthesis.algorithms.toSignatureVector
 import kotlin.math.max
 
 
@@ -19,7 +20,7 @@ fun interface DimensionStep {
         val original: DimensionStep = DimensionStep { target, vectors ->
             val difference = target - vectors.sum()
             val dLength = difference.length()
-//            println("Taking Step: $dLength")
+            println(difference)
             vectors.forEach { vector ->
                 val tempScale = (vector.safeCosineSimilarity(difference) * dLength / vectors.size * 2)
                 val scaling = 1 + tempScale
@@ -107,8 +108,8 @@ interface VectorTransformations {
         }
 
         val NORMALIZE_ELEMENT_VECTORS = object : VectorTransformations {
-            override fun targetVectorTransformation(original: Vector): Vector {
-                return original
+            override fun targetVectorTransformation(original: Vector): ScalableVector {
+                return original.toSignatureVector()
             }
 
             override fun componentVectorTransformation(
@@ -122,7 +123,7 @@ interface VectorTransformations {
                 original: ScalableVector,
                 operative: ScalableVector
             ) {
-                original.scalar = operative.scalar / original.length()
+                original.scalar = operative.scalar / original.attributeLength()
             }
         }
     }
@@ -131,7 +132,7 @@ interface VectorTransformations {
 
 
 class JosephineStepper(
-    private val maxIter: Int = 10000,
+    private val maxIter: Int = 2,
 
     private val exitCriterion: () -> Boolean = { false },
     private val vectorTransformations: VectorTransformations = VectorTransformations.NONE,
