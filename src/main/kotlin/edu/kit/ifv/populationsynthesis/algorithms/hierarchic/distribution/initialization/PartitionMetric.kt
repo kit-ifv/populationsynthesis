@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization
 
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 
 fun interface PartitionMetric {
     fun calculate(expected: DoubleArray, actual: DoubleArray, signature: Signature): Double

@@ -6,16 +6,40 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class VectorTest  {
-    private val a = Vector(1.0, 2.0)
-    private val b = Vector(1.0, 2.0, 1.0)
+    private val a = _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(1.0, 2.0)
+    private val b = _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(1.0, 2.0, 1.0)
 
-    private val c = Vector(.0, .0, .0, .0)
+    private val c = _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(.0, .0, .0, .0)
     @Test
     fun addition() {
-        assertTrue((a + b).contentEquals(Vector(2.0, 4.0, 1.0)))
-        assertTrue((b + a).contentEquals(Vector(2.0, 4.0, 1.0)))
-        assertTrue((a - b).contentEquals(Vector(.0, .0, -1.0)))
-        assertTrue((b - a).contentEquals(Vector(.0, .0, 1.0)))
+        assertTrue((a + b).contentEquals(
+            _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(
+                2.0,
+                4.0,
+                1.0
+            )
+        ))
+        assertTrue((b + a).contentEquals(
+            _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(
+                2.0,
+                4.0,
+                1.0
+            )
+        ))
+        assertTrue((a - b).contentEquals(
+            _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(
+                .0,
+                .0,
+                -1.0
+            )
+        ))
+        assertTrue((b - a).contentEquals(
+            _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(
+                .0,
+                .0,
+                1.0
+            )
+        ))
 
         assertTrue((a + c).contentEquals(a))
         assertTrue((a - c).contentEquals(a))
@@ -49,13 +73,24 @@ class VectorTest  {
 
     @Test
     fun chattyCalculations() {
-        val a = Vector(0.0, 0.1)
-        val b = Vector(1.0, 0.9)
-        val target = Vector(sqrt(2.0), .0)
+        val a = _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(0.0, 0.1)
+        val b = _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(1.0, 0.9)
+        val target = _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(sqrt(2.0), .0)
         val p = a + b
         val r = target - p
-        assertTrue(p.contentEquals(Vector(1.0, 1.0)))
-        assertTrue(r.contentEquals(Vector(sqrt(2.0) - 1, -1.0)))
+        assertTrue(p.contentEquals(
+            _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(
+                1.0,
+                1.0
+            )
+        ))
+        assertTrue(r.contentEquals(
+            _root_ide_package_.edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector(
+                sqrt(
+                    2.0
+                ) - 1, -1.0
+            )
+        ))
         val cosineA = a.cosineSimilarity(r)
         val cosineB = b.cosineSimilarity(r)
 

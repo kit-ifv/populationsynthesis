@@ -1,10 +1,9 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.GenericCollector
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.algorithms.rounding.RoundingStrategy
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-import edu.kit.ifv.populationsynthesis.standardRoundingStrategy
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
 
 class HierarchicDistribution<AREA, T>(
@@ -39,15 +38,13 @@ class HierarchicDistribution<AREA, T>(
      */
     fun initialSolution(target: AREA): List<SignatureAmount> {
         val rules = ruleProvider.getComposedRules(target)
-        // TODO What if there are different rules provided at different root areas, they cannot be traced back to their original signture created from the logic indexer.
-//        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
         val matrixSolution = config.matrixSolver.sigCalcAct(
             householdMapping,
             rules.map { allRuleLogics.toIndexedRule(it) },
             config.matrixSolutionCallback
         )
 
-        val integerIPUResult = standardRoundingStrategy.integerizeMatrixOutput(matrixSolution)
+        val integerIPUResult = RoundingStrategy.cumulative.integerizeMatrixOutput(matrixSolution)
 
 //        rules.verify(integerIPUResult)
         // TODO would be nice to see how much the integerization causes the initial solution quality to drop.
@@ -66,28 +63,11 @@ class HierarchicDistribution<AREA, T>(
     ): Map<AREA, List<T>> {
 
         val initialSolution = initialSolution(highestArea)
-        val distributor = OriginalDistributor(ruleProvider, allRuleLogics, householdMapping)
+        val distributor = OriginalDistributor(ruleProvider, allRuleLogics, householdMapping, config.samplerAlgorithm)
         return distributor.distribute(
             initialSolution,
             highestArea,
         )
-    }
-
-    private val collector = GenericCollector<SignatureAmount, T> {
-        it.map { it.amount }
-    }
-    @Deprecated("The distributor object is tasked with finalization")
-    fun finalize(
-        amounts: Collection<SignatureAmount>,
-        signatures: Map<Signature, List<T>>,
-    ): List<T> {
-        val targetMap = amounts.associateWith {
-            val targetHouseholds = signatures[it.signature] ?: run {
-                error("No households for the signature ${it.signature}")
-            }
-            targetHouseholds
-        }
-        return collector.extract(targetMap).map { it }
     }
 
 

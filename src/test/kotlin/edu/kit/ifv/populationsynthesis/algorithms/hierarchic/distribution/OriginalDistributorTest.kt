@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.evaluation.Verification
 import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer

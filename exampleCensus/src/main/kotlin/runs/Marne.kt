@@ -2,9 +2,8 @@ package edu.kit.ifv.populationsynthesis.runs
 
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.CyclicIPU
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.JosephineStepper
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.ipu.CyclicIPU
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
 import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
@@ -73,6 +72,16 @@ enum class Scenario {
     MARNE() {
         override fun spawnHierarchy(): HierarchicElement<ARSKey> = HierarchyFactory.marneExample()
         override fun spawnRuleProvider(): RuleProvider<ARSKey, CensusHousehold> = RuleProviderFactory.marneExample()
+    },
+    BAVARIA(){
+        override fun spawnHierarchy(): HierarchicElement<ARSKey> {
+            return HierarchyFactory.fromARSKeyset(spawnRuleProvider().getAllRules().keys)
+        }
+
+        override fun spawnRuleProvider(): RuleProvider<ARSKey, CensusHousehold> {
+            return RuleProviderFactory.bavaria()
+        }
+
     };
 
     abstract fun spawnHierarchy(): HierarchicElement<ARSKey>

@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules
 
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
@@ -8,7 +8,7 @@ import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 /**
  * Provide fast access to check whether an area has a rule for a given logic. RuleProvider usually returns the
  * entire bulk of rules, which is cumbersome to operate upon. Does not contain composition strategy or anything
- * like that.
+ * like that - just registered rules and their index.
  */
 class LogicIndexer<AREA, T> internal constructor(
     logicTranslation: Map<LogicIdentifier, Measurement<T>>,

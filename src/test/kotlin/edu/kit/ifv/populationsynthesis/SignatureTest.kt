@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis
 
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import kotlin.test.*
 
 class SignatureTest {

@@ -1,8 +1,9 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.Signature
-import edu.kit.ifv.populationsynthesis.SignatureOld
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
+
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.PartitionMetric
+
 import org.jetbrains.annotations.TestOnly
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -11,7 +12,8 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
-
+@Deprecated("Dont use old signature")
+typealias SignatureOld = Map<Int, Double>
 
 class Partition(
     private val expectedArray: DoubleArray,

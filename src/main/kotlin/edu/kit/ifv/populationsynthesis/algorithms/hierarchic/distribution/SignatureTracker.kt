@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet
 import it.unimi.dsi.fastutil.ints.IntSet
 import it.unimi.dsi.fastutil.ints.IntSets
@@ -15,7 +15,7 @@ class SignatureTracker(
     amountOfAttributes: Int
 ) {
 
-    val indices = signatures.indices
+    val indices get()= signatures.indices
     private val signatureIndexMapper = signatures.withIndex().associate {
         it.value to SignatureIndex(
             it.index

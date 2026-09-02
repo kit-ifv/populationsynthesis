@@ -1,9 +1,9 @@
 package edu.kit.ifv.populationsynthesis
 
-import edu.kit.ifv.populationsynthesis.algorithms.ArrayScalableVector
-import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.Kaczmarz
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ArrayScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.TargetNumberObserver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.Kaczmarz
 import kotlin.test.Test
 
 class SmallIPUTest {

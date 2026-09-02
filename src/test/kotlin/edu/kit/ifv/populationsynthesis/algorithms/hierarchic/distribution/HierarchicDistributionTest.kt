@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement

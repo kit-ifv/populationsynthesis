@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.rules
 
-import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
 fun <T> Collection<Rule<T>>.toScalableVectorOld(element: T): ScalableVector {

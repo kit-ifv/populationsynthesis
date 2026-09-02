@@ -1,5 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.TargetNumberObserver
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ArrayScalableVector
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows

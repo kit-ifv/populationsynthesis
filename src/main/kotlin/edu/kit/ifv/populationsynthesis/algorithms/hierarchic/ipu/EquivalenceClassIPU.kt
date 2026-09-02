@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 
-import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
 import edu.kit.ifv.populationsynthesis.rules.IndexedLogic
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toScalableVector

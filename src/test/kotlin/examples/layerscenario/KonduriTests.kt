@@ -1,10 +1,10 @@
 package examples.layerscenario
 
-import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.EquivalenceClassIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.HistoricIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.NakedIPU
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.MatrixSolver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource

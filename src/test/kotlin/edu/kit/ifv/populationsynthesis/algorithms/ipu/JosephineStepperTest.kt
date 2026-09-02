@@ -1,8 +1,8 @@
 package edu.kit.ifv.populationsynthesis.algorithms.ipu
 
-import edu.kit.ifv.populationsynthesis.algorithms.ArrayScalableVector
-import edu.kit.ifv.populationsynthesis.algorithms.TargetNumberObserver
-import org.junit.jupiter.api.Assertions.*
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ArrayScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.TargetNumberObserver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.JosephineStepper
 import kotlin.test.Test
 
 class JosephineStepperTest {
