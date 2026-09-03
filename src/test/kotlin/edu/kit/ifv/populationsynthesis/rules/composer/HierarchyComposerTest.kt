@@ -9,10 +9,10 @@ import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toRuleSet
-import examples.threelayerscenario.A
-import examples.threelayerscenario.Area
-import examples.threelayerscenario.B
-import examples.threelayerscenario.C
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.A
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.Area
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.B
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.C
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -101,56 +101,56 @@ class HierarchyComposerTest {
 
         val provider = MapRuleProvider<Area, Any>().apply {
 
-            addRule(A.A1, HelperRules.A.generate(1.0))
-            addRule(A.A2, HelperRules.A.generate(2.0))
-            addRule(A.A3, HelperRules.A.generate(3.0))
-            addRule(B.B2, HelperRules.A.generate(10.0))
+            addRule(A.A1, RulesHelper.A.generate(1.0))
+            addRule(A.A2, RulesHelper.A.generate(2.0))
+            addRule(A.A3, RulesHelper.A.generate(3.0))
+            addRule(B.B2, RulesHelper.A.generate(10.0))
 
 
         }.withHierarchy(graph)
 
         val rules = provider.getComposedRules(C.C1)
-        assertTrue(HelperRules.A.text in rules)
-        assertEquals(rules[HelperRules.A.text]!!.target, 13.0)
+        assertTrue(RulesHelper.A.text in rules)
+        assertEquals(rules[RulesHelper.A.text]!!.target, 13.0)
 
     }
 
     @Test
     fun uncoveredRule() {
         val provider = MapRuleProvider<Area, Any>().apply {
-            addRule(A.A1, HelperRules.B.generate(1.0))
-            addRule(A.A2, HelperRules.B.generate(2.0))
-            addRule(A.A3, HelperRules.B.generate(3.0))
+            addRule(A.A1, RulesHelper.B.generate(1.0))
+            addRule(A.A2, RulesHelper.B.generate(2.0))
+            addRule(A.A3, RulesHelper.B.generate(3.0))
         }.withHierarchy(graph)
         val rules = provider.getComposedRules(C.C1)
-        assertTrue(HelperRules.B.text in rules)
-        assertEquals(rules[HelperRules.B.text]!!.target, 6.0)
+        assertTrue(RulesHelper.B.text in rules)
+        assertEquals(rules[RulesHelper.B.text]!!.target, 6.0)
     }
 
     @Test
     fun bestCoverage() {
-        val provider = ruleCProvider().apply { addRule(C.C1, HelperRules.C.generate(100.0)) }.withHierarchy(graph)
+        val provider = ruleCProvider().apply { addRule(C.C1, RulesHelper.C.generate(100.0)) }.withHierarchy(graph)
         val rules = provider.getComposedRules(C.C1)
-        assertTrue(HelperRules.C.text in rules)
-        assertEquals(rules[HelperRules.C.text]!!.target, 8.5)
+        assertTrue(RulesHelper.C.text in rules)
+        assertEquals(rules[RulesHelper.C.text]!!.target, 8.5)
     }
 
     @Test
     fun differentOutputOnRequest() {
         val provider = ruleCProvider().withHierarchy(graph)
         val rules = provider.getComposedRules(C.C1)
-        assertTrue(HelperRules.C.text in rules)
-        assertEquals(rules[HelperRules.C.text]!!.target, 8.5)
+        assertTrue(RulesHelper.C.text in rules)
+        assertEquals(rules[RulesHelper.C.text]!!.target, 8.5)
     }
 
     private fun ruleCProvider(): MapRuleProvider<Area, Any> {
         return MapRuleProvider<Area, Any>().apply {
-            addRule(A.A1, HelperRules.C.generate(1.0))
-            addRule(A.A2, HelperRules.C.generate(2.0))
-            addRule(A.A3, HelperRules.C.generate(3.0))
-            addRule(A.A4, HelperRules.C.generate(2.5))
-            addRule(B.B1, HelperRules.C.generate(10.0))
-            addRule(B.B2, HelperRules.C.generate(20.0))
+            addRule(A.A1, RulesHelper.C.generate(1.0))
+            addRule(A.A2, RulesHelper.C.generate(2.0))
+            addRule(A.A3, RulesHelper.C.generate(3.0))
+            addRule(A.A4, RulesHelper.C.generate(2.5))
+            addRule(B.B1, RulesHelper.C.generate(10.0))
+            addRule(B.B2, RulesHelper.C.generate(20.0))
         }
 
     }

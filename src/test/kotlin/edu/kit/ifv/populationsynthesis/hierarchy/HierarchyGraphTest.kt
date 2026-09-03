@@ -1,9 +1,9 @@
 package edu.kit.ifv.populationsynthesis.hierarchy
 
-import examples.threelayerscenario.A
-import examples.threelayerscenario.Area
-import examples.threelayerscenario.B
-import examples.threelayerscenario.C
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.A
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.Area
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.B
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.C
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

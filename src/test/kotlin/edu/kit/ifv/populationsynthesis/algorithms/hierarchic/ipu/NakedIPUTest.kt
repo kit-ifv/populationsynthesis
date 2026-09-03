@@ -1,10 +1,10 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
-import examples.threelayerscenario.A
-import examples.threelayerscenario.ABCGraph
-import examples.threelayerscenario.ABCRuleProvider
-import examples.threelayerscenario.SeedElement
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.A
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.ABCGraph
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.ABCRuleProvider
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.SeedElement
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
