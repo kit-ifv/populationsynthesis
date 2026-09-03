@@ -41,6 +41,7 @@ class HierarchicDistribution<AREA, T>(
         val matrixSolution = config.matrixSolver.sigCalcAct(
             householdMapping,
             rules.map { allRuleLogics.toIndexedRule(it) },
+            config.initialVectorCallback,
             config.matrixSolutionCallback
         )
 

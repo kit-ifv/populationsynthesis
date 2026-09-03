@@ -23,7 +23,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 //    api("org.jetbrains.kotlinx:kotlin-statistics-jvm:0.2.1")
     implementation("it.unimi.dsi:fastutil:8.5.16")
-    implementation("org.ejml:ejml-all:0.43")
+
     implementation("com.google.ortools:ortools-java:9.15.6755")
     implementation("org.ojalgo:ojalgo:57.1.0")
 //    implementation("org.apache.spark:spark-mllib_2.13:3.5.4")

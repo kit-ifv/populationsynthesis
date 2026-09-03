@@ -3,6 +3,7 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
 import edu.kit.ifv.populationsynthesis.algorithms.sampling.ListSampler
+import edu.kit.ifv.populationsynthesis.algorithms.sampling.PickWithReplacement
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer

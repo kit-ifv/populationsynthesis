@@ -37,6 +37,7 @@ fun interface MatrixSolver {
     fun <I> sigCalcAct(
         signatures: Map<Signature, List<I>>,
         rules: Collection<IndexedRule<I>>,
+        initialVectorCallback: (List<ScalableVector>) -> Unit,
         solutionCallback: (List<ScalableVector>, List<RuleObserver>) -> Unit = { _, _ ->
 
         }
@@ -49,6 +50,7 @@ fun interface MatrixSolver {
             SignatureScalableVector(k, v.size.toDouble() / totalSize)
 //            ArrayScalableVector(k, v.size.toDouble() / totalSize)
         }
+        initialVectorCallback(vectors)
         val relevantIndices = rules.map { it.index }.toSet()
         val (relevantVectors, irrelevantVectors) = vectors.partition { it.signature.isRelevantFor(relevantIndices) }
         val observers = rules.map { (index, rule) ->

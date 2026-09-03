@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
+import edu.kit.ifv.populationsynthesis.algorithms.sampling.PickWithReplacement
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.evaluation.Verification
 import edu.kit.ifv.populationsynthesis.hierarchy.MutableHierarchyGraphFactory
@@ -10,6 +11,7 @@ import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertDoesNotThrow
+import kotlin.random.Random
 import kotlin.test.Test
 
 class OriginalDistributorTest {
@@ -54,7 +56,8 @@ class OriginalDistributorTest {
         val hierarchicRuleProvider: HierarchicRuleProvider<Int, Element> = ruleProvider.withHierarchy(hierarchy)
         val distributor = OriginalDistributor(
             hierarchicRuleProvider, logicIndexer,
-            householdMapping
+            householdMapping,
+            PickWithReplacement(Random(42))
         )
 
         assertEquals(householdMapping.values.size, elements.size) {

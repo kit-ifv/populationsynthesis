@@ -3,11 +3,11 @@ package edu.kit.ifv.populationsynthesis.datastructures.linalg
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.datastructures.toDoubleArray
 
-class ArrayScalableVector internal constructor(private val array: DoubleArray, override var scalar: Double) :
+class ArrayScalableVector(private val array: DoubleArray, override var scalar: Double) :
     ScalableVector {
-    internal constructor(vararg numbers: Number) : this(numbers.toList())
-    internal constructor(numbers: Collection<Number>) : this(numbers.map { it.toDouble() }.toDoubleArray(), 1.0)
-    internal constructor(signature: Signature, scalar: Double) : this(signature.toDoubleArray(), scalar)
+    constructor(vararg numbers: Number) : this(numbers.toList())
+    constructor(numbers: Collection<Number>) : this(numbers.map { it.toDouble() }.toDoubleArray(), 1.0)
+    constructor(signature: Signature, scalar: Double) : this(signature.toDoubleArray(), scalar)
     override val signature: Signature = Signature.Companion.fromValues(array.toList())
     override fun currentValueForIndex(index: Int): Double {
         return this.getAttribute(index) * scalar
