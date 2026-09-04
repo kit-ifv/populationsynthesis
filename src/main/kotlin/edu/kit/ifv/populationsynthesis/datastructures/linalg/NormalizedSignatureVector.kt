@@ -3,7 +3,6 @@ package edu.kit.ifv.populationsynthesis.datastructures.linalg
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.datastructures.dot
 import edu.kit.ifv.populationsynthesis.datastructures.euclidianLength
-import edu.kit.ifv.populationsynthesis.datastructures.normalize
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -86,8 +85,4 @@ class NormalizedSignatureVector internal constructor(
             return value
         }
     }
-}
-
-fun ScalableVector.normalize(): NormalizedSignatureVector {
-    return NormalizedSignatureVector(signature.normalize(), scalar * signature.euclidianLength())
 }

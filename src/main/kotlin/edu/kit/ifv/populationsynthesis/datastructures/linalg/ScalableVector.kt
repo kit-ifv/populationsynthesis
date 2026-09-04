@@ -3,6 +3,7 @@ package edu.kit.ifv.populationsynthesis.datastructures.linalg
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.datastructures.dot
 import edu.kit.ifv.populationsynthesis.datastructures.euclidianLength
+import edu.kit.ifv.populationsynthesis.datastructures.normalize
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
@@ -74,7 +75,9 @@ fun ScalableVector.multiplyComponent(other: Vector): ScalableVector {
     return SignatureScalableVector(Signature.Companion.fromValues(scaled), scalar)
 }
 
-
+fun ScalableVector.normalize(): NormalizedSignatureVector {
+    return NormalizedSignatureVector(signature.normalize(), scalar * signature.euclidianLength())
+}
 
 
 
