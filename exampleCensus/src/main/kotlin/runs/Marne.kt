@@ -18,6 +18,7 @@ import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.input.writeCsv
 import edu.kit.ifv.populationsynthesis.output.CensusHouseholdConverter
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
+import edu.kit.ifv.populationsynthesis.utils.NumericProbabilityDistribution
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
@@ -97,6 +98,10 @@ class SolutionWriteToFile(val path: Path) {
         val output = vectors.zip(originalScalars).map { (it, o) ->
             Write(it.scalar, it.scalar / sum, o)
         }
+        val original = NumericProbabilityDistribution.fromWeights(originalScalars)
+        val newScalars = NumericProbabilityDistribution.fromWeights(vectors.map { it.scalar })
+        println(original.kullbackLeiblerDivergence(newScalars))
+        println(newScalars.kullbackLeiblerDivergence(original))
         writeCsv(path, output)
 
     }

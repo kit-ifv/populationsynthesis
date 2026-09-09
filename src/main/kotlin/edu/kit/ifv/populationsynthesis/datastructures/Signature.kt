@@ -27,7 +27,7 @@ import kotlin.math.sqrt
  *  as underlying type, but since the signature will never be changed after construction, the added overhead of
  *  maintaining map
  */
-class Signature internal constructor(
+class Signature constructor(
     @PublishedApi
     internal val indexArray: IntArray,
     @PublishedApi

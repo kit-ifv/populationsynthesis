@@ -6,7 +6,7 @@ import edu.kit.ifv.populationsynthesis.datastructures.euclidianLength
 import kotlin.math.abs
 import kotlin.math.sign
 
-class NormalizedSignatureVector internal constructor(
+class NormalizedSignatureVector constructor(
     override val signature: Signature,
     override var scalar: Double = 1.0
 ) : NormalizedVector, ScalableVector {
