@@ -54,6 +54,11 @@ data class RunConfig(
         execute()
     }
 
+    fun executeFlat() {
+        val rules = scenario.spawnRuleProvider()
+
+    }
+
     fun execute() {
         val hierarchy = scenario.spawnHierarchy()
         val rules = scenario.spawnRuleProvider()

@@ -70,6 +70,16 @@ interface ScalableVector : Vector {
         }
     }
 }
+
+fun ScalableVector.baseVectorDot(other: Vector): Double {
+    var acc = .0
+    signature.forEachEntry { idx, value ->
+        acc += value * other[idx]
+    }
+    return acc
+}
+
+
 fun ScalableVector.multiplyComponent(other: Vector): ScalableVector {
     val scaled = zip(other) { a, b -> a / scalar * b }
     return SignatureScalableVector(Signature.Companion.fromValues(scaled), scalar)

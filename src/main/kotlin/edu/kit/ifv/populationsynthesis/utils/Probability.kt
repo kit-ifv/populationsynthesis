@@ -26,7 +26,7 @@ value class Probability internal constructor(val probability: Double) : Comparab
     override fun compareTo(other: Probability): Int {
         return probability.compareTo(other.probability)
     }
-
+    fun toDouble() = probability
     companion object {
         fun of(value: Double): Probability {
             require(value in 0.0..1.0) {

@@ -16,7 +16,7 @@ class NumericProbabilityDistribution private constructor(
     companion object {
 
         fun fromWeights(weights: Collection<Number>): NumericProbabilityDistribution {
-            val values = weights.map(Number::toDouble)
+            val values = weights.map{it.toDouble().coerceAtLeast(0.0)}
             val sum = values.sum()
 
             require(sum > 0.0)

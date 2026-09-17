@@ -3,6 +3,8 @@ package edu.kit.ifv.populationsynthesis.input.rules
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
+import edu.kit.ifv.populationsynthesis.domain.population.SeniorityStatus
+import edu.kit.ifv.populationsynthesis.rules.CensusHouseholdType
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -55,6 +57,23 @@ data class CensusHouseholdData(
         return (startingAt..6).fold(null) { acc, i ->
             acc + getHouseholdSizeTarget(i)
 
+        }
+    }
+    fun getHouseholdTypeTarget(householdType: CensusHouseholdType): Int?{
+        return when(householdType) {
+            CensusHouseholdType.SINGLE -> HHTYP_FAM__1
+            CensusHouseholdType.COUPLE_NO_KIDS -> HHTYP_FAM__2
+            CensusHouseholdType.COUPLE_WITH_KIDS -> HHTYP_FAM__3
+            CensusHouseholdType.SINGLE_PARENT -> HHTYP_FAM__4
+            CensusHouseholdType.OTHER_MULTICORE -> HHTYP_FAM__5
+
+        }
+    }
+    fun getSeniorityTarget(seniorityStatus: SeniorityStatus): Int? {
+        return when (seniorityStatus) {
+            SeniorityStatus.ONLY_SENIORS -> HHTYP_SENIOR_HH__1
+            SeniorityStatus.MIXED -> HHTYP_SENIOR_HH__2
+            SeniorityStatus.NO_SENIORS -> HHTYP_SENIOR_HH__3
         }
     }
 

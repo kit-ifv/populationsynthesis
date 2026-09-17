@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
+import java.lang.Double.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -93,6 +94,23 @@ interface NormalizedVector: Vector
 
 fun Collection<Number>.asVector(): ConstantVector {
     return ConstantVector(map { it.toDouble() })
+}
+
+fun Collection<Vector>.strictlyPositiveSum(): Vector {
+    if (isEmpty()) {
+        return ConstantVector(DoubleArray(0))
+    }
+
+    val maxSize = maxOf { it.size }
+    val result = DoubleArray(maxSize)
+
+    for (vector in this) {
+        for (i in 0 until vector.size) {
+            result[i] += max(.0, vector[i])
+        }
+    }
+
+    return ConstantVector(result)
 }
 
 fun Collection<Vector>.sum(): Vector {

@@ -1,5 +1,11 @@
 package edu.kit.ifv.populationsynthesis.input.rules
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
+import edu.kit.ifv.populationsynthesis.domain.population.Sex
+import edu.kit.ifv.populationsynthesis.rules.EmploymentStatus
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class CensusEmploymentStatusData(
     val Berichtszeitpunkt: String,
     val _RS: String,
@@ -21,4 +27,32 @@ data class CensusEmploymentStatusData(
     val ERWERBSTAT_KURZ_STP__2_M: Int?, // Personen nach Erwerbsstatus "Nichterwerbspersonen" männlich (Anzahl)
     val ERWERBSTAT_KURZ_STP__2_W: Int?, // Personen nach Erwerbsstatus "Nichterwerbspersonen" weiblich (Anzahl)
 
-)
+) {
+
+    val arsKey by lazy { ARSKey(_RS, Name) }
+    fun getGenderedEmploymentStatus(sex: Sex, employmentStatus: EmploymentStatus):Int? {
+        return when (sex) {
+            Sex.MALE -> getMaleEmploymentStatus(employmentStatus)
+            Sex.FEMALE -> getFemaleEmploymentStatus(employmentStatus)
+            else -> throw IllegalArgumentException("Cannot use thta")
+        }
+    }
+
+    fun getMaleEmploymentStatus(employmentStatus: EmploymentStatus): Int? {
+        return when (employmentStatus) {
+            EmploymentStatus.ANY -> ERWERBSTAT_KURZ_STP__M
+            EmploymentStatus.EMPLOYED -> ERWERBSTAT_KURZ_STP__11_M
+            EmploymentStatus.UNEMPLOYED -> ERWERBSTAT_KURZ_STP__12_M
+            EmploymentStatus.NOT_WORKING -> ERWERBSTAT_KURZ_STP__2_M
+        }
+    }
+
+    fun getFemaleEmploymentStatus(employmentStatus: EmploymentStatus): Int? {
+        return when (employmentStatus) {
+            EmploymentStatus.ANY -> ERWERBSTAT_KURZ_STP__W
+            EmploymentStatus.EMPLOYED -> ERWERBSTAT_KURZ_STP__11_W
+            EmploymentStatus.UNEMPLOYED -> ERWERBSTAT_KURZ_STP__12_W
+            EmploymentStatus.NOT_WORKING -> ERWERBSTAT_KURZ_STP__2_W
+        }
+    }
+}
