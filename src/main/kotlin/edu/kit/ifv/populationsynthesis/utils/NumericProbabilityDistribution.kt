@@ -19,7 +19,9 @@ class NumericProbabilityDistribution private constructor(
             val values = weights.map{it.toDouble().coerceAtLeast(0.0)}
             val sum = values.sum()
 
-            require(sum > 0.0)
+            require(sum > 0.0) {
+                "HOW"
+            }
 
             return NumericProbabilityDistribution(
                 values

@@ -6,6 +6,7 @@ import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.rules.MutableRuleSet
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
+import java.util.BitSet
 
 object RuleProviderFactory {
     private val demographyInfo: CensusDemographyRules = CensusDemographyRules.fromResource()
@@ -15,7 +16,47 @@ object RuleProviderFactory {
     private val schoolDegreeInfo: CensusHighestSchoolDegreeRules = CensusHighestSchoolDegreeRules.fromResource()
     val keys = demographyInfo.ageProvider.getAllRules().keys
 
+    fun loadFlatProviderWithNumber(arsKey: ARSKey, number: Int): RuleProvider<ARSKey, CensusHousehold>  {
 
+        val binaryString = Integer.toBinaryString(number)
+        return createRuleProvider {
+            if(binaryString.getOrNull(0) == '1') {
+                loadFromOtherRuleProvider(demographyInfo.ageProvider) {
+                    it.key == arsKey
+                }
+            }
+            if(binaryString.getOrNull(1) == '1') {
+                loadFromOtherRuleProvider(demographyInfo.sexProvider) {
+                    it.key == arsKey
+                }
+            }
+            if(binaryString.getOrNull(2) == '1') {
+                loadFromOtherRuleProvider(householdInfo.sizeProvider) {
+                    it.key == arsKey
+                }
+            }
+            if(binaryString.getOrNull(3) == '1') {
+                loadFromOtherRuleProvider(householdInfo.seniorenTypProvider) {
+                    it.key == arsKey
+                }
+            }
+            if(binaryString.getOrNull(4) == '1') {
+                loadFromOtherRuleProvider(schoolInfo.genderedSchoolProvider) {
+                    it.key == arsKey
+                }
+            }
+            if(binaryString.getOrNull(5) == '1') {
+                loadFromOtherRuleProvider(employmentStatusInfo.genderedEmploymentProvider) {
+                    it.key == arsKey
+                }
+            }
+            if(binaryString.getOrNull(6) == '1') {
+                loadFromOtherRuleProvider(schoolDegreeInfo.genderedSchoolDegreeProvider) {
+                    it.key == arsKey
+                }
+            }
+        }
+    }
 
     fun loadFlatProviderMax(arsKey: ARSKey) : RuleProvider<ARSKey, CensusHousehold> {
         return createRuleProvider {

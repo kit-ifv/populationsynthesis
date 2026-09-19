@@ -6,15 +6,30 @@ object ORSolverFactory {
     init {
         Loader.loadNativeLibraries()
     }
-    fun lenient(lambda: ORFactoryConfig.() -> Unit): ORToolsSolver {
+
+    fun lenient(lambda: ORFactoryConfig.() -> Unit): LenientORToolsSolver {
         val config = ORFactoryConfig().also(lambda)
         return LenientORToolsSolver(config.solver, config.upperBound)
     }
-    fun direct(lambda: ORFactoryConfig.() -> Unit): ORToolsSolver {
+
+    fun direct(lambda: ORFactoryConfig.() -> Unit): DirectORToolsSolver {
         val config = ORFactoryConfig().also(lambda)
         return DirectORToolsSolver(config.solver, config.upperBound)
     }
-    val direct  by lazy {direct {}}
-    val lenient by lazy {lenient {}}
+
+    fun withWeights(
+        scale: Double = 1.0,
+        lambda: ORFactoryConfig.() -> Unit
+    ): WeightRegardingLenientORToolsSolver {
+        val config = ORFactoryConfig().also(lambda)
+        return WeightRegardingLenientORToolsSolver(
+            config.solver,
+            config.upperBound,
+            scale,
+        )
+    }
+
+    val direct by lazy { direct {} }
+    val lenient by lazy { lenient {} }
 
 }

@@ -16,6 +16,7 @@ class OptimizationSolver<T>(
         observers.forEach { observer ->
             model.addObserver(observer)
         }
+        model.afterConfigHook()
         val (resultLookup, bonus) = model.solve()
         vectors.forEach { vector ->
             vector.scalar = resultLookup[vector] ?: .0.also {
