@@ -89,7 +89,9 @@ class WeightConsideringOJSolverBuilder(
 
         vectorVariables.forEach { (vector, variable) ->
 
-            val p = originalDistribution[vector] ?: 0.0
+            val p = originalDistribution[vector] ?: 0.0.also {
+                println("Unknown square coefficient for $vector")
+            }
 
             /*
              * lambda * (x_i - p_i * N)^2
