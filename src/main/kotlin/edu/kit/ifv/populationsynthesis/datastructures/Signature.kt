@@ -38,7 +38,7 @@ class Signature constructor(
         map.keys.toIntArray(), map.values.toDoubleArray(),
     )
 
-
+    val baseNormSquared = valueArray.sumOf { it * it }
     val keys get() = indexArray.toList()
     val values get() = valueArray.toList()
     @Deprecated("Use inline iteration instead")
