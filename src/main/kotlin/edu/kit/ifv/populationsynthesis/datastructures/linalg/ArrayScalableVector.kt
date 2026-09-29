@@ -9,6 +9,18 @@ class ArrayScalableVector(private val array: DoubleArray, override var scalar: D
     constructor(numbers: Collection<Number>) : this(numbers.map { it.toDouble() }.toDoubleArray(), 1.0)
     constructor(signature: Signature, scalar: Double) : this(signature.toDoubleArray(), scalar)
     override val signature: Signature = Signature.Companion.fromValues(array.toList())
+    override fun baseNormSquared(): Double {
+        return signature.baseNormSquared
+    }
+
+    override fun baseDot(other: Vector): Double {
+        TODO("Not yet implemented")
+    }
+
+    override fun baseDot(other: DoubleArray): Double {
+        TODO("Not yet implemented")
+    }
+
     override fun currentValueForIndex(index: Int): Double {
         return this.getAttribute(index) * scalar
     }

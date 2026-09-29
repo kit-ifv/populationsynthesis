@@ -118,7 +118,6 @@ fun interface MatrixSolver {
         }
     }
 
-    fun withLogging(path: Path) = PerformanceLoggingMatrixSolver(this, path)
 
     companion object {
         /**

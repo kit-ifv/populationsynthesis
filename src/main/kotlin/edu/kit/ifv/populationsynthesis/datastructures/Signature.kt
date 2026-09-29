@@ -132,11 +132,11 @@ fun Signature.dot(other: Signature): Double {
     var i = 0
     var j = 0
     var sum = .0
-    while(i < maxKey && j < other.maxKey) {
+    while(i <= maxKey && j <= other.maxKey) {
         sum += when{
             indexArray[i] < other.indexArray[j] -> .0.also{i++}
             indexArray[i] > other.indexArray[j] -> .0.also{j++}
-            else -> values[i] * other.values[j].also{
+            else -> valueArray[i] * other.valueArray[j].also{
                 i++
                 j++
             }

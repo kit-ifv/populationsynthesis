@@ -7,9 +7,9 @@ import edu.kit.ifv.populationsynthesis.datastructures.normalize
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
-interface ScalableVector : Vector {
-    var scalar: Double
-    val signature: Signature
+interface ScalableVector : ScaledVector {
+    override var scalar: Double
+    override val signature: Signature
     override operator fun get(index: Int): Double = currentValueForIndex(index)
     fun currentValueForIndex(index: Int): Double
     fun attributeForIndex(index: Int): Double

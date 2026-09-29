@@ -59,6 +59,18 @@ class NormalizedSignatureVector constructor(
         return SparseDoubleIterator()
     }
 
+    override fun baseNormSquared(): Double {
+        return signature.baseNormSquared
+    }
+
+    override fun baseDot(other: Vector): Double {
+        TODO("Not yet implemented")
+    }
+
+    override fun baseDot(other: DoubleArray): Double {
+        TODO("Not yet implemented")
+    }
+
     private inner class SparseDoubleIterator(
     ) : DoubleIterator() {
 

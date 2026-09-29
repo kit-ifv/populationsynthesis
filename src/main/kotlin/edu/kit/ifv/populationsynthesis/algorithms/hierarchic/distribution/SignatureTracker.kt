@@ -26,6 +26,7 @@ class SignatureTracker(
 
     /**
      * The largest shift that can occur in a target region by receiving 1 signature.
+     * Thats just l1 ........
      */
     val largestDelta = signatures.maxOf { it.values.sumOf { abs(it) } }
 

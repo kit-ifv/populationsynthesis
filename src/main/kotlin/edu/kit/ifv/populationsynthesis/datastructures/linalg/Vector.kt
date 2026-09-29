@@ -37,7 +37,7 @@ interface Vector : Iterable<Double> {
         val cosine = cosineSimilarity(other)
         return if(cosine.isNaN()) 0.0 else cosine
     }
-    operator fun plus(other: Vector): ConstantVector {
+    operator fun plus(other: Vector): MutableVector {
         val result = DoubleArray(maxOf(size, other.size))
 
         for (i in 0 until size) {
@@ -48,9 +48,13 @@ interface Vector : Iterable<Double> {
             result[i] += other[i]
         }
 
-        return ConstantVector(result)
+        return DenseVector(result)
     }
-
+    fun forEachNonZeroEntry(action: (idx: Int, value: Double) -> Unit) {
+        iterator().withIndex().forEach {
+            action(it.index, it.value)
+        }
+    }
     operator fun minus(other: Vector): ConstantVector {
         val result = DoubleArray(maxOf(size, other.size))
 
