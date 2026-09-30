@@ -2,29 +2,28 @@ package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import java.lang.Double.max
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 interface Vector : Iterable<Double> {
+
     val size: Int
     operator fun get(index: Int): Double
     override fun iterator(): DoubleIterator // We know that we operate on doubles only.
     fun dot(other: Vector): Double {
-        if(other is ScalableVector) {
-            var acc = .0
-            val scalar = other.scalar
-            other.signature.forEachEntry { idx, value ->
-                acc += get(idx) * value * scalar
-            }
-            return acc
-        }
         return zip(other).sumOf { (a, b) -> a * b }
     }
-
+    fun dot(values: DoubleArray): Double {
+        return TODO()
+    }
     fun length(): Double {
-        return sqrt(this.sumOf { it.pow(2) })
+        return sqrt(euclideanNormSquared())
     }
 
+    fun euclideanNormSquared() = sumOf{it.pow(2)}
+    fun manhattanNorm() = sumOf { abs(it) }
+    fun chebyshevNorm() = maxOf { abs(it) }
     operator fun times(scalar: Double): Vector {
         return ConstantVector(map { it * scalar })
     }
@@ -33,10 +32,12 @@ interface Vector : Iterable<Double> {
     fun cosineSimilarity(other: Vector): Double {
         return this.dot(other) / (this.length() * other.length())
     }
+
     fun safeCosineSimilarity(other: Vector): Double {
         val cosine = cosineSimilarity(other)
-        return if(cosine.isNaN()) 0.0 else cosine
+        return if (cosine.isNaN()) 0.0 else cosine
     }
+
     operator fun plus(other: Vector): MutableVector {
         val result = DoubleArray(maxOf(size, other.size))
 
@@ -50,12 +51,14 @@ interface Vector : Iterable<Double> {
 
         return DenseVector(result)
     }
+
     fun forEachNonZeroEntry(action: (idx: Int, value: Double) -> Unit) {
         iterator().withIndex().forEach {
             action(it.index, it.value)
         }
     }
-    operator fun minus(other: Vector): ConstantVector {
+
+    operator fun minus(other: Vector): MutableVector {
         val result = DoubleArray(maxOf(size, other.size))
 
         for (i in 0 until size) {
@@ -66,19 +69,22 @@ interface Vector : Iterable<Double> {
             result[i] -= other[i]
         }
 
-        return ConstantVector(result)
+        return DenseVector(result)
     }
 
     fun contentEquals(other: Vector): Boolean {
         return zip(other).all { (a, b) -> a == b }
     }
 
+
     companion object {
-        operator fun invoke(vararg constants: Double): ConstantVector {
-            return ConstantVector(constants)
+        operator fun invoke(firstConstant: Number, vararg constants: Number): Vector {
+            return DenseVector(firstConstant, *constants)
         }
     }
 }
+
+
 fun Vector.safeComponentInverse(replaceZerosWith: Double = 1.0): Vector = ConstantVector(map {
     if (it == .0) replaceZerosWith else 1.0 / it
 })

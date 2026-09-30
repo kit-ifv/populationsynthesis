@@ -123,6 +123,15 @@ abstract class RuleObserver(
                 rule.target
             )
         }
+        fun fromIndex(index: Int, target: Double, vectors: List<ScalableVector>): TargetNumberObserver {
+            return TargetNumberObserver(
+                "Manually Created Observer for index$index",
+                index,
+                vectors.filter { it[index] != .0 },
+                target
+
+            )
+        }
     }
 }
 
