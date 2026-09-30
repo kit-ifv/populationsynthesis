@@ -35,7 +35,7 @@ open class OJSolverBuilder(
         val upper = model.addExpression("upper_${rowIndex}").upper(target)
 
         observer.vectors.forEach{
-            val coefficient = it.attributeForIndex(rowIndex)
+            val coefficient = it.baseVector[rowIndex]
             require(coefficient != .0) {"A coefficient of .0 should never be registered in an observer"}
             val variable = vectorVariables.getValue(it)
             lower.set(variable, coefficient)

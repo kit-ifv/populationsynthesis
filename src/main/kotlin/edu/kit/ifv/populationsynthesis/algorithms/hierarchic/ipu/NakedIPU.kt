@@ -5,6 +5,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
 import edu.kit.ifv.populationsynthesis.rules.IndexedLogic
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.toScalableVector
+import edu.kit.ifv.populationsynthesis.rules.toScalableVectorX
 import java.util.*
 
 class NakedIPU<AREA, T>(
@@ -21,7 +22,7 @@ class NakedIPU<AREA, T>(
     private val vectorMapping: MutableMap<ScalableVector, T> = IdentityHashMap()
     override fun spawnVectorsFrom(indexedRules: Set<IndexedLogic<in T>>): Collection<ScalableVector> {
         val vectors = seedHouseholds.map { seed ->
-            indexedRules.toScalableVector(seed).also { vectorMapping[it] = seed }
+            indexedRules.toScalableVectorX(seed).also { vectorMapping[it] = seed }
 
         }
 

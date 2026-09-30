@@ -28,18 +28,18 @@ class SignatureTracker(
      * The largest shift that can occur in a target region by receiving 1 signature.
      * Thats just l1 ........
      */
-    val largestDelta = signatures.maxOf { it.values.sumOf { abs(it) } }
+    val largestDelta = signatures.maxOf { it.manhattanNorm() }
 
     val largestDifference = 2 * largestDelta
 
-    val largestDeltaPartition = signatures.maxBy { it.values.sumOf { abs(it) } }
+    val largestDeltaPartition = signatures.maxOf { it.manhattanNorm() }
 
     init {
-        require(amountOfAttributes == signatures.maxOf { it.maxKey } + 1) {
+        require(amountOfAttributes == signatures.maxOf { it.size }) {
             "The highest key is the last attribute that is referenced by the signatures."
         }
         signatures.withIndex().forEach { (i, sig) ->
-            sig.keys.forEach { key ->
+            sig.nonzeroIndices.forEach { key ->
                 inverseIndices[key].add(i)
             }
         }

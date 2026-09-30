@@ -1,15 +1,23 @@
 package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
-fun <T> Collection<Rule<T>>.toScalableVectorOld(element: T): ScalableVector {
-    return map { it.logic }.toScalableVector(element)
-}
 
-fun <T> Collection<Measurement<T>>.toScalableVector(element: T): ScalableVector {
+fun <T> Collection<Measurement<T>>.toScalableVectorX(element: T): SparseScalableVector {
     return ScalableVector.createFromLogics(element, this)
 }
+
+fun <T> Collection<Measurement<T>>.toSparseVector(element: T): SparseVector {
+    return SparseVector.fromValues(map { it.measure(element) })
+}
+
+fun <T> Collection<Rule<T>>.toScalableVector(element: T): SparseScalableVector {
+    return map { it.logic }.toScalableVectorX(element)
+}
+
 
 
 fun <T> Collection<Rule<T>>.sumRule(): Rule<T> {

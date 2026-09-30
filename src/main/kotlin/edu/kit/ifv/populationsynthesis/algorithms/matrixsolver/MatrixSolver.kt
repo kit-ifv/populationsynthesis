@@ -4,10 +4,11 @@ import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.*
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.ipu.CyclicIPU
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.SignatureScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.isRelevantFor
 import edu.kit.ifv.populationsynthesis.rules.IndexedRule
 import edu.kit.ifv.populationsynthesis.rules.Rule
-import edu.kit.ifv.populationsynthesis.rules.toScalableVectorOld
+import edu.kit.ifv.populationsynthesis.rules.toScalableVector
 import edu.kit.ifv.populationsynthesis.utils.invertMap
 import java.nio.file.Path
 
@@ -23,7 +24,7 @@ fun interface MatrixSolver {
         vectors: Collection<ScalableVector>,
         rules: Collection<Rule<I>>,
     ): DirectRunReport {
-        val (emptyVectors, nonEmptyVectors) = vectors.partition { it.signature.isEmpty() }
+        val (emptyVectors, nonEmptyVectors) = vectors.partition { it.isEmpty() }
         val observers = rules.withIndex().map {
             RuleObserver.fromRule(it.value, it.index, nonEmptyVectors)
         }
@@ -47,12 +48,12 @@ fun interface MatrixSolver {
 
         val vectors = signatures.entries.map { (k, v) ->
             val totalSize = signatures.values.sumOf { it.size }
-            SignatureScalableVector(k, v.size.toDouble() / totalSize)
+            SparseScalableVector(k, v.size.toDouble() / totalSize)
 //            ArrayScalableVector(k, v.size.toDouble() / totalSize)
         }
         initialVectorCallback(vectors)
         val relevantIndices = rules.map { it.index }.toSet()
-        val (relevantVectors, irrelevantVectors) = vectors.partition { it.signature.isRelevantFor(relevantIndices) }
+        val (relevantVectors, irrelevantVectors) = vectors.partition { it.isRelevantFor(relevantIndices) }
         val observers = rules.map { (index, rule) ->
             RuleObserver.fromRule(rule, index, relevantVectors)
         }
@@ -61,7 +62,7 @@ fun interface MatrixSolver {
             vector.scalar = 0.0
         }
         solutionCallback(vectors, observers)
-        return vectors.map { WeightedElement(it.signature, it.scalar) }
+        return vectors.map { WeightedElement(it.baseVector, it.scalar) }
     }
 
 
@@ -87,7 +88,7 @@ fun interface MatrixSolver {
 //            plotLogHistograms(df)
 
             it.keys.map {
-                WeightedElement(it.signature, it.scalar)
+                WeightedElement(it.baseVector, it.scalar)
             }
         }
     }
@@ -97,9 +98,9 @@ fun interface MatrixSolver {
         elements: Collection<I>,
         rules: Collection<Rule<I>>,
         ipuCalculationCallback: (DirectRunReport) -> Unit = {},
-        resultConverter: (Map<ScalableVector, List<I>>) -> X,
+        resultConverter: (Map<SparseScalableVector, List<I>>) -> X,
     ): X {
-        val vectorMapping = elements.associateWith { rules.toScalableVectorOld(it) }
+        val vectorMapping = elements.associateWith { rules.toScalableVector(it) }
         val inverseMap = vectorMapping.invertMap()
         val uniqueVectors = inverseMap.toVectors()
 
@@ -109,7 +110,7 @@ fun interface MatrixSolver {
         return resultConverter(inverseMap)
     }
 
-    private fun <I> Map<ScalableVector, List<I>>.toVectors(): List<ScalableVector> {
+    private fun <I> Map<SparseScalableVector, List<I>>.toVectors(): List<SparseScalableVector> {
         return entries.map { (scalableVector, associatedElements) ->
             scalableVector.apply {
 //                scalar = associatedElements.size.toDouble()

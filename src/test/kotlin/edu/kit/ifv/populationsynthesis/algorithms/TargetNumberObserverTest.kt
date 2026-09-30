@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.algorithms
 
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.TargetNumberObserver
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.ArrayScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.DenseScalableVector
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertThrows
@@ -12,11 +12,11 @@ class TargetNumberObserverTest {
     @Test
     fun properBehaviour() {
         val logicIdentifier = "Fake Identifier"
-        val mutatingVector = ArrayScalableVector(1, 2, 3)
+        val mutatingVector = DenseScalableVector(1, 2, 3)
         val vectors = listOf(
-            ArrayScalableVector(1, 2, 3),
+            DenseScalableVector(1, 2, 3),
             mutatingVector,
-            ArrayScalableVector(1, 2, 3),
+            DenseScalableVector(1, 2, 3),
         )
         val obs = TargetNumberObserver(logicIdentifier, 1, vectors, 10.0)
         assertEquals(obs.absoluteDifference, 4.0)
@@ -30,7 +30,7 @@ class TargetNumberObserverTest {
     @Test
     fun targetIsZero() {
         val logicIdentifier = "Fake Identifier"
-        val mutatingVector = ArrayScalableVector(1, 2, 3)
+        val mutatingVector = DenseScalableVector(1, 2, 3)
         val vectors = listOf(
             mutatingVector,
         )
@@ -46,7 +46,7 @@ class TargetNumberObserverTest {
     @Test
     fun thouCannotCreateANonsenseObserver() {
         val logicIdentifier = "Fake Identifier"
-        val vectors = listOf(ArrayScalableVector(1.0, 0.0, 0.0))
+        val vectors = listOf(DenseScalableVector(1.0, 0.0, 0.0))
         assertThrows<IllegalArgumentException> {
             TargetNumberObserver(logicIdentifier, 4, vectors, 0.0)
         }

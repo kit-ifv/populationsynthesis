@@ -46,11 +46,11 @@ abstract class RuleObserver(
      * @return The sum of the values for the [observedIndex] across all vectors.
      */
     fun sum(): Double {
-        return vectors.sumOf { it.currentValueForIndex(observedIndex) }
+        return vectors.sumOf { it[observedIndex] }
     }
 
     fun fallbackSize(): Double {
-        return vectors.sumOf { it.attributeForIndex(observedIndex) }
+        return vectors.sumOf { it.baseVector[observedIndex] }
     }
 
     /**
@@ -61,7 +61,7 @@ abstract class RuleObserver(
      * @return True if all vectors have a non-zero value at the [observedIndex], otherwise false.
      */
     fun sanityCheck(): Boolean {
-        return vectors.all { it.attributeForIndex(observedIndex) != 0.0 }
+        return vectors.all { it.baseVector[observedIndex] != 0.0 }
     }
 
     /**
@@ -132,6 +132,8 @@ abstract class RuleObserver(
 
             )
         }
+
+        private fun Vector.appliesToRule(ruleIndex: Int) = get(ruleIndex) != .0
     }
 }
 

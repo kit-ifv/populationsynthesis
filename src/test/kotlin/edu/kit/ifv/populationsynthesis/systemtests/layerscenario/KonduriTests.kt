@@ -5,6 +5,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.EquivalenceClas
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.HistoricIPU
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu.NakedIPU
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.toList
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -41,19 +42,19 @@ class KonduriTests {
     fun conversion() {
         test(KonduriHousehold.first, 0, 0, 1, 1, 0, 1, 1, 1)
         test(KonduriHousehold.second, 1, 0, 0, 1, 0, 1, 0, 1)
-        test(KonduriHousehold.third, 0, 1, 0, 1, 0, 2, 1, 0)
+        test(KonduriHousehold.third, 0, 1, 0, 1, 0, 2, 1)
         test(KonduriHousehold.fourth, 1, 0, 0, 0, 1, 1, 0, 2)
         test(KonduriHousehold.fifth, 0, 1, 0, 0, 1, 0, 2, 1)
-        test(KonduriHousehold.sixth, 0, 0, 1, 0, 1, 1, 1, 0)
+        test(KonduriHousehold.sixth, 0, 0, 1, 0, 1, 1, 1)
         test(KonduriHousehold.seventh, 0, 1, 0, 0, 1, 2, 1, 2)
-        test(KonduriHousehold.eighth, 0, 0, 1, 0, 1, 1, 2, 0)
+        test(KonduriHousehold.eighth, 0, 0, 1, 0, 1, 1, 2)
 
 
     }
 
     private fun test(konduriHousehold: KonduriHousehold, vararg expected: Int) {
         assertContentEquals(
-            ScalableVector.createFrom(konduriHousehold, measurements).content,
+            ScalableVector.createFromLogics(konduriHousehold, measurements).toList(),
             expected.map { it.toDouble() })
     }
 

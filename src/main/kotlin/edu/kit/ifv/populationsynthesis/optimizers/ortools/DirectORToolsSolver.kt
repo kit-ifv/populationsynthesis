@@ -12,7 +12,7 @@ class DirectORToolsSolver(
         val rowIndex = observer.observedIndex
         val constraint = solver.makeConstraint(target, target, "c_${rowIndex}")
         observer.vectors.forEach{
-            constraint.setCoefficient(vectorVariables.getValue(it), it.attributeForIndex(rowIndex))
+            constraint.setCoefficient(vectorVariables.getValue(it), it.baseVector[rowIndex])
         }
     }
 }

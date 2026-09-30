@@ -19,7 +19,7 @@ class NakedIPUTest {
         val ipu = NakedIPU(ruleProvider, seedHouseholds)
         val vectors = ipu.spawnVectorsFrom(LogicIndexer.fromProvider(ruleProvider).getLogic(A.A1))
         assertEquals(9, vectors.size)
-        assertEquals(vectors.first(), vectors.last())
+        assertEquals(vectors.first().baseVector, vectors.last().baseVector)
     }
 
     @Test

@@ -3,7 +3,6 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
 import edu.kit.ifv.populationsynthesis.algorithms.sampling.ListSampler
-import edu.kit.ifv.populationsynthesis.algorithms.sampling.PickWithReplacement
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
@@ -70,8 +69,8 @@ class OriginalDistributor<AREA, T>(
             "That is an invalid signature, how did that get created"
         }
         val signatureTracker = SignatureTracker(signatures, signatures.maxOf {
-            it.maxKey
-        } + 1)
+            it.size
+        })
 
         val partitions = childAreas.map { region ->
             logicIndexer.createPartition(region, signatureTracker, ruleProvider)

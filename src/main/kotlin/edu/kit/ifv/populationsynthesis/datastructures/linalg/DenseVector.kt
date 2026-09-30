@@ -12,7 +12,7 @@ class DenseVector(
     override val size: Int = backingArray.size
 
     override fun get(index: Int): Double {
-        return backingArray[index]
+        return backingArray.getOrElse(index) {.0}
     }
 
     override fun iterator(): DoubleIterator {

@@ -1,6 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
@@ -31,7 +32,7 @@ class LogicIndexer<AREA, T> internal constructor(
         }
         if (indexedMeasures.isEmpty() || indexedMeasures.values.all { it == 0.0 })
             return null
-        return Signature.fromMap(indexedMeasures)
+        return SparseVector.fromMap(indexedMeasures)
     }
 
     fun getIndex(rule: Rule<*>): Int {

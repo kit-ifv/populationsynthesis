@@ -1,14 +1,10 @@
 package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
 
-import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.toVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.MutableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScaledVector
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseScalingVector
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.sum
-import kotlin.collections.forEach
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
@@ -38,13 +34,10 @@ class CyclicCoordinateDescent(
     }
 }
 
-fun ScalableVector.toScaledVector(): ScaledVector {
-    return SparseScalingVector(scalar, SparseVector.fromSignature(signature))
-}
 
 class ResidualSolverState(
     override val target: Vector,
-    initVectors: List<ScaledVector>
+    initVectors: List<ScalableVector>
 ) : MutableSolverState {
 
     override val vectors: List<ProtectedScalableVector> = initVectors.map {
@@ -53,12 +46,12 @@ class ResidualSolverState(
 
     override val spawnMark: TimeSource.Monotonic.ValueTimeMark = TimeSource.Monotonic.markNow()
 
-    val residual: DoubleArray =
-        (target - vectors.sum()).map { it }.toDoubleArray()
+    val residual: MutableVector =
+        (target - vectors.sum())
 
     var maxCoordinateChange: Double = Double.POSITIVE_INFINITY
 
-    fun leastSquaresScalar(vector: ScaledVector): Double {
+    fun leastSquaresScalar(vector: ScalableVector): Double {
         val denominator = vector.baseNormSquared()
         return (vector.baseDot(residual) / denominator)
     }
@@ -70,12 +63,12 @@ class ResidualSolverState(
     }
 
     inner class ProtectedScalableVector(
-        val originalRef: ScaledVector
-    ) : ScaledVector(originalRef.scalar, originalRef.original) {
+        val originalRef: ScalableVector
+    ) : ScalableVector(originalRef.scalar, originalRef.baseVector) {
         override var scalar: Double
             get() = super.scalar
             set(value) {
-                updateResidual(original, delta = value - super.scalar)
+                updateResidual(baseVector, delta = value - super.scalar)
                 super.scalar = value
             }
 
@@ -91,7 +84,7 @@ class ResidualSolverState(
             return originalRef.baseDot(other)
         }
 
-        override val size: Int get() = original.size
+        override val size: Int get() = baseVector.size
 
         override fun iterator(): DoubleIterator {
             TODO("Not yet implemented")

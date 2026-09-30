@@ -22,7 +22,7 @@ abstract class AbstractIterativeMatrixSolver<S: SolverState>(
     }
 
     override fun initialize(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>): S {
-        val state = stateFactory.create(vectors.map { it.toScaledVector() }, observers)
+        val state = stateFactory.create(vectors, observers)
         notifyObservers(state = state)
         return state
     }

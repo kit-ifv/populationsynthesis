@@ -2,9 +2,10 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseScalableVector
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
-import edu.kit.ifv.populationsynthesis.rules.toScalableVector
+import edu.kit.ifv.populationsynthesis.rules.toScalableVectorX
 import edu.kit.ifv.populationsynthesis.utils.EquivalenceClass
 import edu.kit.ifv.populationsynthesis.utils.formEquivalenceClass
 
@@ -17,12 +18,12 @@ data class RuleObserverBuilder<AREA, T>(
     fun build(area: AREA, elements: Collection<T>): Collection<RuleObserver> {
 
         val indexedRules = logicIndexer.allMeasurements()
-        val equivalenceClasses = elements.associateWith { indexedRules.toScalableVector(it) }.formEquivalenceClass()
+        val equivalenceClasses = elements.associateWith { indexedRules.toScalableVectorX(it) }.formEquivalenceClass()
 
         return build(area, equivalenceClasses)
     }
 
-    fun build(area: AREA, equivalenceClass: EquivalenceClass<ScalableVector, T>): Collection<RuleObserver> {
+    fun build(area: AREA, equivalenceClass: EquivalenceClass<SparseScalableVector, T>): Collection<RuleObserver> {
         return with(logicIndexer) {
             ruleProvider.buildObservers(area, equivalenceClass.representatives)
         }

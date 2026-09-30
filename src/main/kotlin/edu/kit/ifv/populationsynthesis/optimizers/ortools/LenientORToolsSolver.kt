@@ -5,9 +5,6 @@ import com.google.ortools.linearsolver.MPSolver
 import com.google.ortools.linearsolver.MPVariable
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
-import java.lang.Math.abs
-import kotlin.collections.get
 
 open class LenientORToolsSolver(
     solver: MPSolver = MPSolver.createSolver("GLOP"),
@@ -22,7 +19,7 @@ open class LenientORToolsSolver(
         val upper = solver.makeConstraint(-MPSolver.infinity(), target, "upperdelta_$rowIndex")
         observer.vectors.forEach{
             val variable = vectorVariables.getValue(it)
-            val coefficient = it.attributeForIndex(rowIndex)
+            val coefficient = it.baseVector[rowIndex]
             lower.setCoefficient(variable, coefficient)
             upper.setCoefficient(variable, coefficient)
         }
@@ -54,7 +51,7 @@ class WeightRegardingLenientORToolsSolver(
         val upper = solver.makeConstraint(-MPSolver.infinity(), target, "upperdelta_$rowIndex")
         observer.vectors.forEach{
             val variable = vectorVariables.getValue(it)
-            val coefficient = it.attributeForIndex(rowIndex)
+            val coefficient = it.baseVector[rowIndex]
             lower.setCoefficient(variable, coefficient)
             upper.setCoefficient(variable, coefficient)
         }

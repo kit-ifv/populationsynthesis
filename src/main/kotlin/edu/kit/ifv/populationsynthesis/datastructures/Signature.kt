@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.datastructures
 
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -27,7 +28,9 @@ import kotlin.math.sqrt
  *  as underlying type, but since the signature will never be changed after construction, the added overhead of
  *  maintaining map
  */
-class Signature constructor(
+
+typealias Signature = SparseVector
+class Signatureold constructor(
     @PublishedApi
     internal val indexArray: IntArray,
     @PublishedApi
@@ -69,22 +72,22 @@ class Signature constructor(
         return indexArray.any { it in indices }
     }
 
-
-    fun filterKeys(predicate: (Int) -> Boolean): Signature {
-
-
-        val relevantIndices = indexArray.withIndex().filter {
-            predicate(it.value)
-        }
-        if(relevantIndices.isEmpty()) return Signature.EMPTY
-        return Signature(
-            relevantIndices.map { it.value }.toIntArray(),
-            relevantIndices.map { valueArray[it.index] }.toDoubleArray()
-        )
-    }
+//
+//    fun filterKeys(predicate: (Int) -> Boolean): Signature {
+//
+//
+//        val relevantIndices = indexArray.withIndex().filter {
+//            predicate(it.value)
+//        }
+//        if(relevantIndices.isEmpty()) throw IllegalArgumentException("No keys found")
+//        return SparseVector.fromValues(
+//            relevantIndices.map { it.value }.toIntArray(),
+//            relevantIndices.map { valueArray[it.index] }.toDoubleArray()
+//        )
+//    }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is Signature) return false
+        if (other !is Signatureold) return false
         return indexArray.contentEquals(other.indexArray) && valueArray.contentEquals(other.valueArray)
 
     }
@@ -104,31 +107,31 @@ class Signature constructor(
 
     companion object {
 
-        val EMPTY = Signature(intArrayOf(), doubleArrayOf())
-        fun fromMap(map: Map<Int, Double>): Signature {
+        val EMPTY = Signatureold(intArrayOf(), doubleArrayOf())
+        fun fromMap(map: Map<Int, Double>): Signatureold {
             require(map.isNotEmpty() && map.values.any { it  != 0.0 }) {
                 "That is an empty signature, that cannot reasonably be used for synthesis."
             }
-            return Signature(map.filterValues { it != 0.0 })
+            return Signatureold(map.filterValues { it != 0.0 })
         }
 
-        fun fromValues(values: Collection<Double>): Signature {
+        fun fromValues(values: Collection<Double>): Signatureold {
             val targetValues = values.withIndex().filter { it.value != 0.0 }
 
-            return Signature(targetValues.map { it.index }.toIntArray(), targetValues.map { it.value }.toDoubleArray())
+            return Signatureold(targetValues.map { it.index }.toIntArray(), targetValues.map { it.value }.toDoubleArray())
         }
 
-        fun fromValues(vararg values: Double): Signature = fromValues(values.toList())
+        fun fromValues(vararg values: Double): Signatureold = fromValues(values.toList())
     }
 }
 
-fun Signature.euclidianLength() = sqrt(valueArray.sumOf{it.pow(2)})
+fun Signatureold.euclidianLength() = sqrt(valueArray.sumOf{it.pow(2)})
 
-fun Signature.normalize(): Signature {
+fun Signatureold.normalize(): Signatureold {
     val length = euclidianLength()
-    return Signature(indexArray, valueArray.map { it/ length  }.toDoubleArray())
+    return Signatureold(indexArray, valueArray.map { it/ length  }.toDoubleArray())
 }
-fun Signature.dot(other: Signature): Double {
+fun Signatureold.dot(other: Signatureold): Double {
     var i = 0
     var j = 0
     var sum = .0
@@ -145,8 +148,12 @@ fun Signature.dot(other: Signature): Double {
     return sum
 }
 
-fun Signature.toDoubleArray(): DoubleArray {
+fun Signatureold.toDoubleArray(): DoubleArray {
     return DoubleArray(maxKey) {
         get(it)
     }
+}
+
+fun Signature.toSparseVector(): SparseVector {
+    return SparseVector(this)
 }

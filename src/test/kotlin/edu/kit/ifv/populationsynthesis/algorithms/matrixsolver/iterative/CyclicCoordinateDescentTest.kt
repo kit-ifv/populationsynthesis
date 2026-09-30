@@ -3,7 +3,8 @@ package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.sum
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.toSignatureVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.toList
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.toSparseScalableVector
 import org.junit.jupiter.api.Assertions.*
 import kotlin.test.Test
 
@@ -11,9 +12,9 @@ class CyclicCoordinateDescentTest {
     @Test
     fun testScenario() {
         val ccd = CyclicCoordinateDescent()
-        val a = Vector(1, 1).toSignatureVector()
-        val b = Vector(1, 0).toSignatureVector()
-        val c = Vector(1, -1).toSignatureVector()
+        val a = Vector(1, 1).toSparseScalableVector()
+        val b = Vector(1, 0).toSparseScalableVector()
+        val c = Vector(1, -1).toSparseScalableVector()
 
         val vectors = listOf(a, b, c)
         val o1 = RuleObserver.fromIndex(0, 8.0, vectors)

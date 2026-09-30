@@ -1,10 +1,10 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
-import edu.kit.ifv.populationsynthesis.datastructures.Signature
+import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
-abstract class ScaledVector(
+abstract class ScalableVector(
     open var scalar: Double,
-    val original: Vector,
+    open val baseVector: Vector,
 ): Vector {
 
     abstract fun baseNormSquared(): Double
@@ -14,10 +14,19 @@ abstract class ScaledVector(
         return baseNormSquared() * scalar * scalar
     }
     override fun get(index: Int): Double {
-        return scalar * original[index]
+        return scalar * baseVector[index]
     }
-    override fun length() = scalar * original.length()
+    override fun length() = scalar * baseVector.length()
+    override fun isEmpty() = size == 0
 
+    companion object {
+        fun <T> createFromLogics(element: T, logics: Collection<Measurement<T>>): SparseScalableVector {
+            return SparseScalableVector(
+                scalar = 1.0,
+                SparseVector.fromValues(logics.map { it.measure(element) })
+            )
+        }
+    }
 
 }
 

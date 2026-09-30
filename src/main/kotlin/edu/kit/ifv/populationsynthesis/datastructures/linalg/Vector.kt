@@ -1,31 +1,59 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
-import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import java.lang.Double.max
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-interface Vector : Iterable<Double> {
+interface Vector {
 
     val size: Int
+    val indices get() = 0 until size
     operator fun get(index: Int): Double
-    override fun iterator(): DoubleIterator // We know that we operate on doubles only.
+    fun iterator(): DoubleIterator // We know that we operate on doubles only.
     fun dot(other: Vector): Double {
-        return zip(other).sumOf { (a, b) -> a * b }
+        return indices.sumOf {
+            this[it] * other[it]
+        }
     }
     fun dot(values: DoubleArray): Double {
-        return TODO()
+        return indices.sumOf {
+            this[it] * values[it]
+        }
     }
     fun length(): Double {
         return sqrt(euclideanNormSquared())
     }
 
-    fun euclideanNormSquared() = sumOf{it.pow(2)}
-    fun manhattanNorm() = sumOf { abs(it) }
-    fun chebyshevNorm() = maxOf { abs(it) }
+    fun euclideanNormSquared(): Double {
+        var acc = .0
+        iterator().forEach {
+            acc += it.pow(2)
+        }
+        return acc
+    }
+    fun euclideanLength() = euclideanNormSquared() / length()
+    /**
+     * L1 on a vector
+     */
+    fun manhattanNorm(): Double {
+        var acc = .0
+        iterator().forEach {
+            acc += abs(it)
+        }
+        return acc
+    }
+    fun chebyshevNorm(): Double {
+        var acc = .0
+        iterator().forEach {
+            acc = max(acc, it)
+        }
+        return acc
+    }
     operator fun times(scalar: Double): Vector {
-        return ConstantVector(map { it * scalar })
+        val backingArray = DoubleArray(size)
+        for(i in indices) backingArray[i] = scalar * get(i)
+        return DenseVector(backingArray)
     }
 
 
@@ -72,9 +100,26 @@ interface Vector : Iterable<Double> {
         return DenseVector(result)
     }
 
+    fun isEmpty() = size == 0
+
     fun contentEquals(other: Vector): Boolean {
-        return zip(other).all { (a, b) -> a == b }
+        return indices.all {
+            this[it] == other[it]
+        }
     }
+
+    fun contentEquals(other: DoubleArray): Boolean {
+        return indices.all {
+            this[it] == other[it]
+        }
+    }
+    fun contentEquals(other: List<Double>): Boolean {
+        return indices.all {
+            this[it] == other[it]
+        }
+    }
+
+    fun contentEquals(vararg other: Number): Boolean = contentEquals(other.map { it.toDouble() })
 
 
     companion object {
@@ -85,15 +130,16 @@ interface Vector : Iterable<Double> {
 }
 
 
-fun Vector.safeComponentInverse(replaceZerosWith: Double = 1.0): Vector = ConstantVector(map {
-    if (it == .0) replaceZerosWith else 1.0 / it
-})
-fun Vector.toSignature() = Signature.fromMap(map { it }.withIndex().associate { (i, v) -> i to v })
-fun Vector.toSignatureVector(): ScalableVector =
-    SignatureScalableVector(toSignature(), 1.0)
+fun Vector.safeComponentInverse(replaceZerosWith: Double = 1.0): Vector = DenseVector(indices.map {
+    val value = get(it)
+    if (value == .0) replaceZerosWith else 1.0 / value
+}.toDoubleArray())
+fun Vector.toSparseVector() = SparseVector.fromValues(indices.map {get(it)})
+fun Vector.toSparseScalableVector(): SparseScalableVector =
+    SparseScalableVector(toSparseVector(), 1.0)
 fun Vector.normalize(): NormalizedVector {
     val length = this.length()
-    return ConstantNormalizedVector(map { it / length })
+    return ConstantNormalizedVector(indices.map { get(it) / length })
 }
 /**
  * Guarantees that the entries of the vector are equal to 1 under euclidian norm, making it significantly easier to calculate
@@ -140,23 +186,5 @@ fun Collection<Vector>.sum(): Vector {
     return ConstantVector(result)
 }
 
-fun Collection<Vector>.sumSignature(): SignatureScalableVector {
-    if (isEmpty()) {
-        return SignatureScalableVector(
-            Signature.EMPTY,
-            1.0
-        )
-    }
-
-    val maxSize = maxOf { it.size }
-    val result = DoubleArray(maxSize + 1)
-
-    for (vector in this) {
-        for (i in 0 .. vector.size) {
-            result[i] += vector[i]
-        }
-    }
-
-    return SignatureScalableVector(Signature.fromValues(*result))
-}
-
+fun Vector.isRelevantFor(targetIndices: Collection<Int>) = targetIndices.any {get(it) != .0}
+fun Vector.toList() = indices.map { get(it) }
