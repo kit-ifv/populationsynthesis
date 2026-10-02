@@ -4,7 +4,6 @@ import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet
 import it.unimi.dsi.fastutil.ints.IntSet
 import it.unimi.dsi.fastutil.ints.IntSets
-import kotlin.math.abs
 
 /**
  * Tasked with mapping signatures to ints(read Signature index) and a lot of bijection

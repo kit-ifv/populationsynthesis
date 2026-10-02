@@ -1,78 +1,52 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
-import edu.kit.ifv.populationsynthesis.datastructures.Signature
-import edu.kit.ifv.populationsynthesis.datastructures.dot
-import edu.kit.ifv.populationsynthesis.datastructures.euclidianLength
-import edu.kit.ifv.populationsynthesis.datastructures.normalize
-import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
 
-interface ScalableOldVector : Vector {
-    var scalar: Double
-    val signature: Signature
-    override operator fun get(index: Int): Double = currentValueForIndex(index)
-    fun currentValueForIndex(index: Int): Double
-    fun attributeForIndex(index: Int): Double
-    fun appliesToRule(ruleIndex: Int): Boolean
+abstract class ScalableVector(
+    open var scalar: Double,
+    open val baseVector: Vector,
+): Vector {
 
-    fun attributeLength() = signature.euclideanLength()
-    override fun length() = attributeLength() * scalar
-//    override fun cosineSimilarity(other: Vector): Double {
-//        if(other is ScalableVector) {
-//            return signature.dot(other.signature)
-//        }
-//        return super.cosineSimilarity(other)
-//    }
+    abstract fun baseNormSquared(): Double
+    open fun baseDot(other: Vector): Double {
+        return baseVector.dot(other)
+    }
+    open fun baseDot(other: DoubleArray): Double {
+        return baseVector.dot(other)
+    }
+    override fun euclideanNormSquared(): Double {
+        return baseNormSquared() * scalar * scalar
+    }
+    override fun get(index: Int): Double {
+        return scalar * baseVector[index]
+    }
 
-    override fun dot(other: Vector): Double {
-        var acc = .0
+    override fun addScaledTo(destination: MutableVector, scalar: Double) {
+        return baseVector.addScaledTo(destination, scalar)
+    }
 
-        signature.forEachEntry { idx, value ->
-            acc += other[idx] * value * scalar
+    override fun length() = scalar * baseVector.length()
+    override fun isEmpty() = size == 0
+    override fun iterator(): DoubleIterator {
+        return object : DoubleIterator() {
+            private val baseIterator = baseVector.iterator()
+            private val scalar = this@ScalableVector.scalar
+            override fun nextDouble(): Double {
+                return baseIterator.nextDouble() * scalar
+            }
+
+            override fun hasNext(): Boolean {
+                return baseIterator.hasNext()
+            }
         }
-        return acc
     }
-
-    fun content() = indices.map { get(it) }
-
-//    fun highestIndex(): Int {
-//        return signature.maxKey + 1
-//    }
-//    override fun iterator(): DoubleIterator {
-//        return object : DoubleIterator() {
-//            private var index = 0
-//
-//            override fun hasNext(): Boolean {
-//                return index <= signature.maxKey
-//            }
-//
-//            override fun nextDouble(): Double {
-//                return currentValueForIndex(index++)
-//            }
-//        }
-//    }
-//    override val size get() = signature.maxKey + 1
-
     companion object {
-//        /**
-//         * creates a Scalable Vector for a target [element] based on the ruleset defined in [rules]
-//         */
-//        fun <T> createFromRules(element: T, rules: Collection<Rule<T>>): ArrayScalableVector {
-//            return createFromLogics(element, rules.map { it.logic })
-//        }
-//
-//        fun <T> createFromLogics(element: T, logics: Collection<Measurement<T>>): ArrayScalableVector {
-//            return ArrayScalableVector(logics.map { it.measure(element) })
-//        }
-//
-//        fun <T> createFrom(element: T, measurements: Collection<Measurement<T>>): ArrayScalableVector {
-//            return ArrayScalableVector(measurements.map { it.measure(element) })
-//        }
+        fun <T> createFromLogics(element: T, logics: Collection<Measurement<T>>): SparseScalableVector {
+            return SparseScalableVector(
+                scalar = 1.0,
+                SparseVector.fromValues(logics.map { it.measure(element) })
+            )
+        }
     }
+
 }
-
-
-
-
-
-

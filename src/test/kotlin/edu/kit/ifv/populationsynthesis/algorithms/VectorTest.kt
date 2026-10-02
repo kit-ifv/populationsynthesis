@@ -67,19 +67,23 @@ class VectorTest {
 
     @Test
     fun trivialCosineSimilarity() {
-        assertEquals(a.cosineSimilarity(a), 1.0, 0.00000001)
-        assertEquals(b.cosineSimilarity(b), 1.0, 0.00000001)
+        assertEquals(1.0, a.cosineSimilarity(a), 0.00000001)
+        assertEquals(1.0, b.cosineSimilarity(b), 0.00000001)
     }
 
     @Test
     fun cosineNaNs() {
-        assertEquals(a.cosineSimilarity(c), Double.NaN)
-        assertEquals(b.cosineSimilarity(c), Double.NaN)
-        assertEquals(c.cosineSimilarity(c), Double.NaN)
+        assertEquals(Double.NaN, a.cosineSimilarity(c))
+        assertEquals(Double.NaN, b.cosineSimilarity(c))
+        assertEquals(Double.NaN, c.cosineSimilarity(c))
 
-        assertEquals(c.cosineSimilarity(a), Double.NaN)
-        assertEquals(c.cosineSimilarity(b), Double.NaN)
-        assertEquals(c.cosineSimilarity(c), Double.NaN)
+        assertEquals(Double.NaN, c.cosineSimilarity(a))
+        assertEquals(Double.NaN, c.cosineSimilarity(b))
+        assertEquals(Double.NaN, c.cosineSimilarity(c))
     }
-
+    @Test
+    fun safeCosines() {
+        assertEquals(.0, c.safeCosineSimilarity(a))
+        assertEquals(1.0, a.cosineSimilarity(a), 0.00000001)
+    }
 }

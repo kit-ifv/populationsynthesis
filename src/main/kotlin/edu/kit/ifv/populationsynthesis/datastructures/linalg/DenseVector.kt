@@ -1,8 +1,8 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
 class DenseVector(
-    private val backingArray: DoubleArray,
-): MutableVector {
+    override val backingArray: DoubleArray,
+): MutableVector, ArrayBackedVector {
     // Force a single element, to disallow construction of a 0 element vector via convenience constructor
     constructor(number: Number, vararg values: Number): this((listOf(number.toDouble()) + values.map { it.toDouble() }).toDoubleArray())
     override fun set(index: Int, value: Double) {
@@ -28,7 +28,17 @@ class DenseVector(
             backingArray[idx] += value
         }
     }
-    operator fun minusAssign(other: DenseVector) {
+
+    override fun addScaledTo(
+        destination: MutableVector,
+        scalar: Double
+    ) {
+        backingArray.indices.forEach { i ->
+            destination[i] += scalar * backingArray[i]
+        }
+    }
+
+    operator fun minusAssign(other: Vector) {
         other.forEachNonZeroEntry { idx, value ->
             backingArray[idx] -= value
         }
@@ -41,6 +51,11 @@ class DenseVector(
         }
     }
 
+
+
+    override fun toString(): String {
+        return "V(${indices.map { get(it) }.joinToString()})"
+    }
 
 
 }

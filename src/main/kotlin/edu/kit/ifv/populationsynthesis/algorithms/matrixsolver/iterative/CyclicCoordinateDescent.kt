@@ -1,69 +1,76 @@
 package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
 
-import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.toVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.DenseVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.MutableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.sum
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
 
-class CyclicCoordinateDescent(
-    maxIter: Int = 1000,
-    maxDuration: Duration = 30.minutes,
-) : AbstractIterativeMatrixSolver<ResidualSolverState>(maxIter, maxDuration, SolverStateFactory { a, b ->
-    ResidualSolverState(b.toVector(), a.toList())
-}) {
-    override fun step(
-        state: ResidualSolverState,
-        iteration: Int
-    ) {
-        val vectors = state.vectors
-        vectors.forEach { vector ->
-            val scaling = state.leastSquaresScalar(vector)
-            val delta = scaling.coerceAtLeast(-vector.scalar)
-            vector.scalar += delta
-        }
-    }
 
-    override fun finish(state: ResidualSolverState) {
-        state.vectors.forEach { vector ->
-            vector.originalRef.scalar = vector.scalar
-        }
+interface ResidualState : SolverState {
+    override val vectors: List<ResidualSolverState.ProtectedScalableVector>
+    val residual: Vector
+    fun leastSquaresScalar(vector: ResidualSolverState.ProtectedScalableVector): Double {
+        val denominator = vector.baseNormSquared()
+        return (vector.baseDot(residual) / denominator)
     }
 }
 
 
-class ResidualSolverState(
+interface MutableResidualState : ResidualState, MutableSolverState {
+    companion object {
+
+    }
+}
+
+class ResidualSolverState constructor(
     override val target: Vector,
     initVectors: List<ScalableVector>
-) : MutableSolverState {
+) : MutableResidualState {
 
     override val vectors: List<ProtectedScalableVector> = initVectors.map {
-        ProtectedScalableVector(it)
+        ProtectedScalableVector(it, it.baseVector as SparseVector)
     }
 
     override val spawnMark: TimeSource.Monotonic.ValueTimeMark = TimeSource.Monotonic.markNow()
 
-    val residual: MutableVector =
-        (target - vectors.sum())
+
+    override val residual: Vector
+        field: DenseVector = (target - vectors.sum())
 
     var maxCoordinateChange: Double = Double.POSITIVE_INFINITY
 
-    fun leastSquaresScalar(vector: ScalableVector): Double {
-        val denominator = vector.baseNormSquared()
-        return (vector.baseDot(residual) / denominator)
-    }
+//    override fun leastSquaresScalar(vector: ScalableVector): Double {
+//        val denominator = vector.baseNormSquared()
+//        return (vector.baseDot(residual) / denominator)
+//    }
 
     private fun updateResidual(vector: Vector, delta: Double) {
-        vector.forEachNonZeroEntry { index, value ->
-            residual[index] -= value * delta
-        }
+        vector.addScaledTo(residual, -delta)
+//        vector.forEachNonZeroEntry { index, value ->
+//            residual[index] =
+//                residual[index] - value * delta
+//        }
     }
 
-    inner class ProtectedScalableVector(
-        val originalRef: ScalableVector
+    override fun finish() {
+        vectors.forEach { it.originalRef.scalar = it.scalar }
+    }
+
+    override fun leastSquaresScalar(vector: ProtectedScalableVector): Double {
+        val other = residual.backingArray
+        val baseDot = vector.baseDot(other)
+        val inverseBaseNormSquared = vector.inverseBaseNormSquared
+        return baseDot * inverseBaseNormSquared
+    }
+
+
+
+    inner class ProtectedScalableVector constructor(
+        val originalRef: ScalableVector,
+        override val baseVector: SparseVector,
     ) : ScalableVector(originalRef.scalar, originalRef.baseVector) {
         override var scalar: Double
             get() = super.scalar
@@ -71,23 +78,44 @@ class ResidualSolverState(
                 updateResidual(baseVector, delta = value - super.scalar)
                 super.scalar = value
             }
-
+        val inverseBaseNormSquared =
+            1.0 / baseVector.euclideanNormSquared()
+        val baseNormSquaredField = originalRef.baseVector.euclideanNormSquared()
         override fun baseNormSquared(): Double {
-            return originalRef.baseNormSquared()
+            return baseNormSquaredField
         }
 
         override fun baseDot(other: Vector): Double {
-            return originalRef.baseDot(other)
+            return baseVector.dot(other)
         }
 
         override fun baseDot(other: DoubleArray): Double {
-            return originalRef.baseDot(other)
+            return baseVector.dot(other)
         }
 
         override val size: Int get() = baseVector.size
 
         override fun iterator(): DoubleIterator {
-            TODO("Not yet implemented")
+            return object : DoubleIterator() {
+                private val baseIterator = baseVector.iterator()
+                private val scalar = this@ProtectedScalableVector.scalar
+                override fun nextDouble(): Double {
+                    return baseIterator.nextDouble() * scalar
+                }
+
+                override fun hasNext(): Boolean {
+                    return baseIterator.hasNext()
+                }
+            }
+        }
+
+        override fun toString(): String {
+            val accumulator = StringBuilder()
+            iterator().forEach {
+                accumulator.append(scalar * it)
+                accumulator.append(", ")
+            }
+            return "ProtectedScalableVector(=$accumulator)"
         }
     }
 }

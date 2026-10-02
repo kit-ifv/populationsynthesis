@@ -1,8 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.3.0"
+    kotlin("jvm") version "2.4.20"
     id("maven-publish")
     id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
     id("signing")
+    jacoco
 }
 
 group = "edu.kit.ifv.mobitopp"
@@ -44,11 +45,18 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
 kotlin {
     jvmToolchain(25)
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-parameters")
-    }
+//    compilerOptions {
+//        freeCompilerArgs.add("-Xcontext-parameters")
+//    }
 
 }
 

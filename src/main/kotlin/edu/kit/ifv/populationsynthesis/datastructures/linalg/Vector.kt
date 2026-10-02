@@ -6,7 +6,9 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 interface Vector {
-
+    /**
+     * The last dimension on this vector that has a nonzero element plus one, e
+     */
     val size: Int
     val indices get() = 0 until size
     operator fun get(index: Int): Double
@@ -25,6 +27,11 @@ interface Vector {
         return sqrt(euclideanNormSquared())
     }
 
+    fun addScaledTo(
+        destination: MutableVector,
+        scalar: Double,
+    )
+
     fun euclideanNormSquared(): Double {
         var acc = .0
         iterator().forEach {
@@ -32,7 +39,8 @@ interface Vector {
         }
         return acc
     }
-    fun euclideanLength() = euclideanNormSquared() / length()
+    // Just a t
+    fun euclideanLength() = length()
     /**
      * L1 on a vector
      */
@@ -50,13 +58,6 @@ interface Vector {
         }
         return acc
     }
-    operator fun times(scalar: Double): Vector {
-        val backingArray = DoubleArray(size)
-        for(i in indices) backingArray[i] = scalar * get(i)
-        return DenseVector(backingArray)
-    }
-
-
     fun cosineSimilarity(other: Vector): Double {
         return this.dot(other) / (this.length() * other.length())
     }
@@ -66,39 +67,69 @@ interface Vector {
         return if (cosine.isNaN()) 0.0 else cosine
     }
 
-    operator fun plus(other: Vector): MutableVector {
-        val result = DoubleArray(maxOf(size, other.size))
 
-        for (i in 0 until size) {
-            result[i] += this[i]
-        }
-
-        for (i in 0 until other.size) {
-            result[i] += other[i]
-        }
-
-        return DenseVector(result)
-    }
 
     fun forEachNonZeroEntry(action: (idx: Int, value: Double) -> Unit) {
         iterator().withIndex().forEach {
             action(it.index, it.value)
         }
     }
-
-    operator fun minus(other: Vector): MutableVector {
+    /*
+    Operators
+     */
+    operator fun plus(other: Vector): DenseVector {
         val result = DoubleArray(maxOf(size, other.size))
 
-        for (i in 0 until size) {
+        for (i in indices) {
             result[i] += this[i]
         }
 
-        for (i in 0 until other.size) {
+        for (i in other.indices) {
+            result[i] += other[i]
+        }
+
+        return DenseVector(result)
+    }
+    operator fun minus(other: Vector): DenseVector {
+        val result = DoubleArray(maxOf(size, other.size))
+
+        for (i in indices) {
+            result[i] += this[i]
+        }
+
+        for (i in other.indices) {
             result[i] -= other[i]
         }
 
         return DenseVector(result)
     }
+    operator fun unaryMinus(): MutableVector {
+        val result = DoubleArray(size)
+        for (i in indices) {
+            result[i] = -this[i]
+        }
+        return DenseVector(result)
+    }
+
+
+    operator fun times(scalar: Double): MutableVector {
+        val result = DoubleArray(size)
+        for (i in indices) {
+            result[i] = this[i] * scalar
+
+        }
+        return DenseVector(result)
+    }
+    operator fun div(scalar: Double): MutableVector {
+        if(scalar == .0) throw IllegalArgumentException("Division by zero cannot create a vector")
+        val result = DoubleArray(size)
+        for (i in indices) {
+            result[i] = this[i] / scalar
+
+        }
+        return DenseVector(result)
+    }
+
 
     fun isEmpty() = size == 0
 
@@ -137,53 +168,28 @@ fun Vector.safeComponentInverse(replaceZerosWith: Double = 1.0): Vector = DenseV
 fun Vector.toSparseVector() = SparseVector.fromValues(indices.map {get(it)})
 fun Vector.toSparseScalableVector(): SparseScalableVector =
     SparseScalableVector(toSparseVector(), 1.0)
-fun Vector.normalize(): NormalizedVector {
-    val length = this.length()
-    return ConstantNormalizedVector(indices.map { get(it) / length })
-}
-/**
- * Guarantees that the entries of the vector are equal to 1 under euclidian norm, making it significantly easier to calculate
- * certain operations
- */
-interface NormalizedVector: Vector
 
-
-fun Collection<Number>.asVector(): ConstantVector {
-    return ConstantVector(map { it.toDouble() })
-}
-
-fun Collection<Vector>.strictlyPositiveSum(): Vector {
-    if (isEmpty()) {
-        return ConstantVector(DoubleArray(0))
-    }
-
+fun Collection<Vector>.sum(): MutableVector {
     val maxSize = maxOf { it.size }
-    val result = DoubleArray(maxSize)
+    val backingArray = DoubleArray(maxSize)
+    val target = DenseVector(backingArray)
+    forEach {
+        target += it
+    }
+    return target
+}
 
-    for (vector in this) {
-        for (i in 0 until vector.size) {
-            result[i] += max(.0, vector[i])
+fun Collection<Vector>.strictlyPositiveSum(): MutableVector {
+    val maxSize = maxOf { it.size }
+    val backingArray = DoubleArray(maxSize)
+    val target = DenseVector(backingArray)
+    forEach { vector ->
+        (0 until maxSize).forEach { index ->
+            backingArray[index] += max(vector[index], .0)
+
         }
     }
-
-    return ConstantVector(result)
-}
-
-fun Collection<Vector>.sum(): Vector {
-    if (isEmpty()) {
-        return ConstantVector(DoubleArray(0))
-    }
-
-    val maxSize = maxOf { it.size }
-    val result = DoubleArray(maxSize)
-
-    for (vector in this) {
-        for (i in 0 until vector.size) {
-            result[i] += vector[i]
-        }
-    }
-
-    return ConstantVector(result)
+    return target
 }
 
 fun Vector.isRelevantFor(targetIndices: Collection<Int>) = targetIndices.any {get(it) != .0}

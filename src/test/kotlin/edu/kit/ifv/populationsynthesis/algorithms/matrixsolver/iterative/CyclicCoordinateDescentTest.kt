@@ -11,7 +11,7 @@ import kotlin.test.Test
 class CyclicCoordinateDescentTest {
     @Test
     fun testScenario() {
-        val ccd = CyclicCoordinateDescent()
+        val ccd = Solvers.CCD
         val a = Vector(1, 1).toSparseScalableVector()
         val b = Vector(1, 0).toSparseScalableVector()
         val c = Vector(1, -1).toSparseScalableVector()

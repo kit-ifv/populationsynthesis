@@ -66,6 +66,9 @@ class LogicIndexer<AREA, T> internal constructor(
     fun <T> toIndexedRule(rule: Rule<T>): IndexedRule<T> {
         return IndexedRule(rule = rule, index = getIndex(rule))
     }
+    fun <T> indexRules(rules: Collection<Rule<T>>): List<IndexedRule<T>> {
+        return rules.map { toIndexedRule(it) }
+    }
 
     companion object {
         fun <AREA, T> fromProvider(ruleProvider: RuleProvider<AREA, T>): LogicIndexer<AREA, T> {

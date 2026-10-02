@@ -10,6 +10,11 @@ class SparseScalableVector(
     constructor(signature: Signature, scalar: Double): this(
         scalar, signature.toSparseVector()
     )
+
+
+    constructor(scalar: Double, firstNumber: Number, vararg additionalNumbers: Number): this(
+        scalar, SparseVector.fromValues(firstNumber, *additionalNumbers)
+    )
     val baseNormSquared = baseVector.euclideanNormSquared()
     override fun baseNormSquared(): Double {
         return baseNormSquared
@@ -29,35 +34,9 @@ class SparseScalableVector(
         return scalar * baseVector[index]
     }
 
-    override fun iterator(): DoubleIterator {
-        TODO()
-    }
+
 
     override fun toString(): String {
         return "SparseScalingVector(scalar=$scalar, original=$baseVector)"
-    }
-}
-class DenseScalableVector(
-    scalar: Double,
-    original: DenseVector,
-): ScalableVector(scalar, original) {
-
-    constructor(vararg elements: Number): this(1.0, DenseVector(elements.map { it.toDouble() }.toDoubleArray()))
-    override fun baseNormSquared(): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun baseDot(other: Vector): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun baseDot(other: DoubleArray): Double {
-        TODO("Not yet implemented")
-    }
-
-    override val size: Int get() = baseVector.size
-
-    override fun iterator(): DoubleIterator {
-        TODO("Not yet implemented")
     }
 }

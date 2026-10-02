@@ -9,13 +9,13 @@ import edu.kit.ifv.populationsynthesis.datastructures.linalg.isRelevantFor
 import edu.kit.ifv.populationsynthesis.rules.IndexedRule
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.toScalableVector
+import edu.kit.ifv.populationsynthesis.synthesis.MatrixTask
 import edu.kit.ifv.populationsynthesis.utils.invertMap
-import java.nio.file.Path
 
 fun interface MatrixSolver {
 
     fun solve(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>)
-
+    fun solve(matrixTask: MatrixTask) = solve(matrixTask.vectors, matrixTask.observers)
     /**
      * THe most generic version of IPU does not care about unifying vectors. If you put in multiple identical vecotrs
      * well then thats on you. Returns the observed values and expected values.

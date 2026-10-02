@@ -8,7 +8,7 @@ interface IterativeMatrixSolver<S: SolverState> : MatrixSolver{
     fun initialize(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>): S
     fun iteration(state: S, iteration: Int)
     fun exitCriterion(state: S, iteration: Int): Boolean
-    fun finish(state: S)
+    fun finish(state: S) = state.finish()
     override fun solve(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>) {
         val solver = initialize(vectors, observers)
         var counter = 0

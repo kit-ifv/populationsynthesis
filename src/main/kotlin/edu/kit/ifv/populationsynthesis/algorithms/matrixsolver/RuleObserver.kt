@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver
 
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.ConstantVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.DenseVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
 import edu.kit.ifv.populationsynthesis.rules.Rule
@@ -138,7 +138,7 @@ abstract class RuleObserver(
 }
 
 fun Collection<RuleObserver>.toVector(): Vector {
-    return ConstantVector(map { it.expected }.toDoubleArray())
+    return DenseVector(map { it.expected }.toDoubleArray())
 }
 val RuleObserver.percentError get() = absoluteDifference / max(expected, 1.0)
 
