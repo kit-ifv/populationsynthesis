@@ -32,7 +32,7 @@ class HierarchicDistributionTest {
         val hierarchicRuleProvider = ruleProvider.withHierarchy(hierarchy)
         val ipu = HierarchicDistribution(
             ruleProvider = hierarchicRuleProvider,
-            seedHouseholds = listOf(Elements(Attr.A), Elements(Attr.B), Elements(Attr.C)),
+            seedElements = listOf(Elements(Attr.A), Elements(Attr.B), Elements(Attr.C)),
             config = HierarchicDistributionConfig(
 
                 matrixSolver = MatrixSolver.legacy,

@@ -1,19 +1,14 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.datastructures.Signature
-
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.PartitionMetric
-
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import org.jetbrains.annotations.TestOnly
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.fetchAndIncrement
 import kotlin.math.abs
-import kotlin.math.floor
 import kotlin.math.max
-import kotlin.math.min
-@Deprecated("Dont use old signature")
-typealias SignatureOld = Map<Int, Double>
+
 
 class Partition(
     private val expectedArray: DoubleArray,
@@ -45,8 +40,8 @@ class Partition(
     val error: Double = Double.MAX_VALUE
     fun isEmpty() = actual.all { it == 0.0 }
     fun isNotEmpty() = actual.any { it != 0.0 }
-    fun getExpecteds(signature: SignatureOld) = signature.keys.map { getExpected(it) }
-    fun getActuals(signature: SignatureOld) = signature.keys.map { getActual(it) }
+//    fun getExpecteds(signature: SignatureOld) = signature.keys.map { getExpected(it) }
+//    fun getActuals(signature: SignatureOld) = signature.keys.map { getActual(it) }
     fun verify() {
         val attributeCount = mutableMapOf<Int, Double>()
         _counts.zip(signatureTracker.signatures).map { (amount, signature) ->
@@ -68,19 +63,19 @@ class Partition(
         }
     }
 
-    fun calculateGain(signature: SignatureOld): Double {
-        return signature.entries.sumOf { (idx, factor) ->
-            val delta = max(getDelta(idx), 0.0)
-            -factor + min(factor, delta) * 2
-        }
-    }
-
-    fun calculateLoss(signature: SignatureOld): Double {
-        return signature.entries.sumOf { (idx, factor) ->
-            val delta = max(-getDelta(idx), 0.0)
-            -factor + min(factor, delta) * 2
-        }
-    }
+//    fun calculateGain(signature: SignatureOld): Double {
+//        return signature.entries.sumOf { (idx, factor) ->
+//            val delta = max(getDelta(idx), 0.0)
+//            -factor + min(factor, delta) * 2
+//        }
+//    }
+//
+//    fun calculateLoss(signature: SignatureOld): Double {
+//        return signature.entries.sumOf { (idx, factor) ->
+//            val delta = max(-getDelta(idx), 0.0)
+//            -factor + min(factor, delta) * 2
+//        }
+//    }
 
     fun count(signature: Signature): Int {
         return _counts[signatureTracker.findSignatureIndex(signature).index]

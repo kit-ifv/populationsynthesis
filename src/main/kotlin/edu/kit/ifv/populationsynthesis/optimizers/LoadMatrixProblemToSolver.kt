@@ -11,5 +11,6 @@ interface LoadMatrixProblemToSolver<EXTRA> {
     fun addVectorVariable(vector: Vector)
     fun addObserver(observer: RuleObserver)
     fun solve(): Pair<Map<Vector, Double>, EXTRA>
+    fun loadOriginalDistribution(originalDistribution: Map<out Vector, Double>) {}
     fun afterConfigHook() {}
 }

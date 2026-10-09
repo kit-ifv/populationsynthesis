@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
 
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state.ResidualSolverState
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseScalableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector

@@ -1,6 +1,8 @@
 package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
 
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state.MutableResidualState
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state.ObserverTrackingState
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes

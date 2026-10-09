@@ -26,5 +26,4 @@ class RuleObserverBuilderTest {
         val output = builder.build(A.A1, elements)
         output.forEach { assertTrue(it.sanityCheck()) }
     }
-
 }

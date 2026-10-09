@@ -1,14 +1,13 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
-import edu.kit.ifv.populationsynthesis.datastructures.toSparseVector
 
 class SparseScalableVector(
     scalar: Double,
     override val baseVector: SparseVector,
 ): ScalableVector(scalar, baseVector) {
     constructor(signature: Signature, scalar: Double): this(
-        scalar, signature.toSparseVector()
+        scalar, signature
     )
 
 

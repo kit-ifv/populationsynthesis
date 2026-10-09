@@ -138,7 +138,9 @@ abstract class RuleObserver(
 }
 
 fun Collection<RuleObserver>.toVector(): Vector {
-    return DenseVector(map { it.expected }.toDoubleArray())
+    val maxIndex = maxOf { it.observedIndex }
+    val lookup = associate {it.observedIndex to it.expected}
+    return DenseVector((0..maxIndex).map { lookup[it] ?:.0 }.toDoubleArray())
 }
 val RuleObserver.percentError get() = absoluteDifference / max(expected, 1.0)
 

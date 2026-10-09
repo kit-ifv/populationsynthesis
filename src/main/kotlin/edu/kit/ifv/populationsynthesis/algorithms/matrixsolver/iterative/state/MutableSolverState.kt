@@ -1,5 +1,6 @@
-package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
+package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state
 
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.SolverState
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.sum
 

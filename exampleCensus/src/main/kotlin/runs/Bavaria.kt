@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.runs
 
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.OptimizationSolver
-import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.ipu.CyclicIPU
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.Solvers
 import edu.kit.ifv.populationsynthesis.optimizers.ojalgo.OJSolverBuilder
 import kotlin.io.path.Path
 
@@ -11,7 +11,7 @@ fun main() {
 
     runConfig.execute {
         scenario = Scenario.BAVARIA
-        matrixSolver = CyclicIPU()
+        matrixSolver = Solvers.IPU
         outputPath = Path("output/PopulationBavaria.csv")
         verificationPath = Path("output/ExampleBavaria.csv")
     }

@@ -1,29 +1,11 @@
-package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
+package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state
 
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.DenseVector
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.MutableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.sum
 import kotlin.time.TimeSource
-
-
-interface ResidualState : SolverState {
-    override val vectors: List<ResidualSolverState.ProtectedScalableVector>
-    val residual: Vector
-    fun leastSquaresScalar(vector: ResidualSolverState.ProtectedScalableVector): Double {
-        val denominator = vector.baseNormSquared()
-        return (vector.baseDot(residual) / denominator)
-    }
-}
-
-
-interface MutableResidualState : ResidualState, MutableSolverState {
-    companion object {
-
-    }
-}
 
 class ResidualSolverState constructor(
     override val target: Vector,
@@ -40,19 +22,8 @@ class ResidualSolverState constructor(
     override val residual: Vector
         field: DenseVector = (target - vectors.sum())
 
-    var maxCoordinateChange: Double = Double.POSITIVE_INFINITY
-
-//    override fun leastSquaresScalar(vector: ScalableVector): Double {
-//        val denominator = vector.baseNormSquared()
-//        return (vector.baseDot(residual) / denominator)
-//    }
-
     private fun updateResidual(vector: Vector, delta: Double) {
         vector.addScaledTo(residual, -delta)
-//        vector.forEachNonZeroEntry { index, value ->
-//            residual[index] =
-//                residual[index] - value * delta
-//        }
     }
 
     override fun finish() {

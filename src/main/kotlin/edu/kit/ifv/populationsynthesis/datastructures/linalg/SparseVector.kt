@@ -1,7 +1,6 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
-import edu.kit.ifv.populationsynthesis.datastructures.Signatureold
 import kotlin.math.abs
 
 class SparseVector private constructor(
@@ -17,45 +16,29 @@ class SparseVector private constructor(
 
     val nonzeroIndices get() = indexArray.iterator()
 
+    val myLocalIndices = indexArray.indices
+
     override fun get(index: Int): Double {
-        for (i in indexArray.indices) if (indexArray[i] == index) return valueArray[i]
+        for (i in myLocalIndices) if (indexArray[i] == index) return valueArray[i]
         return 0.0
     }
 
     inline fun forEachEntry(action: (Int, Double) -> Unit) {
-        for (i in indexArray.indices) {
+        for (i in myLocalIndices) {
             action(indexArray[i], valueArray[i])
         }
     }
 
     override fun dot(other: Vector): Double {
 
-        return indexArray.indices.sumOf{ index ->
+        return myLocalIndices.sumOf{ index ->
             valueArray[index] * other[indexArray[index]]
         }
 
     }
 
     override fun dot(values: DoubleArray): Double {
-
-
-        val indices = indexArray
-        val sparseValues = valueArray
-        var result = 0.0
-        var i = 0
-
-        while (i < indices.size) {
-            val index = indices[i]
-            val sparseValue = sparseValues[i]
-            val denseValue = values[index]
-
-            result += sparseValue * denseValue
-
-            i++
-        }
-
-        return result
-        return indexArray.indices.sumOf{ index ->
+        return myLocalIndices.sumOf{ index ->
             valueArray[index] * values[indexArray[index]]
         }
 
@@ -66,7 +49,7 @@ class SparseVector private constructor(
     }
 
     override fun addScaledTo(destination: MutableVector, scalar: Double) {
-        indexArray.indices.forEach { index ->
+        myLocalIndices.forEach { index ->
 
             destination[indexArray[index]] += valueArray[index] * scalar
         }
@@ -103,7 +86,7 @@ class SparseVector private constructor(
     }
 
     override fun forEachNonZeroEntry(action: (Int, Double) -> Unit) {
-        indexArray.indices.forEach { action(indexArray[it], valueArray[it]) }
+        myLocalIndices.forEach { action(indexArray[it], valueArray[it]) }
     }
 
     fun mask(maskArray: BooleanArray): SparseVector {
@@ -131,10 +114,6 @@ class SparseVector private constructor(
     }
 
     companion object {
-        fun fromSignature(signature: Signatureold): SparseVector {
-            return SparseVector(signature.indexArray, signature.valueArray)
-        }
-
         fun fromValues(firstValue: Number, vararg values: Number): SparseVector {
             val values1 = (listOf(firstValue) + values).map { it.toDouble() }
             return fromValues(values1)

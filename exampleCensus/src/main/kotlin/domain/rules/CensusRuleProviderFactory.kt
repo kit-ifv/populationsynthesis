@@ -6,15 +6,26 @@ import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.rules.MutableRuleSet
 import edu.kit.ifv.populationsynthesis.rules.provider.MapRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
-import java.util.BitSet
 
-object RuleProviderFactory {
+object CensusRuleProviderFactory {
     private val demographyInfo: CensusDemographyRules = CensusDemographyRules.fromResource()
     private val householdInfo: CensusHouseholdRules = CensusHouseholdRules.fromResource()
     private val schoolInfo: CensusSchoolLevelRules = CensusSchoolLevelRules.fromResource()
     private val employmentStatusInfo: CensusEmploymentRules = CensusEmploymentRules.fromResource()
     private val schoolDegreeInfo: CensusHighestSchoolDegreeRules = CensusHighestSchoolDegreeRules.fromResource()
     val keys = demographyInfo.ageProvider.getAllRules().keys
+
+    fun censusProvider(): RuleProvider<ARSKey, CensusHousehold> {
+        return createRuleProvider {
+            loadFromOtherRuleProvider(demographyInfo.ageProvider)
+            loadFromOtherRuleProvider(demographyInfo.sexProvider)
+            loadFromOtherRuleProvider(householdInfo.sizeProvider)
+            loadFromOtherRuleProvider(householdInfo.seniorenTypProvider)
+            loadFromOtherRuleProvider(schoolInfo.genderedSchoolProvider)
+            loadFromOtherRuleProvider(employmentStatusInfo.genderedEmploymentProvider)
+            loadFromOtherRuleProvider(schoolDegreeInfo.genderedSchoolDegreeProvider)
+        }
+    }
 
     fun loadFlatProviderWithNumber(arsKey: ARSKey, number: Int): RuleProvider<ARSKey, CensusHousehold>  {
 

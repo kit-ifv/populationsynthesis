@@ -4,7 +4,7 @@ import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.Hierar
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.domain.population.Population
-import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
+import edu.kit.ifv.populationsynthesis.domain.rules.CensusRuleProviderFactory
 import edu.kit.ifv.populationsynthesis.evaluation.Verification
 import edu.kit.ifv.populationsynthesis.input.writeCsv
 import edu.kit.ifv.populationsynthesis.output.CensusHouseholdConverter
@@ -14,14 +14,14 @@ import kotlin.io.path.createParentDirectories
 fun main() {
     TODO("RESTORE Whatever was lost here")
     val hierarchy = HierarchyFactory.marneExample()
-    val rules = RuleProviderFactory.marneExample()
+    val rules = CensusRuleProviderFactory.marneExample()
     val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
     val population = Population.fromPersonInfo()
 
 
     val ipu = HierarchicDistribution(
         ruleProvider = hierarchicRuleProvider,
-        seedHouseholds = population.households,
+        seedElements = population.households,
         config = HierarchicDistributionConfig(
             // You can use different algorithms for the initial solution of the distribution algorithm.
 //            ipu = LeastSquareRegression,

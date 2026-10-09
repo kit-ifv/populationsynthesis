@@ -18,7 +18,7 @@ class ThreeLayerTest {
         val hierarchicProvider = ABCRuleProvider.withHierarchy(ABCGraph)
         val cRules = hierarchicProvider.getComposedRules(C.C1)
         assertEquals(6, cRules.size)
-        assertEquals(cRules.getValue("YesDescriptor(A)").target.toInt(), 1 + 4 + 5 + 7)
+        assertEquals(1 + 4 + 5 + 7, cRules.getValue("YesDescriptor(A)").target.toInt())
 
         val bRules = hierarchicProvider.getComposedRules(B.B1)
         assertEquals(4, bRules.size)
@@ -27,16 +27,16 @@ class ThreeLayerTest {
     @Test
     fun hierarchyResults() {
         val output = ABCGraph.groupByHighestAncestor(A.A1, A.A2)
-        assertEquals(output.keys.first(), C.C1)
-        assertEquals(output.values.first(), setOf(A.A1, A.A2, B.B1, C.C1))
+        assertEquals(C.C1, output.keys.first())
+        assertEquals(setOf(A.A1, A.A2, B.B1, C.C1), output.values.first())
     }
 
     @Test
     fun forestResults() {
         val output = ABCGraph.groupByHighestAncestor(A.A1, A.A5)
-        assertEquals(output.size, 2)
-        assertEquals(output[C.C1]!!, setOf(A.A1, B.B1, C.C1))
-        assertEquals(output[C.C2]!!, setOf(A.A5, B.B3, C.C2))
+        assertEquals(2, output.size)
+        assertEquals(setOf(A.A1, B.B1, C.C1), output[C.C1]!!)
+        assertEquals(setOf(B.B3, A.A5, C.C2), output[C.C2]!!)
     }
 
     @Test
@@ -51,8 +51,8 @@ class ThreeLayerTest {
         }.withHierarchy(graph)
 
         val rules = duplicatedRuleProvider.getComposedRules(B.B1)
-        assertEquals(rules.size, 4)
-        assertNotEquals(rules.getValue("YesDescriptor(A)").target.toInt(), 7)
+        assertEquals(4, rules.size)
+        assertNotEquals(7, rules.getValue("YesDescriptor(A)").target.toInt())
     }
 
     @Test
@@ -72,8 +72,8 @@ class ThreeLayerTest {
     @Test
     fun levels() {
         val output = ABCGraph.levels(C.C1).toList()
-        assertEquals(output[0], setOf(C.C1))
-        assertEquals(output[1], setOf(B.B1, B.B2))
-        assertEquals(output[2], setOf(A.A1, A.A2, A.A3, A.A4))
+        assertEquals(setOf(C.C1), output[0])
+        assertEquals(setOf(B.B1, B.B2), output[1])
+        assertEquals(setOf(A.A1, A.A2, A.A3, A.A4), output[2])
     }
 }

@@ -4,24 +4,27 @@ import edu.kit.ifv.populationsynthesis.algorithms.rounding.RoundingStrategy
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
+import edu.kit.ifv.populationsynthesis.synthesis.HierarchicResourceTaskProvider
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
+import edu.kit.ifv.populationsynthesis.synthesis.MatrixTaskProvider
 
 class HierarchicDistribution<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, in T>,
-    val seedHouseholds: Collection<T>,
+    val seedElements: Collection<T>,
+    val matrixTaskProvider: MatrixTaskProvider<AREA, T> = HierarchicResourceTaskProvider(seedElements, ruleProvider),
     val config: HierarchicDistributionConfig = HierarchicDistributionConfig()
 ) : HierarchicSynthesis<AREA, T>(ruleProvider) {
 
 
     private val allRuleLogics = LogicIndexer.fromProvider(ruleProvider)
-    private val householdMapping = initializeHouseholdMapping()
+    private val householdMapping = initializeElementMapping()
     init {
         require(householdMapping.keys.none { it.isEmpty() }) {
             "This is not a valid signature state"
         }
     }
-    private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
-        val groupBy: Map<Signature?, List<T>> = seedHouseholds.groupBy { element ->
+    private fun initializeElementMapping(): Map<Signature, List<T>> {
+        val groupBy: Map<Signature?, List<T>> = seedElements.groupBy { element ->
             allRuleLogics.createSignature(element)
 
 
@@ -37,19 +40,12 @@ class HierarchicDistribution<AREA, T>(
      * According to whatever other strategy is present.
      */
     fun initialSolution(target: AREA): List<SignatureAmount> {
-        val rules = ruleProvider.getComposedRules(target)
-        val matrixSolution = config.matrixSolver.sigCalcAct(
-            householdMapping,
-            rules.map { allRuleLogics.toIndexedRule(it) },
-            config.initialVectorCallback,
-            config.matrixSolutionCallback
-        )
+        val matrixTask = matrixTaskProvider[target]
 
-        val integerIPUResult = RoundingStrategy.cumulative.integerizeMatrixOutput(matrixSolution)
-
-//        rules.verify(integerIPUResult)
-        // TODO would be nice to see how much the integerization causes the initial solution quality to drop.
-        val sigs = integerIPUResult.map { (element, amount) ->
+        config.matrixSolver.solve(matrixTask)
+        val matrixSolution = matrixTask.extractSolution()
+        val integerMatrixResult = config.roundingStrategy.integerizeMatrixTask(matrixTask)
+        val sigs = integerMatrixResult.map { (element, amount) ->
             SignatureAmount(element, amount)
         }
 

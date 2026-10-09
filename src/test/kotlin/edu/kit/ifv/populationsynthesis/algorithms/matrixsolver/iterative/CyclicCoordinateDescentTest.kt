@@ -11,7 +11,9 @@ import kotlin.test.Test
 class CyclicCoordinateDescentTest {
     @Test
     fun testScenario() {
-        val ccd = Solvers.CCD
+        val ccd = Solvers.cyclicCoordinateDescent {
+            stateFactory = SolverStateFactory.noNormalization
+        }
         val a = Vector(1, 1).toSparseScalableVector()
         val b = Vector(1, 0).toSparseScalableVector()
         val c = Vector(1, -1).toSparseScalableVector()
@@ -34,7 +36,6 @@ class CyclicCoordinateDescentTest {
         assertEquals(.0, state.leastSquaresScalar(state.vectors.first()))
         assertEquals(2.5, state.leastSquaresScalar(state.vectors[1]))
         assertEquals(2.5, state.leastSquaresScalar(state.vectors[2]))
-
 
     }
 }

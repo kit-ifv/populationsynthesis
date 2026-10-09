@@ -18,7 +18,6 @@ class OriginalDistributor<AREA, T>(
 
 
     override fun distribute(
-
         initialSolution: List<SignatureAmount>,
         rootArea: AREA
     ): Map<AREA, List<T>> {

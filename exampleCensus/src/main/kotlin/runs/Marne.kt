@@ -2,22 +2,27 @@ package edu.kit.ifv.populationsynthesis.runs
 
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
-import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.ipu.CyclicIPU
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.Solvers
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.toVector
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.withCallback
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.sum
 import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.domain.population.Population
-import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
+import edu.kit.ifv.populationsynthesis.domain.rules.CensusRuleProviderFactory
 import edu.kit.ifv.populationsynthesis.evaluation.Verification
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.input.writeCsv
 import edu.kit.ifv.populationsynthesis.output.CensusHouseholdConverter
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
+import edu.kit.ifv.populationsynthesis.synthesis.HierarchicResourceTaskProvider
+import edu.kit.ifv.populationsynthesis.synthesis.InitializeVectorScalars
+import edu.kit.ifv.populationsynthesis.synthesis.MatrixTask
+import edu.kit.ifv.populationsynthesis.synthesis.withCallback
 import edu.kit.ifv.populationsynthesis.utils.NumericProbabilityDistribution
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -27,7 +32,7 @@ import kotlin.math.max
 fun main() {
     val runConfig = RunConfig(
         scenario = Scenario.MARNE,
-        matrixSolver = CyclicIPU(),
+        matrixSolver = Solvers.IPU,
         outputPath = Path("output/PopulationMarne.csv"),
         verificationPath = Path("output/ExampleMarne.csv"),
 
@@ -37,12 +42,12 @@ fun main() {
 
 
 }
-typealias MatrixSolutionCallback = (Collection<ScalableVector>, Collection<RuleObserver>) -> Unit
+typealias MatrixSolutionCallback = (MatrixTask) -> Unit
 typealias InitialVectorCallback = (List<ScalableVector>) -> Unit
 
 data class RunConfig(
     var scenario: Scenario = Scenario.MARNE,
-    var matrixSolver: MatrixSolver = CyclicIPU(),
+    var matrixSolver: MatrixSolver = Solvers.IPU,
     var population: Population = Population.fromPersonInfo(),
     var verificationPath: Path? = null,
     var outputPath: Path? = null,
@@ -63,14 +68,17 @@ data class RunConfig(
         val hierarchy = scenario.spawnHierarchy()
         val rules = scenario.spawnRuleProvider()
         val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
-
+        val matrixTaskProvider = HierarchicResourceTaskProvider(
+            population.households,
+            hierarchicRuleProvider,
+            scalarInitializer = InitializeVectorScalars.byNormalizedElementCount.withCallback(initialVectorCallback)
+        )
         val algorithm = HierarchicDistribution(
             ruleProvider = hierarchicRuleProvider,
-            seedHouseholds = population.households,
+            seedElements = population.households,
+            matrixTaskProvider = matrixTaskProvider,
             config = HierarchicDistributionConfig(
-                matrixSolver = matrixSolver,
-                initialVectorCallback = initialVectorCallback,
-                matrixSolutionCallback = matrixSolutionCallback
+                matrixSolver = matrixSolver.withCallback(matrixSolutionCallback),
             )
         )
 
@@ -115,16 +123,15 @@ class SolutionWriteToFile(val path: Path) {
 enum class PredefinedCallbacks {
     NONE {
         override fun callback(
-            vectors: Collection<ScalableVector>,
-            observers: Collection<RuleObserver>
+            task: MatrixTask,
         ) {
         }
     },
     PRINT {
         override fun callback(
-            vectors: Collection<ScalableVector>,
-            observers: Collection<RuleObserver>
+            task: MatrixTask,
         ) {
+            val (vectors, observers) = task
             val message = vectors.sum()
             val target = observers.toVector()
             val diff = target - message
@@ -147,13 +154,13 @@ enum class PredefinedCallbacks {
         }
     };
 
-    abstract fun callback(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>)
+    abstract fun callback(task: MatrixTask)
 }
 
 enum class Scenario {
     MARNE() {
         override fun spawnHierarchy(): HierarchicElement<ARSKey> = HierarchyFactory.marneExample()
-        override fun spawnRuleProvider(): RuleProvider<ARSKey, CensusHousehold> = RuleProviderFactory.marneExample()
+        override fun spawnRuleProvider(): RuleProvider<ARSKey, CensusHousehold> = CensusRuleProviderFactory.marneExample()
     },
     BAVARIA() {
         override fun spawnHierarchy(): HierarchicElement<ARSKey> {
@@ -161,7 +168,7 @@ enum class Scenario {
         }
 
         override fun spawnRuleProvider(): RuleProvider<ARSKey, CensusHousehold> {
-            return RuleProviderFactory.bavaria()
+            return CensusRuleProviderFactory.bavaria()
         }
 
     };
