@@ -10,7 +10,7 @@ class HierarchicalExhaustiveRuleProvider<AREA, T>(
     val ruleProvider: ExhaustiveRuleProvider<AREA, T>,
     override val composer: HierarchyRuleComposer<AREA, T>,
 ) : ExhaustiveRuleProvider<AREA, T>(), HierarchicRuleProvider<AREA, T> {
-
+    override val keys: Set<AREA> get() = ruleProvider.keys
     override fun getAllRules(): Map<AREA, RuleSet<T>> {
         return ruleProvider.getAllRules()
     }

@@ -22,9 +22,12 @@ data class PersonInfo(
     @field:JsonProperty("birthyear")
     val birthYear: Int,
     val sex: Sex,
-
-
+    @field:JsonProperty("employmentType")
+    val employmentTypeCode: Int,
+    @field:JsonProperty("graduation")
+    val graduationCode: Int,
     ) {
+
     /**
      *  This method serves to convert the [PersonInfo] object to a [edu.kit.ifv.populationsynthesis.domain.population.CensusPerson]. Because in this version
      *  we decided to keep the Person info types as raw as possible, without any coding encoding or similar stuff
@@ -33,7 +36,9 @@ data class PersonInfo(
     fun toCensusPerson(): CensusPerson {
         return CensusPerson(
             age = year - birthYear,
-            sex = sex
+            sex = sex,
+            employment = Employment.decode(employmentTypeCode),
+            graduationCode = graduationCode
         )
     }
 
@@ -44,5 +49,32 @@ data class PersonInfo(
             return parseResource<PersonInfo>(CensusDemographyRules::class.java, resourceName)
         }
 
+    }
+}
+
+enum class Employment(val code: Int)  {
+    UNKNOWN(-1),
+    FULLTIME(1),
+    PARTTIME(2),
+    MARGINAL(22),
+    UNEMPLOYED(3),
+    STUDENT(4),
+    STUDENT_PRIMARY(40),
+    STUDENT_SECONDARY(41),
+    STUDENT_TERTIARY(42),
+    EDUCATION(5),
+    HOMEKEEPER(6),
+    RETIRED(7),
+    INFANT(8),
+    NONE(9),
+    ;
+
+    val description: String = name
+
+    fun isStudent() = this.code in studentCodes
+
+    companion object  {
+        fun decode(int: Int) = Employment.entries.first { it.code == int }
+        private val studentCodes = setOf(4, 40, 41, 42)
     }
 }

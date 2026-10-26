@@ -1,0 +1,21 @@
+package edu.kit.ifv.populationsynthesis.systemtests
+
+import edu.kit.ifv.populationsynthesis.systemtests.households.AgeRules
+import org.junit.jupiter.api.Assertions.assertEquals
+import kotlin.test.Test
+
+class MeasurementTest {
+    @Test
+    fun test() {
+        val ruleSpawner = AgeRules(10, 18, 66)
+        val ruleContributions = ruleSpawner.generateAllDescriptions()
+        assertEquals(4, ruleContributions.size)
+
+        val otherSpawner = AgeRules(10, 18, 66)
+        val otherContributions = otherSpawner.generateAllDescriptions()
+        assertEquals(ruleContributions[0], otherContributions[0])
+        assertEquals(ruleContributions[1], otherContributions[1])
+        assertEquals(ruleContributions[2], otherContributions[2])
+        assertEquals(ruleContributions[3], otherContributions[3])
+    }
+}

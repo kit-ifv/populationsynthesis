@@ -1,5 +1,5 @@
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
-import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
+import edu.kit.ifv.populationsynthesis.domain.rules.CensusRuleProviderFactory
 import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
 import edu.kit.ifv.populationsynthesis.rules.measurements.PersonAgeDefinition
 import edu.kit.ifv.populationsynthesis.rules.measurements.asHouseholdDefinition
@@ -11,7 +11,7 @@ class HierarchicRuleProviderTest {
     fun runTest() {
         val hierarchy = HierarchyFactory.marneExample()
 
-        val hierarchicRuleProvider = RuleProviderFactory.marneExample().withHierarchy(hierarchy)
+        val hierarchicRuleProvider = CensusRuleProviderFactory.marneExample().withHierarchy(hierarchy)
 
         val rules = hierarchicRuleProvider.getComposedRules(ARSKey.MARNE_NORDSEE)
         val output = rules[PersonAgeDefinition(0..2).asHouseholdDefinition().createNamedMeasurement().identifier]

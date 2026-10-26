@@ -53,7 +53,7 @@ val module = SimpleModule().apply {
  *
  */
 
-internal val standardMapper: ObjectMapper = CsvMapper().registerKotlinModule().registerModule(module)
+val standardMapper: ObjectMapper = CsvMapper().registerKotlinModule().registerModule(module)
 
 /**
  * Standard schema used for reading our census CSV files.
@@ -65,8 +65,8 @@ internal val standardMapper: ObjectMapper = CsvMapper().registerKotlinModule().r
  * - [com.fasterxml.jackson.dataformat.csv.CsvSchema.withColumnSeparator] sets `';'` as separator.
  *
  */
-internal val standardSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';')
-internal inline fun <reified T> standardParse(path: Path): List<T> =
+val standardSchema = CsvSchema.emptySchema().withHeader().withColumnSeparator(';')
+inline fun <reified T> standardParse(path: Path): List<T> =
     path.toFile().inputStream().use { standardParse<T>(it) }
 
 /**
@@ -91,7 +91,7 @@ internal inline fun <reified T> standardParse(path: Path): List<T> =
  * - Flatten a nested object into multiple columns (e.g. `area_id`, `area_name`, ...).
  *
  */
-internal inline fun <reified T> standardParse(input: InputStream): List<T> {
+inline fun <reified T> standardParse(input: InputStream): List<T> {
     return standardMapper
         .readerFor(T::class.java)
         .with(standardSchema).readValues<T>(input)

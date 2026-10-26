@@ -4,6 +4,7 @@ import edu.kit.ifv.populationsynthesis.domain.area.ARSKey
 import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.input.rules.CensusHouseholdData
 import edu.kit.ifv.populationsynthesis.input.parseResource
+import edu.kit.ifv.populationsynthesis.rules.HHSeniorityRuleFactory
 import edu.kit.ifv.populationsynthesis.rules.HHSizeRuleFactory
 import edu.kit.ifv.populationsynthesis.rules.provider.ExhaustiveRuleProvider
 
@@ -31,7 +32,7 @@ class CensusHouseholdRules(
     }
 
     val seniorenTypProvider:  ExhaustiveRuleProvider<ARSKey, CensusHousehold> by lazy {
-        TODO()
+        buildExhaustiveProvider(HHSeniorityRuleFactory::build)
 
     }
 

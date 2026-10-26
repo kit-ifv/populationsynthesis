@@ -1,16 +1,13 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.Signature
-import edu.kit.ifv.populationsynthesis.SignatureOld
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.PartitionMetric
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import org.jetbrains.annotations.TestOnly
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.fetchAndIncrement
 import kotlin.math.abs
-import kotlin.math.floor
 import kotlin.math.max
-import kotlin.math.min
 
 
 class Partition(
@@ -43,12 +40,12 @@ class Partition(
     val error: Double = Double.MAX_VALUE
     fun isEmpty() = actual.all { it == 0.0 }
     fun isNotEmpty() = actual.any { it != 0.0 }
-    fun getExpecteds(signature: SignatureOld) = signature.keys.map { getExpected(it) }
-    fun getActuals(signature: SignatureOld) = signature.keys.map { getActual(it) }
+//    fun getExpecteds(signature: SignatureOld) = signature.keys.map { getExpected(it) }
+//    fun getActuals(signature: SignatureOld) = signature.keys.map { getActual(it) }
     fun verify() {
         val attributeCount = mutableMapOf<Int, Double>()
         _counts.zip(signatureTracker.signatures).map { (amount, signature) ->
-            signature.entries.forEach { (key, value) ->
+            signature.forEachEntry  { key, value ->
                 val currentValue = attributeCount.getOrPut(key) { 0.0 }
                 attributeCount[key] = currentValue + amount * value
             }
@@ -66,19 +63,19 @@ class Partition(
         }
     }
 
-    fun calculateGain(signature: SignatureOld): Double {
-        return signature.entries.sumOf { (idx, factor) ->
-            val delta = max(getDelta(idx), 0.0)
-            -factor + min(factor, delta) * 2
-        }
-    }
-
-    fun calculateLoss(signature: SignatureOld): Double {
-        return signature.entries.sumOf { (idx, factor) ->
-            val delta = max(-getDelta(idx), 0.0)
-            -factor + min(factor, delta) * 2
-        }
-    }
+//    fun calculateGain(signature: SignatureOld): Double {
+//        return signature.entries.sumOf { (idx, factor) ->
+//            val delta = max(getDelta(idx), 0.0)
+//            -factor + min(factor, delta) * 2
+//        }
+//    }
+//
+//    fun calculateLoss(signature: SignatureOld): Double {
+//        return signature.entries.sumOf { (idx, factor) ->
+//            val delta = max(-getDelta(idx), 0.0)
+//            -factor + min(factor, delta) * 2
+//        }
+//    }
 
     fun count(signature: Signature): Int {
         return _counts[signatureTracker.findSignatureIndex(signature).index]
@@ -136,14 +133,16 @@ class Partition(
      */
     fun untilFlagChange(sigIdx: Int, searchDirection: Int): Int {
         val sig = signatureTracker[sigIdx]
-        val minAmountMoves = sig.entries.minOf { (k, v) ->
-            // positive diff means i need that signature
-            val diff = (expectedArray[k] - _actual[k]) * searchDirection
-
-            val intDiv = diff / v
-            if (intDiv >= 0) floor(intDiv).toInt() else Int.MAX_VALUE
-        }
-        return max(1, minAmountMoves)
+        // Gotta be replaced with sig.forEachEntry min
+//        val minAmountMoves = sig.entries.minOf { (k, v) ->
+//            // positive diff means i need that signature
+//            val diff = (expectedArray[k] - _actual[k]) * searchDirection
+//
+//            val intDiv = diff / v
+//            if (intDiv >= 0) floor(intDiv).toInt() else Int.MAX_VALUE
+//        }
+//        return max(1, minAmountMoves)
+        return TODO()
     }
 
     fun indexDelta(sigIdx: Int, amount: Int) {
@@ -173,14 +172,16 @@ class Partition(
     }
 
     private val _signatures = signatureTracker.signatures.map { signature ->
-        signature.filterKeys { mask[it] }
+        signature.mask(mask)
     }.toTypedArray()
 
     private fun resolve(sigIdx: Int): Signature = _signatures[sigIdx]
     private fun updateActual(sigIndex: Int, delta: Int) {
         val signature = resolve(sigIndex)
-        signature.filter { (key, _) -> mask[key] }.forEach { (k, v) ->
-            _actual[k] += v * delta
+        signature.forEachEntry { index, value ->
+            if(mask[index]) {
+                _actual[index] += value * delta
+            }
         }
     }
 

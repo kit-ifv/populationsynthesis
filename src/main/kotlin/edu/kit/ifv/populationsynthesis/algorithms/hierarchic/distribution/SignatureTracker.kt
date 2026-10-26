@@ -1,10 +1,9 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet
 import it.unimi.dsi.fastutil.ints.IntSet
 import it.unimi.dsi.fastutil.ints.IntSets
-import kotlin.math.abs
 
 /**
  * Tasked with mapping signatures to ints(read Signature index) and a lot of bijection
@@ -15,7 +14,7 @@ class SignatureTracker(
     amountOfAttributes: Int
 ) {
 
-    val indices = signatures.indices
+    val indices get()= signatures.indices
     private val signatureIndexMapper = signatures.withIndex().associate {
         it.value to SignatureIndex(
             it.index
@@ -26,19 +25,20 @@ class SignatureTracker(
 
     /**
      * The largest shift that can occur in a target region by receiving 1 signature.
+     * Thats just l1 ........
      */
-    val largestDelta = signatures.maxOf { it.values.sumOf { abs(it) } }
+    val largestDelta = signatures.maxOf { it.manhattanNorm() }
 
     val largestDifference = 2 * largestDelta
 
-    val largestDeltaPartition = signatures.maxBy { it.values.sumOf { abs(it) } }
+    val largestDeltaPartition = signatures.maxOf { it.manhattanNorm() }
 
     init {
-        require(amountOfAttributes == signatures.maxOf { it.maxKey } + 1) {
+        require(amountOfAttributes == signatures.maxOf { it.size }) {
             "The highest key is the last attribute that is referenced by the signatures."
         }
         signatures.withIndex().forEach { (i, sig) ->
-            sig.keys.forEach { key ->
+            sig.nonzeroIndices.forEach { key ->
                 inverseIndices[key].add(i)
             }
         }

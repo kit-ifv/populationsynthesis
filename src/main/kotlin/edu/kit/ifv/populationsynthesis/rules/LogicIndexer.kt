@@ -1,14 +1,18 @@
 package edu.kit.ifv.populationsynthesis.rules
 
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.Partition
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.SignatureTracker
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
+import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
 /**
  * Provide fast access to check whether an area has a rule for a given logic. RuleProvider usually returns the
  * entire bulk of rules, which is cumbersome to operate upon. Does not contain composition strategy or anything
- * like that.
+ * like that - just registered rules and their index.
  */
 class LogicIndexer<AREA, T> internal constructor(
     logicTranslation: Map<LogicIdentifier, Measurement<T>>,
@@ -31,7 +35,7 @@ class LogicIndexer<AREA, T> internal constructor(
         }
         if (indexedMeasures.isEmpty() || indexedMeasures.values.all { it == 0.0 })
             return null
-        return Signature.fromMap(indexedMeasures)
+        return SparseVector.fromMap(indexedMeasures)
     }
 
     fun getIndex(rule: Rule<*>): Int {
@@ -64,6 +68,28 @@ class LogicIndexer<AREA, T> internal constructor(
 
     fun <T> toIndexedRule(rule: Rule<T>): IndexedRule<T> {
         return IndexedRule(rule = rule, index = getIndex(rule))
+    }
+    fun <T> indexRules(rules: Collection<Rule<T>>): List<IndexedRule<T>> {
+        return rules.map { toIndexedRule(it) }
+    }
+
+
+    fun createPartition(
+        target: AREA,
+        signatureTracker: SignatureTracker,
+        ruleProvider: HierarchicRuleProvider<AREA, *>): Partition {
+        val rules = ruleProvider.getComposedRules(target)
+        val expectedValues = rules.associate {
+            getIndex(it) to it.target
+        }
+        val targetArray = DoubleArray(size) { 0.0 }
+        val maskArray = BooleanArray(size) { false }
+        expectedValues.forEach { (index, target) ->
+            targetArray[index] = target
+            maskArray[index] = true
+
+        }
+        return Partition(targetArray, signatureTracker, maskArray)
     }
 
     companion object {

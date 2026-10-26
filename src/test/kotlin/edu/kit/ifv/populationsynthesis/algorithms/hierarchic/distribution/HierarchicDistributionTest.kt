@@ -1,6 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchyGraphFactory
 import edu.kit.ifv.populationsynthesis.rules.Rule
 import edu.kit.ifv.populationsynthesis.rules.measurement.NamedMeasurement
@@ -30,16 +30,12 @@ class HierarchicDistributionTest {
             addVertex(2)
         }
         val hierarchicRuleProvider = ruleProvider.withHierarchy(hierarchy)
-        val callbackCollector = mutableListOf<Boolean>() // To check whether the callback function is triggered properly
         val ipu = HierarchicDistribution(
             ruleProvider = hierarchicRuleProvider,
-            seedHouseholds = listOf(Elements(Attr.A), Elements(Attr.B), Elements(Attr.C)),
+            seedElements = listOf(Elements(Attr.A), Elements(Attr.B), Elements(Attr.C)),
             config = HierarchicDistributionConfig(
 
-                ipu = GenericIPU.legacy,
-                ipuCalculationCallback = {
-                    callbackCollector.add(it.amountOfZeroVectors > 0)
-                }
+                matrixSolver = MatrixSolver.legacy,
             )
         )
 
@@ -47,8 +43,8 @@ class HierarchicDistributionTest {
         val output = ipu.synthesizeAll()
 
 
-        assertEquals(output[1]!!.size, 30)
-        assertEquals(output[2]!!.size, 10)
+        assertEquals(30, output[1]!!.size)
+        assertEquals(10, output[2]!!.size)
         assertFalse(output[2]!!.contains(Elements(Attr.B)))
         assertFalse(output[2]!!.contains(Elements(Attr.C)))
 

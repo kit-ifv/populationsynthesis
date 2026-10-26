@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules.provider
 
-import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
-import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.Rule
@@ -18,7 +18,6 @@ interface RuleProvider<AREA,  T> {
     fun getAllRules(): Map<AREA, RuleSet<T>>
 
     operator fun get(target: AREA, logicIdentifier: LogicIdentifier): Rule<T>?
-
     /**
      * Link this rule provider with a [HierarchicElement] to generate a [HierarchicRuleProvider].
      * Will construct a fresh rule provider from scratch and copy rules from this into the new provider
@@ -31,7 +30,7 @@ interface RuleProvider<AREA,  T> {
             ruleProvider.addRules(area, rules)
         }
 
-        val missingNodes = hierarchy.getAllVertices() - getAllRules().keys
+        val missingNodes = hierarchy.getAllVertices() - keys
         missingNodes.forEach {
             ruleProvider.addRules(it, emptyList())
         }

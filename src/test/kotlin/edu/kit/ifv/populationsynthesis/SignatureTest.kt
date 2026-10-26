@@ -1,23 +1,26 @@
 package edu.kit.ifv.populationsynthesis
 
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.hasKey
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.isRelevantForIndices
 import kotlin.test.*
 
 class SignatureTest {
 
-    private val signature = Signature(intArrayOf(0, 2, 4), doubleArrayOf(1.0, 2.0, 3.0))
+    private val signature = Signature.fromValues(1, 0, 2, 0, 3)
 
     @Test
     fun testFiltering() {
         val mask = booleanArrayOf(false, false, true, false, false)
-        val filteredSignature = signature.filterKeys { mask[it] }
-        assertContentEquals(filteredSignature.keys, listOf(2))
-        assertContentEquals(filteredSignature.values, listOf(2.0))
+        val filteredSignature = signature.mask(mask)
+        assertContentEquals(filteredSignature.indexArray.toList(), listOf(2))
+        assertContentEquals(filteredSignature.valueArray.toList(), listOf(2.0))
     }
 
     @Test
     fun testRelevancy() {
-        assertTrue(signature.isRelevantFor(setOf(0)))
-        assertFalse(signature.isRelevantFor(setOf(1)))
+        assertTrue(signature.isRelevantForIndices(setOf(0)))
+        assertFalse(signature.isRelevantForIndices(setOf(1)))
     }
 
     @Test
@@ -28,8 +31,8 @@ class SignatureTest {
 
     @Test
     fun testAccess() {
-        assertEquals(signature[4], 3.0)
-        assertEquals(signature[3], 0.0)
+        assertEquals(3.0, signature[4])
+        assertEquals(0.0, signature[3])
     }
 
     @Test

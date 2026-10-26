@@ -1,9 +1,9 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.GenericCollector
-import edu.kit.ifv.populationsynthesis.Signature
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
+import edu.kit.ifv.populationsynthesis.algorithms.sampling.ListSampler
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.hierarchy.HierarchicElement
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
@@ -12,24 +12,23 @@ class OriginalDistributor<AREA, T>(
     private val ruleProvider: HierarchicRuleProvider<AREA, in T>,
     private val logicIndexer: LogicIndexer<AREA, in T>,
     private val householdMapping: Map<Signature, List<T>>,
-    private val initialDistribution: InitialSignatureDistributor = GreedyDistribution()
+    private val sampler: ListSampler,
 ) : Distributor<AREA, T> {
     private val hierarchy: HierarchicElement<AREA> = ruleProvider.hierarchy
 
 
     override fun distribute(
-
         initialSolution: List<SignatureAmount>,
         rootArea: AREA
     ): Map<AREA, List<T>> {
 
         val output: MutableMap<AREA, List<T>> = mutableMapOf()
         val handledNonTargetNodes = mutableMapOf<AREA, List<SignatureAmount>>()
-        val targetAreas = hierarchy.getAllChildren(rootArea)
+        val targetAreas = hierarchy.getAllLeafsFrom(rootArea)
         if (targetAreas.isNotEmpty()) {
             handledNonTargetNodes[rootArea] = initialSolution
         } else {
-            output[rootArea] = finalize(initialSolution, householdMapping)
+            output[rootArea] = unpack(initialSolution, householdMapping)
         }
 
         while (handledNonTargetNodes.isNotEmpty()) {
@@ -40,28 +39,22 @@ class OriginalDistributor<AREA, T>(
                 if (subArea !in targetAreas) {
                     handledNonTargetNodes[subArea] = amounts
                 } else {
-                    output[subArea] = finalize(amounts, householdMapping)
+                    output[subArea] = unpack(amounts, householdMapping)
                 }
             }
         }
         return output
     }
 
-    private val collector = GenericCollector<SignatureAmount, T> {
-        it.map { it.amount }
-    }
-
-    fun finalize(
+    fun unpack(
         amounts: Collection<SignatureAmount>,
         signatures: Map<Signature, List<T>>,
     ): List<T> {
-        val targetMap = amounts.associateWith {
-            val targetHouseholds = signatures[it.signature] ?: run {
-                error("No households for the signature ${it.signature}")
-            }
-            targetHouseholds
+
+        return amounts.flatMap { (signature, amount) ->
+            val elements = signatures[signature]?: emptyList()
+            sampler.sample(elements, amount)
         }
-        return collector.extract(targetMap).map { it }
     }
 
     private fun distributeToImmediateChildren(
@@ -71,15 +64,17 @@ class OriginalDistributor<AREA, T>(
         val childAreas = hierarchy.getImmediateChildren(area)
         val signatures = targetAmounts.map { it.signature }
         if (childAreas.isEmpty()) throw IllegalStateException("We expect at least one child for distribution")
-
+        require(signatures.none{it.isEmpty()}) {
+            "That is an invalid signature, how did that get created"
+        }
         val signatureTracker = SignatureTracker(signatures, signatures.maxOf {
-            it.maxKey
-        } + 1)
+            it.size
+        })
 
         val partitions = childAreas.map { region ->
             logicIndexer.createPartition(region, signatureTracker, ruleProvider)
         }
-
+        val initialDistribution: InitialSignatureDistributor = GreedyDistribution()
         initialDistribution.distribute(partitions, targetAmounts)
 
         return childAreas.zip(partitions).associate { (region, partition) ->

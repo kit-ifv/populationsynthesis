@@ -1,28 +1,31 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.GreedyDistribution
-import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.InitialSignatureDistributor
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.DirectRunReport
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.MatrixSolver
+import edu.kit.ifv.populationsynthesis.algorithms.rounding.RoundingStrategy
+import edu.kit.ifv.populationsynthesis.algorithms.rounding.withCallback
+import edu.kit.ifv.populationsynthesis.algorithms.sampling.ListSampler
+import edu.kit.ifv.populationsynthesis.algorithms.sampling.PickWithReplacement
+import kotlin.random.Random
 
-
-typealias IPUCallback = (DirectRunReport) -> Unit
-
-val CONSOLE_PRINT: IPUCallback = {
-    it.observers.forEach {
-        val output = "(${it.expected} ${it.actual})"
-        println(output)
-
-    }
-
-}
 
 data class HierarchicDistributionConfig(
-    val ipu: GenericIPU = GenericIPU.legacy,
-//    val refinement: Refinement = Refinement { },
-//    val signatureDistributor: InitialSignatureDistributor = GreedyAmountDistro(),
-    val ipuCalculationCallback: IPUCallback = {
-        if (it.amountOfZeroVectors > 0) println("There are degenerate vectors in the IPU. This happens when a seed element matches no rule, the vectors will be set to 0")
-    },
-    val initialSignatureDistributor: InitialSignatureDistributor = GreedyDistribution(),
-)
+    val matrixSolver: MatrixSolver = MatrixSolver.legacy,
+    val random: Random = Random(42),
+    val samplerAlgorithm: ListSampler = PickWithReplacement(random),
+    val roundingStrategy: RoundingStrategy = RoundingStrategy.cumulative
+) {
+    companion object {
+        val VERBOSE = HierarchicDistributionConfig(
+            matrixSolver = MatrixSolver.legacy,
+            random = Random(42),
+        roundingStrategy = RoundingStrategy.cumulative.withCallback { ints, task ->
+            val lookup = task.vectors.zip(ints).toMap()
+            task.observers.forEach { observer ->
+                val integerResult = observer.vectors.sumOf { (lookup[it] ?: 0) * it.baseVector[observer.observedIndex] }
+                println("expected = ${observer.expected}, doubleResult = ${observer.actual}, intResult = $integerResult")
+
+            }
+        }
+        )
+    }
+}

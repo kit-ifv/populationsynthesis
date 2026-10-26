@@ -5,7 +5,4 @@ package edu.kit.ifv.populationsynthesis.rules.measurement
  * registers the logic name in the registry, to resolve ambiguities and help with debugging.
  */
 @JvmInline
-value class LogicIdentifier(val text: String) {
-
-
-}
+value class LogicIdentifier(val text: String)

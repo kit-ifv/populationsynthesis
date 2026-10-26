@@ -1,10 +1,8 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
-import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-
 /**
- * The distributor is tasked with taking
+ * The distributor is tasked with taking an initial solution of signature amounts, a root area and distributing
+ * the signatures to different areas, converting them back to the type T of the original elements.
  */
 fun interface Distributor<AREA, out T> {
 
@@ -13,25 +11,4 @@ fun interface Distributor<AREA, out T> {
         initialSolution: List<SignatureAmount>,
         rootArea: AREA,
     ): Map<AREA, List<T>>
-}
-
-
-fun <AREA> LogicIndexer<AREA, *>.createPartition(
-    target: AREA,
-    signatureTracker: SignatureTracker,
-    ruleProvider: HierarchicRuleProvider<AREA, *>
-): Partition {
-    val rules = ruleProvider.getComposedRules(target)
-    val expectedValues = rules.associate {
-        getIndex(it) to it.target
-    }
-    val targetArray = DoubleArray(size) { 0.0 }
-    val maskArray = BooleanArray(size) { false }
-    expectedValues.forEach { (index, target) ->
-        targetArray[index] = target
-        maskArray[index] = true
-
-    }
-    return Partition(targetArray, signatureTracker, maskArray)
-
 }

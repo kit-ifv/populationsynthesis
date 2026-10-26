@@ -1,12 +1,12 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.ipu
 
-import examples.layerscenario.KonduriGeographicUnit
-import examples.layerscenario.KonduriHousehold
-import examples.layerscenario.KonduriRuleProvider
-import examples.threelayerscenario.A
-import examples.threelayerscenario.ABCGraph
-import examples.threelayerscenario.ABCRuleProvider
-import examples.threelayerscenario.SeedElement
+import edu.kit.ifv.populationsynthesis.systemtests.layerscenario.KonduriGeographicUnit
+import edu.kit.ifv.populationsynthesis.systemtests.layerscenario.KonduriHousehold
+import edu.kit.ifv.populationsynthesis.systemtests.layerscenario.KonduriRuleProvider
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.A
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.ABCGraph
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.ABCRuleProvider
+import edu.kit.ifv.populationsynthesis.systemtests.threelayerscenario.SeedElement
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 
@@ -26,5 +26,4 @@ class RuleObserverBuilderTest {
         val output = builder.build(A.A1, elements)
         output.forEach { assertTrue(it.sanityCheck()) }
     }
-
 }

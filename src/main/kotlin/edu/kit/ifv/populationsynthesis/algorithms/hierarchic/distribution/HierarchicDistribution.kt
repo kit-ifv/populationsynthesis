@@ -1,28 +1,29 @@
 package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution
 
-import edu.kit.ifv.populationsynthesis.GenericCollector
-import edu.kit.ifv.populationsynthesis.Signature
+import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.rules.LogicIndexer
 import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
-import edu.kit.ifv.populationsynthesis.standardRoundingStrategy
+import edu.kit.ifv.populationsynthesis.synthesis.HierarchicResourceTaskProvider
 import edu.kit.ifv.populationsynthesis.synthesis.HierarchicSynthesis
+import edu.kit.ifv.populationsynthesis.synthesis.MatrixTaskProvider
 
 class HierarchicDistribution<AREA, T>(
     ruleProvider: HierarchicRuleProvider<AREA, in T>,
-    val seedHouseholds: Collection<T>,
+    val seedElements: Collection<T>,
+    val matrixTaskProvider: MatrixTaskProvider<AREA, T> = HierarchicResourceTaskProvider(seedElements, ruleProvider),
     val config: HierarchicDistributionConfig = HierarchicDistributionConfig()
 ) : HierarchicSynthesis<AREA, T>(ruleProvider) {
 
 
     private val allRuleLogics = LogicIndexer.fromProvider(ruleProvider)
-    private val householdMapping = initializeHouseholdMapping()
+    private val householdMapping = initializeElementMapping()
     init {
         require(householdMapping.keys.none { it.isEmpty() }) {
             "This is not a valid signature state"
         }
     }
-    private fun initializeHouseholdMapping(): Map<Signature, List<T>> {
-        val groupBy: Map<Signature?, List<T>> = seedHouseholds.groupBy { element ->
+    private fun initializeElementMapping(): Map<Signature, List<T>> {
+        val groupBy: Map<Signature?, List<T>> = seedElements.groupBy { element ->
             allRuleLogics.createSignature(element)
 
 
@@ -38,17 +39,12 @@ class HierarchicDistribution<AREA, T>(
      * According to whatever other strategy is present.
      */
     fun initialSolution(target: AREA): List<SignatureAmount> {
-        val rules = ruleProvider.getComposedRules(target)
-        // TODO What if there are different rules provided at different root areas, they cannot be traced back to their original signture created from the logic indexer.
-//        val oIpu = config.ipu.calculateSignature(seedHouseholds, rules, config.ipuCalculationCallback)
-        val oIpu = config.ipu.sigCalcAct(householdMapping, rules.map { allRuleLogics.toIndexedRule(it) })
+        val matrixTask = matrixTaskProvider[target]
 
-
-        val integerIPUResult = standardRoundingStrategy.integerizeIPUOutput(oIpu)
-
-//        rules.verify(integerIPUResult)
-        // TODO would be nice to see how much the integerization causes the initial solution quality to drop.
-        val sigs = integerIPUResult.map { (element, amount) ->
+        config.matrixSolver.solve(matrixTask)
+        val matrixSolution = matrixTask.extractSolution()
+        val integerMatrixResult = config.roundingStrategy.integerizeMatrixTask(matrixTask)
+        val sigs = integerMatrixResult.map { (element, amount) ->
             SignatureAmount(element, amount)
         }
 
@@ -63,28 +59,11 @@ class HierarchicDistribution<AREA, T>(
     ): Map<AREA, List<T>> {
 
         val initialSolution = initialSolution(highestArea)
-        val distributor = OriginalDistributor(ruleProvider, allRuleLogics, householdMapping, config.initialSignatureDistributor)
+        val distributor = OriginalDistributor(ruleProvider, allRuleLogics, householdMapping, config.samplerAlgorithm)
         return distributor.distribute(
             initialSolution,
             highestArea,
         )
-    }
-
-    private val collector = GenericCollector<SignatureAmount, T> {
-        it.map { it.amount }
-    }
-
-    fun finalize(
-        amounts: Collection<SignatureAmount>,
-        signatures: Map<Signature, List<T>>,
-    ): List<T> {
-        val targetMap = amounts.associateWith {
-            val targetHouseholds = signatures[it.signature] ?: run {
-                error("No households for the signature ${it.signature}")
-            }
-            targetHouseholds
-        }
-        return collector.extract(targetMap).map { it }
     }
 
 

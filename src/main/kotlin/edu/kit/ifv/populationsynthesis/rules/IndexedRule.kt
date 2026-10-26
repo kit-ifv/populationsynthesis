@@ -1,7 +1,7 @@
 package edu.kit.ifv.populationsynthesis.rules
 
-import edu.kit.ifv.populationsynthesis.algorithms.RuleObserver
-import edu.kit.ifv.populationsynthesis.algorithms.ScalableVector
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 
 /**
  * Once the order of rules exist, then we can reference the index in the logic block.

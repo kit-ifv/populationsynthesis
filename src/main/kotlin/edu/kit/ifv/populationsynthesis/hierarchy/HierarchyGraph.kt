@@ -57,7 +57,11 @@ open class HierarchyGraph<T>(
     }
 
     private fun getAllDescendantsInclusive(element: T): Collection<T> {
-        return BreadthFirstIterator(childGraph, element).asSequence().toSet()
+        val output = runCatching { BreadthFirstIterator(childGraph, element).asSequence().toSet()  }
+        return output.getOrElse {
+            throw IllegalStateException("Child graph seems to not contain element: $element")
+
+        }
     }
 
     override fun groupByHighestAncestor(elements: Collection<T>): Map<T, Collection<T>> {

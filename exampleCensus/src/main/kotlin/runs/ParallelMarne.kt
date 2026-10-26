@@ -2,11 +2,9 @@ package edu.kit.ifv.populationsynthesis.runs
 
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistribution
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.HierarchicDistributionConfig
-import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initialization.ParallelPrecomputationDistribution
-import edu.kit.ifv.populationsynthesis.algorithms.ipu.GenericIPU
 import edu.kit.ifv.populationsynthesis.domain.area.HierarchyFactory
 import edu.kit.ifv.populationsynthesis.domain.population.Population
-import edu.kit.ifv.populationsynthesis.domain.rules.RuleProviderFactory
+import edu.kit.ifv.populationsynthesis.domain.rules.CensusRuleProviderFactory
 import edu.kit.ifv.populationsynthesis.evaluation.Verification
 import edu.kit.ifv.populationsynthesis.input.writeCsv
 import edu.kit.ifv.populationsynthesis.output.CensusHouseholdConverter
@@ -14,23 +12,24 @@ import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 
 fun main() {
+    TODO("RESTORE Whatever was lost here")
     val hierarchy = HierarchyFactory.marneExample()
-    val rules = RuleProviderFactory.marneExample()
+    val rules = CensusRuleProviderFactory.marneExample()
     val hierarchicRuleProvider = rules.withHierarchy(hierarchy)
     val population = Population.fromPersonInfo()
 
 
     val ipu = HierarchicDistribution(
         ruleProvider = hierarchicRuleProvider,
-        seedHouseholds = population.households,
+        seedElements = population.households,
         config = HierarchicDistributionConfig(
             // You can use different algorithms for the initial solution of the distribution algorithm.
 //            ipu = LeastSquareRegression,
 //            ipu = SparkNonnegativeLeastSquares,
 //            ipu = TabooListIPU(blockAmount = 5, iterations = 1000),
 //            ipu = MaximumAnnihilator(),
-            ipu = GenericIPU.legacy,
-            initialSignatureDistributor = ParallelPrecomputationDistribution()
+//            ipu = GenericIPU.legacy,
+//            initialSignatureDistributor = ParallelPrecomputationDistribution()
         )
     )
     // You can also use the traditional hierarchic IPU of Konduri instead of the Distribution Algorithm.
