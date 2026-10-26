@@ -19,7 +19,7 @@ class HierarchyGraphTest {
         }
 
         val output = graph.groupByHighestAncestor(A.A1)
-        assertEquals(output.size, 1)
+        assertEquals(1, output.size)
         assertTrue(C.C1 in output)
     }
 
@@ -33,7 +33,7 @@ class HierarchyGraphTest {
         }
 
         val output = graph.groupByHighestAncestor(A.A1)
-        assertEquals(output.size, 1)
+        assertEquals(1, output.size)
         assertTrue(C.C1 !in output)
     }
 }

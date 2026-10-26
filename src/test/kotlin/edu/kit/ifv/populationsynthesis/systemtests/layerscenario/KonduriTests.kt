@@ -76,15 +76,14 @@ class KonduriTests {
         val outp = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
 
         val vectorsGeo1 = outp[KonduriGeographicUnit.geo1]?.toList() ?: emptyList()
-        val expectedScalars = vectorsGeo1
-        assertEquals(expectedScalars[0].scalar, 13 + 2.0 / 3)
-        assertEquals(expectedScalars[1].scalar, 21 + 1.0 / 2)
-        assertEquals(expectedScalars[2].scalar, 10 + 1.0 / 6)
-        assertEquals(expectedScalars[3].scalar, 21 + 1.0 / 2)
-        assertEquals(expectedScalars[4].scalar, 10 + 1.0 / 6)
-        assertEquals(expectedScalars[5].scalar, 13 + 2.0 / 3)
-        assertEquals(expectedScalars[6].scalar, 10 + 1.0 / 6)
-        assertEquals(expectedScalars[7].scalar, 13 + 2.0 / 3)
+        assertEquals(13 + 2.0 / 3, vectorsGeo1[0].scalar)
+        assertEquals(21 + 1.0 / 2, vectorsGeo1[1].scalar)
+        assertEquals(10 + 1.0 / 6, vectorsGeo1[2].scalar)
+        assertEquals(21 + 1.0 / 2, vectorsGeo1[3].scalar)
+        assertEquals(10 + 1.0 / 6, vectorsGeo1[4].scalar)
+        assertEquals(13 + 2.0 / 3, vectorsGeo1[5].scalar)
+        assertEquals(10 + 1.0 / 6, vectorsGeo1[6].scalar)
+        assertEquals(13 + 2.0 / 3, vectorsGeo1[7].scalar)
 
     }
 
@@ -102,17 +101,16 @@ class KonduriTests {
         )
         val output = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
 
-        val vectorsGeo1 = output[KonduriGeographicUnit.geo1]?.toList() ?: fail("The output for geo1 should be present")
+        val expectedScalars = output[KonduriGeographicUnit.geo1]?.toList() ?: fail("The output for geo1 should be present")
 
-        val expectedScalars = vectorsGeo1
-        assertEquals(expectedScalars[0].scalar, 13.87, 0.01)
-        assertEquals(expectedScalars[1].scalar, 21.82, 0.01)
-        assertEquals(expectedScalars[2].scalar, 10.32, 0.01)
-        assertEquals(expectedScalars[3].scalar, 21.5, 0.01)
-        assertEquals(expectedScalars[4].scalar, 10.17, 0.01)
-        assertEquals(expectedScalars[5].scalar, 13.67, 0.01)
-        assertEquals(expectedScalars[6].scalar, 10.17, 0.01)
-        assertEquals(expectedScalars[7].scalar, 13.67, 0.01)
+        assertEquals(13.87, expectedScalars[0].scalar, 0.01)
+        assertEquals(21.82, expectedScalars[1].scalar, 0.01)
+        assertEquals(10.32, expectedScalars[2].scalar, 0.01)
+        assertEquals(21.5, expectedScalars[3].scalar, 0.01)
+        assertEquals(10.17, expectedScalars[4].scalar, 0.01)
+        assertEquals(13.67, expectedScalars[5].scalar, 0.01)
+        assertEquals(10.17, expectedScalars[6].scalar, 0.01)
+        assertEquals(13.67, expectedScalars[7].scalar, 0.01)
     }
 
     @ParameterizedTest(name = "{0}")
@@ -131,30 +129,27 @@ class KonduriTests {
         )
         val output = ipu.calculate(KonduriRegion, listOf(KonduriGeographicUnit.geo1, KonduriGeographicUnit.geo2))
 
-        val vectorsGeo1 = output[KonduriGeographicUnit.geo1]?.toList() ?: fail("The output for geo1 should be present")
+        val expectedScalarsArea1 = output[KonduriGeographicUnit.geo1]?.toList() ?: fail("The output for geo1 should be present")
 
-        val expectedScalars = vectorsGeo1
-
-        assertEquals(expectedScalars[0].scalar, 8.33, 0.01)
-        assertEquals(expectedScalars[1].scalar, 25.71, 0.01)
-        assertEquals(expectedScalars[2].scalar, 12.19, 0.01)
-        assertEquals(expectedScalars[3].scalar, 12.19, 0.01)
-        assertEquals(expectedScalars[4].scalar, 20.02, 0.01)
-        assertEquals(expectedScalars[5].scalar, 8.22, 0.01)
-        assertEquals(expectedScalars[6].scalar, 2.78, 0.01)
-        assertEquals(expectedScalars[7].scalar, 8.22, 0.01)
+        assertEquals(8.33, expectedScalarsArea1[0].scalar, 0.01)
+        assertEquals(25.71, expectedScalarsArea1[1].scalar, 0.01)
+        assertEquals(12.19, expectedScalarsArea1[2].scalar, 0.01)
+        assertEquals(12.19, expectedScalarsArea1[3].scalar, 0.01)
+        assertEquals(20.02, expectedScalarsArea1[4].scalar, 0.01)
+        assertEquals(8.22, expectedScalarsArea1[5].scalar, 0.01)
+        assertEquals(2.78, expectedScalarsArea1[6].scalar, 0.01)
+        assertEquals(8.22, expectedScalarsArea1[7].scalar, 0.01)
 
 
-        val vectorsGeo2 = output[KonduriGeographicUnit.geo2]?.toList() ?: fail("The output for geo2 should be present")
+        val expectedScalarsArea2 = output[KonduriGeographicUnit.geo2]?.toList() ?: fail("The output for geo2 should be present")
 
-        val expectedScalars2 = vectorsGeo2
-        assertEquals(expectedScalars2[0].scalar, 4.46, 0.01)
-        assertEquals(expectedScalars2[1].scalar, 17.71, 0.01)
-        assertEquals(expectedScalars2[2].scalar, 11.00, 0.01)
-        assertEquals(expectedScalars2[3].scalar, 30.39, 0.01)
-        assertEquals(expectedScalars2[4].scalar, 10.31, 0.01)
-        assertEquals(expectedScalars2[5].scalar, 26.85, 0.01)
-        assertEquals(expectedScalars2[6].scalar, 5.38, 0.01)
-        assertEquals(expectedScalars2[7].scalar, 26.85, 0.01)
+        assertEquals(4.46, expectedScalarsArea2[0].scalar, 0.01)
+        assertEquals(17.71, expectedScalarsArea2[1].scalar, 0.01)
+        assertEquals(11.00, expectedScalarsArea2[2].scalar, 0.01)
+        assertEquals(30.39, expectedScalarsArea2[3].scalar, 0.01)
+        assertEquals(10.31, expectedScalarsArea2[4].scalar, 0.01)
+        assertEquals(26.85, expectedScalarsArea2[5].scalar, 0.01)
+        assertEquals(5.38, expectedScalarsArea2[6].scalar, 0.01)
+        assertEquals(26.85, expectedScalarsArea2[7].scalar, 0.01)
     }
 }

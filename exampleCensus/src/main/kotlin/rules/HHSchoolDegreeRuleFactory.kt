@@ -2,7 +2,6 @@ package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.domain.population.Sex
-import edu.kit.ifv.populationsynthesis.input.rules.CensusEmploymentStatusData
 import edu.kit.ifv.populationsynthesis.input.rules.CensusHighestSchoolDegreeData
 import edu.kit.ifv.populationsynthesis.input.rules.SchoolDegree
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup

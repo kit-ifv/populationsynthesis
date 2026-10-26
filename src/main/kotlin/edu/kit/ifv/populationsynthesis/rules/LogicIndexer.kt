@@ -1,9 +1,12 @@
 package edu.kit.ifv.populationsynthesis.rules
 
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.Partition
+import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.SignatureTracker
 import edu.kit.ifv.populationsynthesis.datastructures.Signature
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.rules.measurement.LogicIdentifier
 import edu.kit.ifv.populationsynthesis.rules.measurement.Measurement
+import edu.kit.ifv.populationsynthesis.rules.provider.HierarchicRuleProvider
 import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 
 /**
@@ -68,6 +71,25 @@ class LogicIndexer<AREA, T> internal constructor(
     }
     fun <T> indexRules(rules: Collection<Rule<T>>): List<IndexedRule<T>> {
         return rules.map { toIndexedRule(it) }
+    }
+
+
+    fun createPartition(
+        target: AREA,
+        signatureTracker: SignatureTracker,
+        ruleProvider: HierarchicRuleProvider<AREA, *>): Partition {
+        val rules = ruleProvider.getComposedRules(target)
+        val expectedValues = rules.associate {
+            getIndex(it) to it.target
+        }
+        val targetArray = DoubleArray(size) { 0.0 }
+        val maskArray = BooleanArray(size) { false }
+        expectedValues.forEach { (index, target) ->
+            targetArray[index] = target
+            maskArray[index] = true
+
+        }
+        return Partition(targetArray, signatureTracker, maskArray)
     }
 
     companion object {

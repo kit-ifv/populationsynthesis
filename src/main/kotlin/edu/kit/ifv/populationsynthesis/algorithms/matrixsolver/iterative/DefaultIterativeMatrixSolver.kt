@@ -1,8 +1,6 @@
 package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
 
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
-import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state.MutableResidualState
-import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state.ObserverTrackingState
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -66,62 +64,4 @@ open class DefaultIterativeMatrixSolver<S : SolverState>(
 
 }
 
-
-class SolverConfiguration<S : SolverState>(
-    var maxIter: Int = 1000,
-    var maxDuration: Duration = 30.minutes,
-) {
-    lateinit var step: IterationStep<S>
-    lateinit var stateFactory: SolverStateFactory<S>
-    fun build(): DefaultIterativeMatrixSolver<S> {
-        return DefaultIterativeMatrixSolver(
-            maxIter = maxIter,
-            maxDuration = maxDuration,
-            step = step,
-            stateFactory = stateFactory,
-        )
-    }
-
-    companion object {
-        // Deliberately getter and not a field so that each config is "fresh"
-        val ipuConfig get()= SolverConfiguration<ObserverTrackingState>().apply {
-            step = IterationStep.ipuStep
-            stateFactory = SolverStateFactory.ipuStateNormalized
-        }
-
-        val ccdConfig get()= SolverConfiguration<MutableResidualState>().apply {
-            step = IterationStep.ccdStep
-            stateFactory = SolverStateFactory.normalization
-        }
-    }
-}
-
-object Solvers {
-
-    fun iterativeProportionalUpdate(lambda: SolverConfiguration<ObserverTrackingState>.() -> Unit = {}): DefaultIterativeMatrixSolver<ObserverTrackingState> {
-        return create{
-            step = IterationStep.ipuStep
-            stateFactory = SolverStateFactory.ipuStateNormalized
-            apply(lambda)
-        }
-    }
-
-
-    fun cyclicCoordinateDescent(lambda: SolverConfiguration<MutableResidualState>.() -> Unit = {}): DefaultIterativeMatrixSolver<MutableResidualState> {
-        return create {
-            step = IterationStep.ccdStep
-            stateFactory = SolverStateFactory.normalization
-            apply(lambda)
-        }
-    }
-
-
-    fun <S: SolverState> create(lambda: SolverConfiguration<S>.() -> Unit = {}): DefaultIterativeMatrixSolver<S> {
-        val solverConfiguration = SolverConfiguration<S>().apply(lambda)
-        return solverConfiguration.build()
-    }
-
-    val IPU get()= iterativeProportionalUpdate()
-    val CCD get() = cyclicCoordinateDescent()
-}
 

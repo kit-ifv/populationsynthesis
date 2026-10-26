@@ -15,7 +15,7 @@ class LogicIndexerTest {
             addRule(2, spawnRule("B"))
         }
         val indexer = LogicIndexer.fromProvider(ruleProvider)
-        assertEquals(indexer.allMeasurements().size, 2)
+        assertEquals(2, indexer.allMeasurements().size)
     }
 
     private fun spawnRule(id: String): Rule<Any> {

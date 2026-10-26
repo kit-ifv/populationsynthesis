@@ -12,18 +12,18 @@ class KullbackLeiblerTest {
 
     @Test
     fun calculatePQ() {
-        assertEquals(p.kullbackLeiblerDivergence(q), 0.0852996, 0.0000001)
+        assertEquals(0.0852996, p.kullbackLeiblerDivergence(q), 0.0000001)
     }
 
     @Test
     fun calculateQP() {
-        assertEquals(q.kullbackLeiblerDivergence(p), 0.097455, 0.000001)
+        assertEquals(0.097455, q.kullbackLeiblerDivergence(p), 0.000001)
     }
 
     @Test
     fun calculateIdentity() {
-        assertEquals(p.kullbackLeiblerDivergence(p), 0.0)
-        assertEquals(q.kullbackLeiblerDivergence(q), 0.0)
+        assertEquals(0.0, p.kullbackLeiblerDivergence(p))
+        assertEquals(0.0, q.kullbackLeiblerDivergence(q))
     }
 }
 

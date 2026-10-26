@@ -2,7 +2,6 @@ package edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative
 
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector.Companion.invoke
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.toList
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.toSparseScalableVector
 import org.junit.jupiter.api.Test

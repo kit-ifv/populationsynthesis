@@ -10,7 +10,7 @@ abstract class ORToolsSolver protected constructor(
     protected val lowerBound: Double = .0,
     protected val upperBound: Double = 80_000_000.0,
 ): LoadMatrixProblemToSolver<ORToolsSolver.Result> {
-    inner class Result(
+    class Result(
         val variables : Array<MPVariable>
     )
     protected val vectorVariables: MutableMap<Vector, MPVariable> = mutableMapOf()

@@ -111,7 +111,7 @@ class HierarchyComposerTest {
 
         val rules = provider.getComposedRules(C.C1)
         assertTrue(RulesHelper.A.text in rules)
-        assertEquals(rules[RulesHelper.A.text]!!.target, 13.0)
+        assertEquals(13.0, rules[RulesHelper.A.text]!!.target)
 
     }
 
@@ -124,7 +124,7 @@ class HierarchyComposerTest {
         }.withHierarchy(graph)
         val rules = provider.getComposedRules(C.C1)
         assertTrue(RulesHelper.B.text in rules)
-        assertEquals(rules[RulesHelper.B.text]!!.target, 6.0)
+        assertEquals(6.0, rules[RulesHelper.B.text]!!.target)
     }
 
     @Test
@@ -132,7 +132,7 @@ class HierarchyComposerTest {
         val provider = ruleCProvider().apply { addRule(C.C1, RulesHelper.C.generate(100.0)) }.withHierarchy(graph)
         val rules = provider.getComposedRules(C.C1)
         assertTrue(RulesHelper.C.text in rules)
-        assertEquals(rules[RulesHelper.C.text]!!.target, 8.5)
+        assertEquals(8.5, rules[RulesHelper.C.text]!!.target)
     }
 
     @Test
@@ -140,7 +140,7 @@ class HierarchyComposerTest {
         val provider = ruleCProvider().withHierarchy(graph)
         val rules = provider.getComposedRules(C.C1)
         assertTrue(RulesHelper.C.text in rules)
-        assertEquals(rules[RulesHelper.C.text]!!.target, 8.5)
+        assertEquals(8.5, rules[RulesHelper.C.text]!!.target)
     }
 
     private fun ruleCProvider(): MapRuleProvider<Area, Any> {

@@ -96,7 +96,7 @@ class ExampleIPURun {
             HH.random(3),
         )
         val output = firstRuleset.delta(households)
-        assertEquals(output.entries.first().value, 0.0)
+        assertEquals(0.0, output.entries.first().value)
         val outputRelative = firstRuleset.relativeDeltas(households)
         val outputt = firstRuleset.relativeTotals(households)
         firstRuleset.zip(secondRuleset).forEach { (first, second) ->

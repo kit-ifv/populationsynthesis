@@ -12,12 +12,20 @@ data class HierarchicDistributionConfig(
     val matrixSolver: MatrixSolver = MatrixSolver.legacy,
     val random: Random = Random(42),
     val samplerAlgorithm: ListSampler = PickWithReplacement(random),
-    val roundingStrategy: RoundingStrategy = RoundingStrategy.cumulative.withCallback { ints, task ->
-        val lookup = task.vectors.zip(ints).toMap()
-        task.observers.forEach { observer ->
-            val integerResult = observer.vectors.sumOf { (lookup[it] ?: 0) * it.baseVector[observer.observedIndex] }
-            println("expected = ${observer.expected}, doubleResult = ${observer.actual}, intResult = $integerResult")
+    val roundingStrategy: RoundingStrategy = RoundingStrategy.cumulative
+) {
+    companion object {
+        val VERBOSE = HierarchicDistributionConfig(
+            matrixSolver = MatrixSolver.legacy,
+            random = Random(42),
+        roundingStrategy = RoundingStrategy.cumulative.withCallback { ints, task ->
+            val lookup = task.vectors.zip(ints).toMap()
+            task.observers.forEach { observer ->
+                val integerResult = observer.vectors.sumOf { (lookup[it] ?: 0) * it.baseVector[observer.observedIndex] }
+                println("expected = ${observer.expected}, doubleResult = ${observer.actual}, intResult = $integerResult")
 
+            }
         }
+        )
     }
-)
+}

@@ -8,7 +8,7 @@ value class Probability internal constructor(val probability: Double) : Comparab
 
     val logProbability: Double get() = ln(probability)
     operator fun not(): Probability {
-        return Probability.of(1.0 - probability)
+        return of(1.0 - probability)
     }
 
     operator fun times(other: Probability): Probability {

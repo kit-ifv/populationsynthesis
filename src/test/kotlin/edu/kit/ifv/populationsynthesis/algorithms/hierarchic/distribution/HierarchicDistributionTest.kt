@@ -43,8 +43,8 @@ class HierarchicDistributionTest {
         val output = ipu.synthesizeAll()
 
 
-        assertEquals(output[1]!!.size, 30)
-        assertEquals(output[2]!!.size, 10)
+        assertEquals(30, output[1]!!.size)
+        assertEquals(10, output[2]!!.size)
         assertFalse(output[2]!!.contains(Elements(Attr.B)))
         assertFalse(output[2]!!.contains(Elements(Attr.C)))
 

@@ -24,10 +24,7 @@ data class RuleObserverBuilder<AREA, T>(
     }
 
     fun build(area: AREA, equivalenceClass: EquivalenceClass<SparseScalableVector, T>): Collection<RuleObserver> {
-        return with(logicIndexer) {
-            ruleProvider.buildObservers(area, equivalenceClass.representatives)
-        }
-
+        return context(logicIndexer) {ruleProvider.buildObservers(area, equivalenceClass.representatives)}
     }
 
     fun buildFromVectors(area: AREA, vectors: Collection<ScalableVector>): Collection<RuleObserver> {

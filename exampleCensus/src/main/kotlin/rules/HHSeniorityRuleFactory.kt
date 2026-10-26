@@ -2,7 +2,6 @@ package edu.kit.ifv.populationsynthesis.rules
 
 import edu.kit.ifv.populationsynthesis.domain.population.CensusHousehold
 import edu.kit.ifv.populationsynthesis.domain.population.SeniorityStatus
-import edu.kit.ifv.populationsynthesis.input.rules.CensusDemographyData
 import edu.kit.ifv.populationsynthesis.input.rules.CensusHouseholdData
 import edu.kit.ifv.populationsynthesis.rules.covered.CoverageGroup
 import edu.kit.ifv.populationsynthesis.rules.covered.ExplicitTargetCoverageGroup

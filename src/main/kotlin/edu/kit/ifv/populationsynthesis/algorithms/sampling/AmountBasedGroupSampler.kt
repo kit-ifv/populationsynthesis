@@ -12,9 +12,6 @@ import kotlin.random.Random
  *
  * The samples from all groups are combined into a single result list.
  *
- * Groups assigned an amount of `0` contribute no elements. An amount greater
- * than `0` requires the corresponding group to contain at least one element.
- *
  * @param K type identifying a group
  * @param V type of the elements being sampled
  * @property random random number generator used for sampling

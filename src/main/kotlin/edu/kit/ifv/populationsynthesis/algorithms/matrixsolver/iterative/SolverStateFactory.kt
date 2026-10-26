@@ -7,9 +7,38 @@ import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state.O
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.iterative.state.ResidualSolverState
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.toVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
+import edu.kit.ifv.populationsynthesis.datastructures.linalg.isRelevantFor
 
-fun interface SolverStateFactory<S: SolverState> {
-    fun create(vectors: Collection<ScalableVector>, observers: Collection<RuleObserver>): S
+fun interface SolverStateFactory<S : SolverState> {
+
+    /**
+     * Constructs a solver state from vectors that have already
+     * been filtered for relevance.
+     *
+     * Implementations may override [create] if irrelevant vectors
+     * need to be retained.
+     */
+    fun createFromRelevant(
+        vectors: Collection<ScalableVector>,
+        observers: Collection<RuleObserver>
+    ): S
+
+    /**
+     * Creates a solver state, excluding vectors that cannot
+     * contribute to any observer.
+     *
+     * Excluded vectors have their scalars set to zero.
+     * Override this method if the solver requires them.
+     */
+    fun create(
+        vectors: Collection<ScalableVector>,
+        observers: Collection<RuleObserver>
+    ): S {
+        val (relevant, irrelevant) = vectors.partition { it.isRelevantFor(observers) }
+        irrelevant.forEach { vector -> vector.scalar = .0 }
+
+        return createFromRelevant(relevant, observers)
+    }
 
     companion object {
         val ipuState = SolverStateFactory<ObserverTrackingState> { vectors, observers ->
@@ -30,6 +59,6 @@ fun interface SolverStateFactory<S: SolverState> {
                 normalize()
             }
         }
-            }
+    }
 }
 

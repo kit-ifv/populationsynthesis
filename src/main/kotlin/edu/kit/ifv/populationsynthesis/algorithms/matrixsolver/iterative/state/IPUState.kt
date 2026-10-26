@@ -10,6 +10,7 @@ data class IPUState(
     override val observers: List<RuleObserver>,
     override val vectors: List<ScalableVector>,
 ): MutableSolverState, ObserverTrackingState {
+
     override val spawnMark: TimeSource.Monotonic.ValueTimeMark = TimeSource.Monotonic.markNow()
     override val target: Vector = observers.toVector()
 }

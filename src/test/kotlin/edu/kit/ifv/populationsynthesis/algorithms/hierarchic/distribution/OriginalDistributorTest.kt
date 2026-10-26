@@ -15,7 +15,7 @@ import kotlin.random.Random
 import kotlin.test.Test
 
 class OriginalDistributorTest {
-    inner class Element(
+    class Element(
         val first: Int,
         val second: Int,
     )
@@ -67,7 +67,7 @@ class OriginalDistributorTest {
         val initialSolution: List<SignatureAmount>  = householdMapping.keys.map { SignatureAmount(it, 1) }
         val output = distributor.distribute(initialSolution = initialSolution, rootArea = 3)
 
-        assertEquals(output.keys, setOf(1, 5, 6))
+        assertEquals(setOf(1, 5, 6), output.keys)
 
         assertDoesNotThrow {
             Verification.verify(hierarchicRuleProvider, output)

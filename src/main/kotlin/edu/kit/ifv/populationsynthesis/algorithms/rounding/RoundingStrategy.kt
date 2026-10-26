@@ -4,7 +4,6 @@ import edu.kit.ifv.populationsynthesis.algorithms.IntegerWeightedElement
 import edu.kit.ifv.populationsynthesis.algorithms.WeightedElement
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.SparseVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.toSparseVector
-import edu.kit.ifv.populationsynthesis.rules.provider.RuleProvider
 import edu.kit.ifv.populationsynthesis.synthesis.MatrixTask
 
 fun interface RoundingStrategy {

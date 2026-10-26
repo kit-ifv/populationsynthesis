@@ -3,7 +3,6 @@ package edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.initi
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.MutableSignatureAmount
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.Partition
 import edu.kit.ifv.populationsynthesis.algorithms.hierarchic.distribution.SignatureAmount
-import java.io.File
 
 class GreedyDistribution(
     val insertionMetric: PartitionMetric = PartitionMetric.squaredDifference,
@@ -66,19 +65,15 @@ class GreedyDistribution(
             i++
         }
     }
+
+    private fun Partition.takeOne(signatureAmount: MutableSignatureAmount) {
+        delta(signatureAmount.index, 1)
+        signatureAmount.atomicAmount.andDecrement
+
+    }
 }
 
 
-fun Partition.takeOne(signatureAmount: MutableSignatureAmount) {
-    delta(signatureAmount.index, 1)
-    signatureAmount.atomicAmount.andDecrement
-//    val msg = "Partition ${id} Taking ${signatureAmount}"
-//    println(msg)
-//    log(msg)
 
-}
-private val logFile = File("sequentialpartitionmarne.log")
-private fun log(message: String) {
-    logFile.appendText(message + System.lineSeparator())
-}
-private var counter = 0
+
+

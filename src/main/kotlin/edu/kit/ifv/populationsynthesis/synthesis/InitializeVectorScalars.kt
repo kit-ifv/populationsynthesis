@@ -26,13 +26,3 @@ fun <T> InitializeVectorScalars<T>.withCallback(lambda: (List<ScalableVector>) -
     return VectorScalarsWithCallback(this, lambda)
 }
 
-class VectorScalarsWithCallback<in T>(
-    private val original: InitializeVectorScalars<T>,
-    private val callback: (List<ScalableVector>) -> Unit
-): InitializeVectorScalars<T> {
-    override fun generateScalars(vectorElementMapping: Map<SparseVector, List<T>>): List<SparseScalableVector> {
-        val output = original.generateScalars(vectorElementMapping)
-        callback(output)
-        return output
-    }
-}

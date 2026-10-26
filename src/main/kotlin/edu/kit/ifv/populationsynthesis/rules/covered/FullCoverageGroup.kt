@@ -9,9 +9,3 @@ class FullCoverageGroup<T>(val rules: RuleSet<T>) : CoverageGroup<T>, RuleSet<T>
     override val totalTarget: Double = sumOf { it.target }
 }
 
-/**
- * If you do not know your rules, but your total target then you can also define a coverage group
- */
-class ExplicitTargetCoverageGroup<T>(val rules: RuleSet<T>, target: Number) : CoverageGroup<T>, RuleSet<T> by rules {
-    override val totalTarget: Double = target.toDouble()
-}

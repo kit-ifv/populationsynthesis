@@ -1,5 +1,6 @@
 package edu.kit.ifv.populationsynthesis.datastructures.linalg
 
+import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
 import java.lang.Double.max
 import kotlin.math.abs
 import kotlin.math.pow
@@ -191,6 +192,6 @@ fun Collection<Vector>.strictlyPositiveSum(): MutableVector {
     }
     return target
 }
-
-fun Vector.isRelevantFor(targetIndices: Collection<Int>) = targetIndices.any {get(it) != .0}
+fun Vector.isRelevantFor(observers: Collection<RuleObserver>) = isRelevantForIndices(observers.map { it.observedIndex })
+fun Vector.isRelevantForIndices(targetIndices: Collection<Int>) = targetIndices.any {get(it) != .0}
 fun Vector.toList() = indices.map { get(it) }

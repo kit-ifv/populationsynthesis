@@ -20,7 +20,7 @@ class NumericProbabilityDistribution private constructor(
             val sum = values.sum()
 
             require(sum > 0.0) {
-                "HOW"
+                "Cannot create a distribution when all weights are zero"
             }
 
             return NumericProbabilityDistribution(

@@ -19,12 +19,12 @@ class TargetNumberObserverTest {
             DenseScalableVector(1, 2, 3),
         )
         val obs = TargetNumberObserver(logicIdentifier, 1, vectors, 10.0)
-        assertEquals(obs.absoluteDifference, 4.0)
-        assertEquals(obs.actual, 6.0)
-        assertEquals(obs.relativeDifference, 0.4)
+        assertEquals(4.0, obs.absoluteDifference)
+        assertEquals(6.0, obs.actual)
+        assertEquals(0.4, obs.relativeDifference)
 
         mutatingVector.scalar = 2.0
-        assertEquals(obs.actual, 8.0)
+        assertEquals(8.0, obs.actual)
     }
 
     @Test
@@ -35,12 +35,12 @@ class TargetNumberObserverTest {
             mutatingVector,
         )
         val obs = TargetNumberObserver(logicIdentifier, 1, vectors, 0.0)
-        assertEquals(obs.actual, 2.0)
-        assertEquals(obs.delta, -2.0)
+        assertEquals(2.0, obs.actual)
+        assertEquals(-2.0, obs.delta)
         mutatingVector.scalar = 0.0
 
-        assertEquals(obs.absoluteDifference, 0.0)
-        assertEquals(obs.quotientDifference, 1.0)
+        assertEquals(0.0, obs.absoluteDifference)
+        assertEquals(1.0, obs.quotientDifference)
     }
 
     @Test

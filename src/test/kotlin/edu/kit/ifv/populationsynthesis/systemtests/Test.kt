@@ -9,7 +9,7 @@ class MeasurementTest {
     fun test() {
         val ruleSpawner = AgeRules(10, 18, 66)
         val ruleContributions = ruleSpawner.generateAllDescriptions()
-        assertEquals(ruleContributions.size, 4)
+        assertEquals(4, ruleContributions.size)
 
         val otherSpawner = AgeRules(10, 18, 66)
         val otherContributions = otherSpawner.generateAllDescriptions()

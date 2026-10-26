@@ -5,7 +5,6 @@ import com.google.ortools.linearsolver.MPObjective
 import com.google.ortools.linearsolver.MPSolver
 import com.google.ortools.linearsolver.MPVariable
 import edu.kit.ifv.populationsynthesis.algorithms.matrixsolver.RuleObserver
-import edu.kit.ifv.populationsynthesis.datastructures.linalg.ScalableVector
 import edu.kit.ifv.populationsynthesis.datastructures.linalg.Vector
 import kotlin.time.Duration.Companion.minutes
 
@@ -213,7 +212,6 @@ class BoundedLenientORToolsSolver(
     val boundsDeterminer: BoundsDeterminer,
     lowerBound: Double = .0,
     upperBound: Double = 80_000_000.0,
-    private val lambda: Double = 1.0,
 ): LenientORToolsSolver(solver, lowerBound, upperBound)   {
     lateinit var originalDistribution: Map<out Vector, Double>
 
