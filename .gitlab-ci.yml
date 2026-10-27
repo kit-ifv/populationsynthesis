@@ -2,7 +2,7 @@ variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 default:
-  image: amazoncorretto:25
+  image: gitlab.kit.edu:5000/kit/ifv/intern/ci-images/ci:25
   before_script:
     - |
       cat > "$CI_PROJECT_DIR/internal-repositories.init.gradle.kts" <<'EOF'
